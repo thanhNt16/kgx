@@ -30,5 +30,5 @@ fn ask_returns_answer_with_citations() {
         .unwrap()
         .to_lowercase()
         .contains("postgres"));
-    assert!(v["data"]["citations"].as_array().unwrap().len() >= 1);
+    assert!(!v["data"]["citations"].as_array().unwrap().is_empty());
 }

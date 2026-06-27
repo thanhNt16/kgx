@@ -12,6 +12,6 @@ async fn mock_extract_returns_canned_facts_json() {
     };
     let r = p.complete(req).await.unwrap();
     let v: serde_json::Value = serde_json::from_str(&r.text).unwrap();
-    assert!(v["facts"].as_array().unwrap().len() >= 1);
+    assert!(!v["facts"].as_array().unwrap().is_empty());
     assert!(r.input_tokens > 0);
 }
