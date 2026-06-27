@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/kgx-core"]
+members = ["crates/kgx-core", "crates/kgx-vault", "crates/kgx-okf"]
 
 [workspace.package]
 edition = "2021"
