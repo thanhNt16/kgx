@@ -20,10 +20,10 @@ pub fn derive_edges(notes: &[Note]) -> Vec<Edge> {
     // Index by path-without-extension (e.g. "raw/2026-01-15-arch-review")
     let by_path: BTreeMap<String, &str> = notes
         .iter()
-        .filter_map(|n| {
+        .map(|n| {
             let s = n.rel_path.to_string_lossy();
             let stem = s.trim_end_matches(".md").to_string();
-            Some((stem, n.fm.id.as_str()))
+            (stem, n.fm.id.as_str())
         })
         .collect();
     let resolve = |target: &str| -> Option<String> {
