@@ -1,5 +1,5 @@
-use kgx_core::{Result, KgError};
 use crate::Brain;
+use kgx_core::{KgError, Result};
 
 pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(String, f32)>> {
     let mut stmt = brain

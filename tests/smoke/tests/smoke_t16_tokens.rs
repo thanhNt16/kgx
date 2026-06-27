@@ -1,4 +1,4 @@
-/// T10: .kg rebuild is deterministic — same node count after deleting and re-indexing.
+/// T16: kg index writes a token accounting record to .kg/metrics.log.
 use assert_cmd::Command;
 use std::path::Path;
 
@@ -19,14 +19,8 @@ fn copy_fixture() -> tempfile::TempDir {
     d
 }
 
-fn node_count(db: &Path) -> i64 {
-    let c = rusqlite::Connection::open(db).unwrap();
-    c.query_row("SELECT count(*) FROM notes", [], |r| r.get(0))
-        .unwrap()
-}
-
 #[test]
-fn t10_rebuild_is_deterministic() {
+fn t16_index_writes_token_record() {
     let d = copy_fixture();
 
     Command::cargo_bin("kg")
@@ -36,19 +30,12 @@ fn t10_rebuild_is_deterministic() {
         .current_dir(d.path())
         .assert()
         .success();
-    let n1 = node_count(&d.path().join(".kg/brain.sqlite"));
 
-    std::fs::remove_dir_all(d.path().join(".kg")).unwrap();
-
-    Command::cargo_bin("kg")
-        .unwrap()
-        .env("KGX_LLM", "mock")
-        .args(["index", "--full"])
-        .current_dir(d.path())
-        .assert()
-        .success();
-    let n2 = node_count(&d.path().join(".kg/brain.sqlite"));
-
-    assert_eq!(n1, n2, "node count must be identical across rebuilds");
-    assert_eq!(n1, 15, "fixture should index exactly 15 notes");
+    let log = std::fs::read_to_string(d.path().join(".kg/metrics.log")).unwrap();
+    assert!(
+        log.lines().any(|l| {
+            l.contains("\"operation\":\"embed\"") && l.contains("\"command\":\"index\"")
+        }),
+        "metrics.log must contain an embed/index token record; got:\n{log}"
+    );
 }

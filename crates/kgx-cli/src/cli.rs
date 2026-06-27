@@ -31,4 +31,15 @@ pub enum Commands {
         #[arg(long)]
         vault: Option<std::path::PathBuf>,
     },
+    /// Build/refresh .kg/brain.sqlite
+    Index {
+        #[arg(long)]
+        full: bool,
+        #[arg(long)]
+        incremental: bool,
+        #[arg(long)]
+        pagerank: bool,
+        #[arg(long)]
+        communities: bool,
+    },
 }

@@ -1,5 +1,5 @@
-pub mod record;
 pub mod aggregate;
+pub mod record;
 
-pub use record::{append, TokenRecord};
 pub use aggregate::{summarize, GroupBy, TokenAgg};
+pub use record::{append, TokenRecord};

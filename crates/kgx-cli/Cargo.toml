@@ -12,6 +12,8 @@ path = "src/main.rs"
 kgx-core = { path = "../kgx-core" }
 kgx-okf = { path = "../kgx-okf" }
 kgx-vault = { path = "../kgx-vault" }
+kgx-graph = { path = "../kgx-graph" }
+kgx-tokens = { path = "../kgx-tokens" }
 clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true

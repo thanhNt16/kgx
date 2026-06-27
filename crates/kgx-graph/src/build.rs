@@ -1,7 +1,7 @@
-use rusqlite::params;
-use kgx_core::{Note, Edge, RelType, Result, KgError, util};
+use crate::{embed::f32_to_blob, Brain};
 use kgx_core::llm::Embedder;
-use crate::{Brain, embed::f32_to_blob};
+use kgx_core::{util, Edge, KgError, Note, RelType, Result};
+use rusqlite::params;
 
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
 pub struct BuildStats {
@@ -106,7 +106,11 @@ pub fn derive_edges(notes: &[Note]) -> Vec<Edge> {
     edges
 }
 
-pub fn build_full(brain: &mut Brain, notes: &[Note], embedder: &dyn Embedder) -> Result<BuildStats> {
+pub fn build_full(
+    brain: &mut Brain,
+    notes: &[Note],
+    embedder: &dyn Embedder,
+) -> Result<BuildStats> {
     let tx = brain
         .conn_mut()
         .transaction()
@@ -119,8 +123,12 @@ pub fn build_full(brain: &mut Brain, notes: &[Note], embedder: &dyn Embedder) ->
         .collect();
     let embeddings = embedder.embed(&texts)?;
     for (n, emb) in notes.iter().zip(&embeddings) {
-        let tags =
-            serde_json::to_string(&{ let mut t = n.fm.tags.clone(); t.sort(); t }).unwrap();
+        let tags = serde_json::to_string(&{
+            let mut t = n.fm.tags.clone();
+            t.sort();
+            t
+        })
+        .unwrap();
         let typ = serde_json::to_string(&n.fm.r#type)
             .unwrap()
             .trim_matches('"')
@@ -181,7 +189,11 @@ pub fn build_incremental(
     use std::collections::BTreeSet;
     let changed: BTreeSet<&str> = changed_ids.iter().map(|s| s.as_str()).collect();
     if changed.is_empty() {
-        return Ok(BuildStats { nodes: 0, edges: 0, embedded: 0 });
+        return Ok(BuildStats {
+            nodes: 0,
+            edges: 0,
+            embedded: 0,
+        });
     }
     let subset: Vec<&Note> = notes
         .iter()
@@ -197,8 +209,12 @@ pub fn build_incremental(
         .transaction()
         .map_err(|e| KgError::Brain(e.to_string()))?;
     for (n, emb) in subset.iter().zip(&embs) {
-        let tags =
-            serde_json::to_string(&{ let mut t = n.fm.tags.clone(); t.sort(); t }).unwrap();
+        let tags = serde_json::to_string(&{
+            let mut t = n.fm.tags.clone();
+            t.sort();
+            t
+        })
+        .unwrap();
         let typ = serde_json::to_string(&n.fm.r#type)
             .unwrap()
             .trim_matches('"')
@@ -225,24 +241,21 @@ pub fn build_incremental(
             ],
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;
-        tx.execute(
-            "DELETE FROM notes_fts WHERE id=?1",
-            params![n.fm.id],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
+        tx.execute("DELETE FROM notes_fts WHERE id=?1", params![n.fm.id])
+            .map_err(|e| KgError::Brain(e.to_string()))?;
         tx.execute(
             "INSERT INTO notes_fts (id, raw_text, tags) VALUES (?1,?2,?3)",
             params![n.fm.id, n.body, tags],
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;
-        tx.execute(
-            "DELETE FROM edges WHERE src_id=?1",
-            params![n.fm.id],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
+        tx.execute("DELETE FROM edges WHERE src_id=?1", params![n.fm.id])
+            .map_err(|e| KgError::Brain(e.to_string()))?;
     }
     let all_edges = derive_edges(notes);
-    for e in all_edges.iter().filter(|e| changed.contains(e.src_id.as_str())) {
+    for e in all_edges
+        .iter()
+        .filter(|e| changed.contains(e.src_id.as_str()))
+    {
         let rt = serde_json::to_string(&e.rel_type)
             .unwrap()
             .trim_matches('"')

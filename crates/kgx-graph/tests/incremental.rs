@@ -1,8 +1,7 @@
 use kgx_graph::{
-    Brain,
     build::{build_full, build_incremental},
     embed::MockEmbedder,
-    pagerank,
+    pagerank, Brain,
 };
 use kgx_vault::scan::scan_vault;
 
@@ -38,7 +37,9 @@ fn pagerank_writes_scores() {
     pagerank::compute(&mut b, 0.85, 20).unwrap();
     let cnt: i64 = b
         .conn()
-        .query_row("SELECT count(*) FROM pagerank WHERE score > 0", [], |r| r.get(0))
+        .query_row("SELECT count(*) FROM pagerank WHERE score > 0", [], |r| {
+            r.get(0)
+        })
         .unwrap();
     assert!(cnt > 0);
 }

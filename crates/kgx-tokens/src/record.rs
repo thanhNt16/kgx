@@ -1,6 +1,6 @@
-use std::path::Path;
+use kgx_core::{KgError, Result};
 use std::io::Write;
-use kgx_core::{Result, KgError};
+use std::path::Path;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TokenRecord {
@@ -15,15 +15,23 @@ pub struct TokenRecord {
 }
 
 pub fn append(kg_dir: &Path, r: &TokenRecord) -> Result<()> {
-    std::fs::create_dir_all(kg_dir)
-        .map_err(|e| KgError::Io { path: kg_dir.display().to_string(), source: e })?;
+    std::fs::create_dir_all(kg_dir).map_err(|e| KgError::Io {
+        path: kg_dir.display().to_string(),
+        source: e,
+    })?;
     let path = kg_dir.join("metrics.log");
     let line = serde_json::to_string(r).map_err(|e| KgError::Other(e.to_string()))?;
     let mut f = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
         .open(&path)
-        .map_err(|e| KgError::Io { path: path.display().to_string(), source: e })?;
-    writeln!(f, "{line}").map_err(|e| KgError::Io { path: path.display().to_string(), source: e })?;
+        .map_err(|e| KgError::Io {
+            path: path.display().to_string(),
+            source: e,
+        })?;
+    writeln!(f, "{line}").map_err(|e| KgError::Io {
+        path: path.display().to_string(),
+        source: e,
+    })?;
     Ok(())
 }

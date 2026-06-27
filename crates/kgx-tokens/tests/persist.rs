@@ -1,5 +1,5 @@
-use kgx_tokens::record::{append, TokenRecord};
 use kgx_tokens::aggregate::{summarize, GroupBy};
+use kgx_tokens::record::{append, TokenRecord};
 
 fn rec(op: &str, i: u32, o: u32) -> TokenRecord {
     TokenRecord {

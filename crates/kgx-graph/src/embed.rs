@@ -35,10 +35,9 @@ impl Embedder for MockEmbedder {
             .map(|t| {
                 let mut v = vec![0f32; 384];
                 for word in t.split_whitespace() {
-                    let h = word.bytes().fold(
-                        1469598103934665603u64,
-                        |a, b| (a ^ b as u64).wrapping_mul(1099511628211),
-                    );
+                    let h = word.bytes().fold(1469598103934665603u64, |a, b| {
+                        (a ^ b as u64).wrapping_mul(1099511628211)
+                    });
                     v[(h % 384) as usize] += 1.0;
                 }
                 let norm = v.iter().map(|x| x * x).sum::<f32>().sqrt().max(1e-9);

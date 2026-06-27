@@ -11,7 +11,14 @@ fn open_creates_all_tables() {
         .unwrap()
         .collect::<Result<_, _>>()
         .unwrap();
-    for expected in ["communities", "edges", "meta", "notes", "notes_fts", "pagerank"] {
+    for expected in [
+        "communities",
+        "edges",
+        "meta",
+        "notes",
+        "notes_fts",
+        "pagerank",
+    ] {
         assert!(
             tables.iter().any(|t| t == expected),
             "missing table {expected}; have {tables:?}"

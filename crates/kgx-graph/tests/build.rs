@@ -1,4 +1,8 @@
-use kgx_graph::{Brain, build::{build_full, derive_edges}, embed::MockEmbedder};
+use kgx_graph::{
+    build::{build_full, derive_edges},
+    embed::MockEmbedder,
+    Brain,
+};
 use kgx_vault::scan::scan_vault;
 
 fn fixture() -> std::path::PathBuf {

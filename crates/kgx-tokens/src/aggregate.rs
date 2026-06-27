@@ -1,7 +1,7 @@
-use std::path::Path;
-use std::collections::BTreeMap;
-use kgx_core::{Result, KgError};
 use crate::record::TokenRecord;
+use kgx_core::{KgError, Result};
+use std::collections::BTreeMap;
+use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub enum GroupBy {
@@ -23,11 +23,14 @@ pub fn summarize(kg_dir: &Path, _since_days: u32, group: GroupBy) -> Result<Vec<
     if !path.exists() {
         return Ok(vec![]);
     }
-    let text = std::fs::read_to_string(&path)
-        .map_err(|e| KgError::Io { path: path.display().to_string(), source: e })?;
+    let text = std::fs::read_to_string(&path).map_err(|e| KgError::Io {
+        path: path.display().to_string(),
+        source: e,
+    })?;
     let mut map: BTreeMap<String, TokenAgg> = BTreeMap::new();
     for line in text.lines().filter(|l| !l.trim().is_empty()) {
-        let r: TokenRecord = serde_json::from_str(line).map_err(|e| KgError::Other(e.to_string()))?;
+        let r: TokenRecord =
+            serde_json::from_str(line).map_err(|e| KgError::Other(e.to_string()))?;
         let key = match group {
             GroupBy::Operation => r.operation.clone(),
             GroupBy::Command => r.command.clone(),

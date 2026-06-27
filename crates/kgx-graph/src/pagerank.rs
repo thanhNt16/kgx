@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use petgraph::graph::{DiGraph, NodeIndex};
-use kgx_core::{Result, KgError};
 use crate::Brain;
+use kgx_core::{KgError, Result};
+use petgraph::graph::{DiGraph, NodeIndex};
+use std::collections::HashMap;
 
 pub fn compute(brain: &mut Brain, damping: f32, iters: u32) -> Result<()> {
     let mut g: DiGraph<String, ()> = DiGraph::new();
@@ -38,10 +38,8 @@ pub fn compute(brain: &mut Brain, damping: f32, iters: u32) -> Result<()> {
     let n = g.node_count().max(1) as f32;
     let mut rank: HashMap<NodeIndex, f32> = g.node_indices().map(|i| (i, 1.0 / n)).collect();
     for _ in 0..iters {
-        let mut next: HashMap<NodeIndex, f32> = g
-            .node_indices()
-            .map(|i| (i, (1.0 - damping) / n))
-            .collect();
+        let mut next: HashMap<NodeIndex, f32> =
+            g.node_indices().map(|i| (i, (1.0 - damping) / n)).collect();
         for node in g.node_indices() {
             let out: Vec<_> = g
                 .neighbors_directed(node, petgraph::Direction::Outgoing)
