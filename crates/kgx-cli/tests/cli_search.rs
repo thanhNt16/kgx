@@ -20,5 +20,5 @@ fn search_hybrid_json_returns_hits() {
         .success();
     let v: serde_json::Value =
         serde_json::from_slice(&out.get_output().stdout).unwrap();
-    assert!(v["data"]["hits"].as_array().unwrap().len() > 0);
+    assert!(!v["data"]["hits"].as_array().unwrap().is_empty());
 }
