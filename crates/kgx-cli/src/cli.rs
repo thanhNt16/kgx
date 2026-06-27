@@ -42,4 +42,56 @@ pub enum Commands {
         #[arg(long)]
         communities: bool,
     },
+    /// Capture raw source (immutable)
+    Capture {
+        #[arg(long)]
+        from: String,
+        #[arg(long = "type", default_value = "doc")]
+        kind: String,
+    },
+    /// Extract atomic facts from a source note
+    Extract {
+        #[arg(long)]
+        source: String,
+        #[arg(long)]
+        batch: bool,
+        #[arg(long)]
+        dry_run: bool,
+        #[arg(long, default_value = "full")]
+        intensity: String,
+    },
+    /// Analyze and repair links
+    Link {
+        #[arg(long)]
+        suggest: bool,
+        #[arg(long)]
+        orphans: bool,
+        #[arg(long)]
+        fix: bool,
+    },
+    /// Search the knowledge brain
+    Search {
+        query: String,
+        #[arg(long, default_value = "hybrid")]
+        mode: String,
+        #[arg(long, default_value = "10")]
+        limit: usize,
+    },
+    /// Recall an entity's neighborhood
+    Recall {
+        #[arg(long)]
+        entity: String,
+    },
+    /// Answer a question using hybrid retrieval
+    Ask {
+        question: String,
+        #[arg(long, default_value = "local")]
+        scope: String,
+        #[arg(long, default_value = "hybrid")]
+        mode: String,
+        #[arg(long)]
+        cite: bool,
+        #[arg(long)]
+        write: bool,
+    },
 }
