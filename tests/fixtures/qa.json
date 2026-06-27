@@ -1,0 +1,5 @@
+[
+  {"question": "What is the primary datastore?", "expected_ids": ["01FACT01POSTGRESPRIMARY00"]},
+  {"question": "What depends on Postgres?", "expected_ids": ["01FACT03BILLINGDEPS000000"]},
+  {"question": "What is used for caching?", "expected_ids": ["01FACT03REDISCACHE0000000"]}
+]
