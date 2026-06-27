@@ -1,6 +1,7 @@
 mod cli;
 mod output;
 mod commands {
+    pub mod index;
     pub mod init;
     pub mod validate;
 }
@@ -22,5 +23,11 @@ fn main() -> anyhow::Result<()> {
             okf,
             vault,
         } => commands::init::run(cli.json, &template, okf, vault),
+        Commands::Index {
+            full,
+            incremental,
+            pagerank,
+            communities,
+        } => commands::index::run(cli.json, full, incremental, pagerank, communities),
     }
 }

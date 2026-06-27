@@ -1,12 +1,12 @@
+use kgx_core::llm::Embedder;
 use kgx_graph::{
-    Brain,
     build::build_full,
     embed::MockEmbedder,
     knn::vector_search,
     query::{bm25_search, neighbors},
+    Brain,
 };
 use kgx_vault::scan::scan_vault;
-use kgx_core::llm::Embedder;
 
 fn fixture() -> std::path::PathBuf {
     std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min")

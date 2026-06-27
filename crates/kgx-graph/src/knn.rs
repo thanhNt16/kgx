@@ -1,5 +1,5 @@
-use kgx_core::{Result, KgError};
-use crate::{Brain, embed::blob_to_f32};
+use crate::{embed::blob_to_f32, Brain};
+use kgx_core::{KgError, Result};
 
 fn cosine(a: &[f32], b: &[f32]) -> f32 {
     let dot: f32 = a.iter().zip(b).map(|(x, y)| x * y).sum();

@@ -1,7 +1,7 @@
-use std::path::Path;
-use rusqlite::Connection;
-use kgx_core::{Result, KgError};
 use crate::schema::SCHEMA;
+use kgx_core::{KgError, Result};
+use rusqlite::Connection;
+use std::path::Path;
 
 pub struct Brain {
     conn: Connection,
@@ -22,7 +22,8 @@ impl Brain {
     }
 
     fn init(conn: Connection) -> Result<Brain> {
-        conn.execute_batch(SCHEMA).map_err(|e| KgError::Brain(e.to_string()))?;
+        conn.execute_batch(SCHEMA)
+            .map_err(|e| KgError::Brain(e.to_string()))?;
         Ok(Brain { conn })
     }
 
