@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS notes (
 CREATE TABLE IF NOT EXISTS edges (
   src_id TEXT NOT NULL, dst_id TEXT NOT NULL, rel_type TEXT NOT NULL,
   valid_from TEXT, valid_to TEXT, PRIMARY KEY (src_id, dst_id, rel_type));
-CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts USING fts5(id, raw_text, tags, content='', tokenize='porter');
+CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts USING fts5(id, raw_text, tags, tokenize='porter');
 CREATE TABLE IF NOT EXISTS pagerank (id TEXT PRIMARY KEY, score REAL);
 CREATE TABLE IF NOT EXISTS communities (id TEXT, community_id INTEGER, PRIMARY KEY (id, community_id));
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
