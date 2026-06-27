@@ -3,3 +3,15 @@ name = "kgx-graph"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+kgx-vault = { path = "../kgx-vault" }
+rusqlite = { version = "0.31", features = ["bundled", "blob"] }
+serde.workspace = true
+serde_json.workspace = true
+petgraph = "0.6"
+
+[dev-dependencies]
+tempfile.workspace = true
+kgx-vault = { path = "../kgx-vault" }
