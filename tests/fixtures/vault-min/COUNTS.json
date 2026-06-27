@@ -1,0 +1,13 @@
+{
+  "notes_total": 15,
+  "facts": 5,
+  "entities": 3,
+  "decisions": 2,
+  "moc": 1,
+  "questions": 1,
+  "sources": 2,
+  "raw_sources": 2,
+  "orphans": 1,
+  "contradiction_pairs": 1,
+  "supersession_candidates": 1
+}

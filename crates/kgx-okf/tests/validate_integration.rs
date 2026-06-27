@@ -1,6 +1,19 @@
 use kgx_okf::validate::check_okf;
 use std::fs;
 
+#[test]
+#[ignore]
+fn fixture_vault_is_okf_valid() {
+    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/fixtures/vault-min");
+    let r = check_okf(&fixture).expect("check_okf should not error");
+    assert!(
+        r.ok,
+        "fixture vault should be OKF-clean but got violations: {:#?}",
+        r.errors
+    );
+}
+
 fn vault_with(content: &str, name: &str) -> tempfile::TempDir {
     let d = tempfile::tempdir().unwrap();
     fs::create_dir_all(d.path().join("notes/facts")).unwrap();
