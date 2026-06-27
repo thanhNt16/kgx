@@ -14,10 +14,14 @@ kgx-okf = { path = "../kgx-okf" }
 kgx-vault = { path = "../kgx-vault" }
 kgx-graph = { path = "../kgx-graph" }
 kgx-tokens = { path = "../kgx-tokens" }
+kgx-extract = { path = "../kgx-extract" }
+kgx-llm = { path = "../kgx-llm" }
+kgx-retrieval = { path = "../kgx-retrieval" }
 clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 
 [dev-dependencies]
 assert_cmd.workspace = true
