@@ -1,0 +1,23 @@
+[package]
+name = "kgx-cli"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "kg"
+path = "src/main.rs"
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+kgx-okf = { path = "../kgx-okf" }
+kgx-vault = { path = "../kgx-vault" }
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+
+[dev-dependencies]
+assert_cmd.workspace = true
+tempfile.workspace = true
+walkdir.workspace = true
