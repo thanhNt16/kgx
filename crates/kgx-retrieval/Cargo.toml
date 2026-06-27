@@ -1,0 +1,13 @@
+[package]
+name = "kgx-retrieval"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+kgx-graph = { path = "../kgx-graph" }
+serde.workspace = true
+serde_json.workspace = true
+[dev-dependencies]
+kgx-vault = { path = "../kgx-vault" }
+tempfile.workspace = true
