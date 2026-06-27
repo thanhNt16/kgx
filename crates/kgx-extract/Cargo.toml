@@ -1,0 +1,13 @@
+[package]
+name = "kgx-extract"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+kgx-vault = { path = "../kgx-vault" }
+kgx-llm = { path = "../kgx-llm" }
+serde.workspace = true
+serde_json.workspace = true
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
