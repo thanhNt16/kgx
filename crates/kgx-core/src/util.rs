@@ -60,9 +60,12 @@ mod tests {
     #[test]
     fn ulid_is_26_chars_and_monotonic() {
         let a = new_ulid();
+        // Wait 2ms so timestamps differ, ensuring the second ULID sorts after
+        std::thread::sleep(std::time::Duration::from_millis(2));
         let b = new_ulid();
         assert_eq!(a.len(), 26);
-        assert!(b >= a); // ULIDs sort by time
+        assert_eq!(b.len(), 26);
+        assert!(b >= a, "ULIDs should sort by time: {a} <= {b}");
     }
     #[test]
     fn slugify_basic() {
