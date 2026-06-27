@@ -2,6 +2,16 @@ use crate::Brain;
 use kgx_core::{KgError, Result};
 
 pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(String, f32)>> {
+    // Sanitize query for FTS5: strip punctuation that causes syntax errors,
+    // then collect non-empty tokens as individual terms.
+    let sanitized: String = query
+        .chars()
+        .map(|c| if c.is_alphanumeric() || c == ' ' { c } else { ' ' })
+        .collect();
+    let sanitized = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+    if sanitized.is_empty() {
+        return Ok(vec![]);
+    }
     let mut stmt = brain
         .conn()
         .prepare(
@@ -10,7 +20,7 @@ pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(Stri
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;
     let rows = stmt
-        .query_map(rusqlite::params![query, limit as i64], |r| {
+        .query_map(rusqlite::params![sanitized, limit as i64], |r| {
             let id: String = r.get(0)?;
             let score: f64 = r.get(1)?;
             Ok((id, -score as f32))
