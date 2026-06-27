@@ -1,6 +1,6 @@
-use std::path::Path;
-use kgx_core::{Note, Result, KgError};
 use crate::parse::parse_note;
+use kgx_core::{KgError, Note, Result};
+use std::path::Path;
 
 pub fn scan_vault(vault_root: &Path) -> Result<Vec<Note>> {
     let mut notes = Vec::new();
@@ -9,7 +9,10 @@ pub fn scan_vault(vault_root: &Path) -> Result<Vec<Note>> {
         if !base.exists() {
             continue;
         }
-        for entry in walkdir::WalkDir::new(&base).into_iter().filter_map(|e| e.ok()) {
+        for entry in walkdir::WalkDir::new(&base)
+            .into_iter()
+            .filter_map(|e| e.ok())
+        {
             let p = entry.path();
             if !p.is_file() || p.extension().map(|e| e != "md").unwrap_or(true) {
                 continue;

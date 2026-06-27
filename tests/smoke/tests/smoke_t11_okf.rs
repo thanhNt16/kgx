@@ -22,8 +22,7 @@ fn t11_init_then_validate_passes() {
         .assert()
         .success();
 
-    let v: serde_json::Value =
-        serde_json::from_slice(&out.get_output().stdout).unwrap();
+    let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     assert_eq!(v["ok"], true, "validate should report ok=true after init");
     assert_eq!(v["command"], "validate");
 }

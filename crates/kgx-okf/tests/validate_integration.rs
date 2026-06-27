@@ -4,8 +4,8 @@ use std::fs;
 #[test]
 #[ignore]
 fn fixture_vault_is_okf_valid() {
-    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../tests/fixtures/vault-min");
+    let fixture =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min");
     let r = check_okf(&fixture).expect("check_okf should not error");
     assert!(
         r.ok,

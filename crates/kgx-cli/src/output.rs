@@ -1,5 +1,5 @@
-use std::time::Instant;
 use kgx_core::json::JsonEnvelope;
+use std::time::Instant;
 
 pub fn emit<T: serde::Serialize>(
     command: &str,

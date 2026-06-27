@@ -1,5 +1,5 @@
+use kgx_core::{KgError, Note, Result};
 use std::path::Path;
-use kgx_core::{Note, Result, KgError};
 
 pub fn render_note(note: &Note) -> String {
     // Sort collections for stable diffs (Global Constraint: determinism).
@@ -29,7 +29,7 @@ pub fn write_note(vault_root: &Path, note: &Note) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use kgx_core::{Note, Frontmatter, NoteType, Status, Confidence, CreatedBy, CreatedVia};
+    use kgx_core::{Confidence, CreatedBy, CreatedVia, Frontmatter, Note, NoteType, Status};
     use std::path::PathBuf;
     fn note() -> Note {
         Note {

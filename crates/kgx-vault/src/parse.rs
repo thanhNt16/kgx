@@ -1,11 +1,13 @@
+use kgx_core::{Frontmatter, KgError, Note, Result};
 use std::path::{Path, PathBuf};
-use kgx_core::{Frontmatter, Note, KgError, Result};
 
 pub fn parse_note(rel_path: &Path, raw: &str) -> Result<Note> {
-    let rest = raw.strip_prefix("---\n").ok_or_else(|| KgError::Frontmatter {
-        path: rel_path.display().to_string(),
-        msg: "missing opening '---'".into(),
-    })?;
+    let rest = raw
+        .strip_prefix("---\n")
+        .ok_or_else(|| KgError::Frontmatter {
+            path: rel_path.display().to_string(),
+            msg: "missing opening '---'".into(),
+        })?;
     let end = rest
         .find("\n---\n")
         .or_else(|| rest.strip_suffix("\n---").map(|_| rest.len() - 4))
@@ -23,7 +25,11 @@ pub fn parse_note(rel_path: &Path, raw: &str) -> Result<Note> {
         .trim_start_matches("\n---")
         .trim_start()
         .to_string();
-    Ok(Note { fm, body, rel_path: PathBuf::from(rel_path) })
+    Ok(Note {
+        fm,
+        body,
+        rel_path: PathBuf::from(rel_path),
+    })
 }
 
 #[cfg(test)]

@@ -1,6 +1,6 @@
+use crate::output::emit;
 use std::path::PathBuf;
 use std::time::Instant;
-use crate::output::emit;
 
 const DIRS: &[&str] = &[
     "raw/assets",
@@ -14,12 +14,7 @@ const DIRS: &[&str] = &[
     "notes/archived",
 ];
 
-pub fn run(
-    json: bool,
-    template: &str,
-    _okf: bool,
-    vault: Option<PathBuf>,
-) -> anyhow::Result<()> {
+pub fn run(json: bool, template: &str, _okf: bool, vault: Option<PathBuf>) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = vault.unwrap_or(std::env::current_dir()?);
     std::fs::create_dir_all(&root)?;
@@ -27,10 +22,14 @@ pub fn run(
         std::fs::create_dir_all(root.join(d))?;
     }
     let today = kgx_core::util::now_iso();
-    let date_prefix = if today.len() >= 10 { &today[..10] } else { &today };
+    let date_prefix = if today.len() >= 10 {
+        &today[..10]
+    } else {
+        &today
+    };
     std::fs::write(
         root.join("index.md"),
-        format!("# Knowledge Base Index\n\nokf_version: \"0.1\"\n\n- (add MOCs here)\n"),
+        "# Knowledge Base Index\n\nokf_version: \"0.1\"\n\n- (add MOCs here)\n",
     )?;
     std::fs::write(
         root.join("log.md"),

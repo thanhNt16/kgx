@@ -1,14 +1,16 @@
 use std::sync::OnceLock;
 
-pub fn new_ulid() -> String { ulid::Ulid::new().to_string() }
+pub fn new_ulid() -> String {
+    ulid::Ulid::new().to_string()
+}
 
 pub fn now_iso() -> String {
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default();
     let secs = now.as_secs() as i64;
-    let dt = time::OffsetDateTime::from_unix_timestamp(secs)
-        .unwrap_or(time::OffsetDateTime::UNIX_EPOCH);
+    let dt =
+        time::OffsetDateTime::from_unix_timestamp(secs).unwrap_or(time::OffsetDateTime::UNIX_EPOCH);
     dt.format(&time::format_description::well_known::Rfc3339)
         .unwrap_or_else(|_| "1970-01-01T00:00:00Z".to_string())
 }
@@ -50,7 +52,10 @@ mod tests {
     #[test]
     fn wikilinks_extracted_and_deduped() {
         let links = extract_wikilinks("See [[Postgres]] and [[Billing Service]] and [[Postgres]].");
-        assert_eq!(links, vec!["Postgres".to_string(), "Billing Service".to_string()]);
+        assert_eq!(
+            links,
+            vec!["Postgres".to_string(), "Billing Service".to_string()]
+        );
     }
     #[test]
     fn ulid_is_26_chars_and_monotonic() {
@@ -60,5 +65,7 @@ mod tests {
         assert!(b >= a); // ULIDs sort by time
     }
     #[test]
-    fn slugify_basic() { assert_eq!(slugify("Postgres is Primary!"), "postgres-is-primary"); }
+    fn slugify_basic() {
+        assert_eq!(slugify("Postgres is Primary!"), "postgres-is-primary");
+    }
 }

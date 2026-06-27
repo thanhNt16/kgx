@@ -1,7 +1,11 @@
 #[derive(Debug, thiserror::Error)]
 pub enum KgError {
     #[error("io error at {path}: {source}")]
-    Io { path: String, #[source] source: std::io::Error },
+    Io {
+        path: String,
+        #[source]
+        source: std::io::Error,
+    },
     #[error("frontmatter parse error in {path}: {msg}")]
     Frontmatter { path: String, msg: String },
     #[error("brain/sqlite error: {0}")]

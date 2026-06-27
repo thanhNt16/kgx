@@ -1,6 +1,6 @@
-use std::path::Path;
 use kgx_core::Result;
 use kgx_vault::scan::scan_vault;
+use std::path::Path;
 
 #[derive(Debug, serde::Serialize)]
 pub struct OkfViolation {
@@ -22,10 +22,11 @@ pub fn check_okf(root: &Path) -> Result<OkfReport> {
     check_frontmatter(&notes, &mut errors);
     check_bitemporal(&notes, &mut errors);
     check_links(&notes, &mut errors);
-    errors.sort_by(|a, b| {
-        (&a.path, &a.code).cmp(&(&b.path, &b.code))
-    });
-    Ok(OkfReport { ok: errors.is_empty(), errors })
+    errors.sort_by(|a, b| (&a.path, &a.code).cmp(&(&b.path, &b.code)));
+    Ok(OkfReport {
+        ok: errors.is_empty(),
+        errors,
+    })
 }
 
 fn check_reserved(root: &Path, errors: &mut Vec<OkfViolation>) {

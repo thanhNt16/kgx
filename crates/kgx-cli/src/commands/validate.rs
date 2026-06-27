@@ -1,5 +1,5 @@
-use std::time::Instant;
 use crate::output::emit;
+use std::time::Instant;
 
 pub fn run(
     json: bool,
