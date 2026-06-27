@@ -1,0 +1,16 @@
+use kgx_retrieval::{search, SearchOpts, Mode};
+use kgx_graph::{Brain, build::build_full, embed::MockEmbedder};
+use kgx_vault::scan::scan_vault;
+fn fixture() -> std::path::PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min")
+}
+#[test]
+fn hybrid_beats_keyword_on_postgres_query() {
+    let notes = scan_vault(&fixture()).unwrap();
+    let mut b = Brain::open_in_memory().unwrap();
+    build_full(&mut b, &notes, &MockEmbedder::new()).unwrap();
+    let e = MockEmbedder::new();
+    let hits = search(&b, &e, "primary datastore", SearchOpts { mode: Mode::Hybrid, limit: 5, expand_ppr: true }).unwrap();
+    assert!(!hits.is_empty());
+    assert!(hits.iter().any(|h| h.id == "01FACT01POSTGRESPRIMARY00"));
+}
