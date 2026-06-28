@@ -95,12 +95,47 @@ Brain Layers
 
 ## Installation
 
+### Install from GitHub Releases
+
+Every push to `main` publishes a release named `KGX 0.0.<run_number>`, and version tags publish releases such as `KGX 0.1.0`.
+
+Install the latest release archive:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/thanhNt16/kgx/main/install.sh | bash
+```
+
+Install a specific release:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/thanhNt16/kgx/main/install.sh | KGX_VERSION=v0.0.1 bash
+```
+
+The installer downloads the matching `kgx-<version>-<platform>.zip` from GitHub Releases, installs the `kg` CLI to `~/.local/bin`, and copies the bundled skill templates to `~/.kgx/skills`.
+
+After installing:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+
+mkdir ~/brain && cd ~/brain
+kg init --with-skills --with-rtk
+```
+
+This gives you the full toolset:
+
+| Component | How it is installed or used |
+| --- | --- |
+| CLI | `kg` is installed to `~/.local/bin` |
+| MCP server | Run with `kg mcp-server --transport stdio` from inside a vault |
+| Skills and hooks | `kg init --with-skills --with-rtk` writes Claude Code, Codex, Cursor, OpenCode, and shared hook files into the vault |
+
 ### Build from Source
 
 Requires Rust 1.78+.
 
 ```bash
-git clone https://github.com/yourusername/kgx
+git clone https://github.com/thanhNt16/kgx
 cd kgx
 cargo build --release        # ~30s cold, 0.07s incremental
 cp target/release/kg ~/.local/bin/kg

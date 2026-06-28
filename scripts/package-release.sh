@@ -75,8 +75,21 @@ Contents:
 - README.md: project usage reference.
 MANIFEST
 
-ARCHIVE="$OUT_DIR/$PKG_NAME.tar.gz"
-tar -C "$WORK_DIR" -czf "$ARCHIVE" "$PKG_NAME"
+ARCHIVE="$OUT_DIR/$PKG_NAME.zip"
+PKG_NAME="$PKG_NAME" WORK_DIR="$WORK_DIR" ARCHIVE="$ARCHIVE" python3 - <<'PY'
+import os
+import pathlib
+import zipfile
+
+work_dir = pathlib.Path(os.environ["WORK_DIR"])
+pkg_name = os.environ["PKG_NAME"]
+archive = pathlib.Path(os.environ["ARCHIVE"])
+pkg_dir = work_dir / pkg_name
+
+with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+    for path in pkg_dir.rglob("*"):
+        zf.write(path, path.relative_to(work_dir))
+PY
 
 if command -v shasum >/dev/null 2>&1; then
   (cd "$OUT_DIR" && shasum -a 256 "$(basename "$ARCHIVE")" >"$(basename "$ARCHIVE").sha256")
