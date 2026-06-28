@@ -18,7 +18,6 @@ fn search_hybrid_json_returns_hits() {
         .current_dir(d.path())
         .assert()
         .success();
-    let v: serde_json::Value =
-        serde_json::from_slice(&out.get_output().stdout).unwrap();
+    let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     assert!(!v["data"]["hits"].as_array().unwrap().is_empty());
 }

@@ -6,7 +6,13 @@ pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(Stri
     // then collect non-empty tokens as individual terms.
     let sanitized: String = query
         .chars()
-        .map(|c| if c.is_alphanumeric() || c == ' ' { c } else { ' ' })
+        .map(|c| {
+            if c.is_alphanumeric() || c == ' ' {
+                c
+            } else {
+                ' '
+            }
+        })
         .collect();
     let sanitized = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
     if sanitized.is_empty() {

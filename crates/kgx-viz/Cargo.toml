@@ -1,0 +1,17 @@
+[package]
+name = "kgx-viz"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+kgx-graph = { path = "../kgx-graph" }
+rusqlite = { version = "0.31", features = ["bundled", "blob"] }
+serde.workspace = true
+serde_json.workspace = true
+tera.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+kgx-vault = { path = "../kgx-vault" }

@@ -1,4 +1,7 @@
-use kgx_core::{llm::{LlmProvider, LlmRequest, LlmResponse}, KgError, Result};
+use kgx_core::{
+    llm::{LlmProvider, LlmRequest, LlmResponse},
+    KgError, Result,
+};
 
 pub struct ClaudeProvider {
     api_key: String,
@@ -38,14 +41,8 @@ impl LlmProvider for ClaudeProvider {
             .send()
             .await
             .map_err(|e| KgError::Llm(e.to_string()))?;
-        let v: serde_json::Value = resp
-            .json()
-            .await
-            .map_err(|e| KgError::Llm(e.to_string()))?;
-        let text = v["content"][0]["text"]
-            .as_str()
-            .unwrap_or("")
-            .to_string();
+        let v: serde_json::Value = resp.json().await.map_err(|e| KgError::Llm(e.to_string()))?;
+        let text = v["content"][0]["text"].as_str().unwrap_or("").to_string();
         Ok(LlmResponse {
             text,
             input_tokens: v["usage"]["input_tokens"].as_u64().unwrap_or(0) as u32,

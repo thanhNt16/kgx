@@ -1,0 +1,13 @@
+[package]
+name = "kgx-docs"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+serde.workspace = true
+tera.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

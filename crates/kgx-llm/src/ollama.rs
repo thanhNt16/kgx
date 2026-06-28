@@ -1,4 +1,7 @@
-use kgx_core::{llm::{LlmProvider, LlmRequest, LlmResponse}, KgError, Result};
+use kgx_core::{
+    llm::{LlmProvider, LlmRequest, LlmResponse},
+    KgError, Result,
+};
 
 pub struct OllamaProvider {
     base_url: String,
@@ -38,14 +41,8 @@ impl LlmProvider for OllamaProvider {
             .send()
             .await
             .map_err(|e| KgError::Llm(e.to_string()))?;
-        let v: serde_json::Value = resp
-            .json()
-            .await
-            .map_err(|e| KgError::Llm(e.to_string()))?;
-        let text = v["message"]["content"]
-            .as_str()
-            .unwrap_or("")
-            .to_string();
+        let v: serde_json::Value = resp.json().await.map_err(|e| KgError::Llm(e.to_string()))?;
+        let text = v["message"]["content"].as_str().unwrap_or("").to_string();
         Ok(LlmResponse {
             text,
             input_tokens: v["prompt_eval_count"].as_u64().unwrap_or(0) as u32,

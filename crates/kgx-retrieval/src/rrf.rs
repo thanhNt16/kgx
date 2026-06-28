@@ -7,7 +7,11 @@ pub fn fuse(rankings: &[Vec<String>], k: f32) -> Vec<(String, f32)> {
         }
     }
     let mut v: Vec<(String, f32)> = scores.into_iter().collect();
-    v.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal).then(a.0.cmp(&b.0)));
+    v.sort_by(|a, b| {
+        b.1.partial_cmp(&a.1)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then(a.0.cmp(&b.0))
+    });
     v
 }
 #[cfg(test)]

@@ -9,7 +9,7 @@ pub fn run(
     full: bool,
     _incremental: bool,
     do_pagerank: bool,
-    _communities: bool,
+    communities: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = std::env::current_dir()?;
@@ -21,6 +21,31 @@ pub fn run(
     let _ = full;
     if do_pagerank {
         pagerank::compute(&mut brain, 0.85, 30)?;
+    }
+    if communities {
+        kgx_graph::community::detect(&mut brain, 42)?;
+        let provider = kgx_llm::select::provider_from_env()?;
+        let rt = tokio::runtime::Runtime::new()?;
+        let summaries = rt.block_on(kgx_retrieval::community_summary::summarize_all(
+            &brain,
+            provider.as_ref(),
+            &notes,
+        ))?;
+        let moc_dir = root.join("notes/moc");
+        std::fs::create_dir_all(&moc_dir)?;
+        for summary in summaries {
+            let body = format!("{}\n\nMembers: {}", summary.summary, summary.member_count);
+            let path = moc_dir.join(format!("community-{}.md", summary.community_id));
+            std::fs::write(
+                path,
+                format!(
+                    "---\ntype: moc\nid: {}\ntitle: \"{}\"\ntags: [entrypoint, community]\ncreated_by: agent\ncreated_via: cli\n---\n{}\n",
+                    kgx_core::util::new_ulid(),
+                    summary.title.replace('"', "\\\""),
+                    body
+                ),
+            )?;
+        }
     }
     let approx_in: u32 = notes.iter().map(|n| (n.body.len() / 4) as u32).sum();
     append(

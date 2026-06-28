@@ -29,6 +29,10 @@ pub enum Commands {
         #[arg(long)]
         okf: bool,
         #[arg(long)]
+        with_skills: bool,
+        #[arg(long)]
+        with_rtk: bool,
+        #[arg(long)]
         vault: Option<std::path::PathBuf>,
     },
     /// Build/refresh .kg/brain.sqlite
@@ -93,5 +97,90 @@ pub enum Commands {
         cite: bool,
         #[arg(long)]
         write: bool,
+    },
+    /// Run dream consolidation passes and stage proposed diffs
+    Dream {
+        #[arg(long, default_value = "3")]
+        max_iterations: u32,
+        #[arg(long)]
+        only: Option<String>,
+        #[arg(long)]
+        dry_run: bool,
+    },
+    /// Review staged dream diffs
+    Review {
+        #[arg(long)]
+        approve: Option<String>,
+        #[arg(long)]
+        reject: Option<String>,
+        #[arg(long)]
+        interactive: bool,
+        #[arg(long)]
+        ponytail_audit: bool,
+    },
+    /// Start the MCP server
+    McpServer {
+        #[arg(long, default_value = "stdio")]
+        transport: String,
+    },
+    /// Manage KGX scheduler jobs
+    Cron {
+        action: String,
+        name: Option<String>,
+        #[arg(long)]
+        command: Option<String>,
+        #[arg(long, alias = "schedule")]
+        calendar: Option<String>,
+    },
+    /// Export the knowledge graph
+    Graph {
+        #[arg(long, default_value = "html")]
+        format: String,
+        #[arg(long)]
+        out: Option<std::path::PathBuf>,
+        #[arg(long)]
+        filter: Option<String>,
+    },
+    /// Generate documentation artifacts
+    Docs {
+        #[command(subcommand)]
+        command: DocsCommand,
+    },
+    /// Print vault and brain status
+    Status {
+        #[arg(long)]
+        verbose: bool,
+    },
+    /// Print token accounting summaries
+    Tokens {
+        #[arg(long, default_value = "30d")]
+        since: String,
+        #[arg(long, default_value = "operation")]
+        by: String,
+    },
+    /// Print or display a dashboard snapshot
+    Dashboard,
+    /// Create an OKF bundle
+    Ship {
+        #[arg(long)]
+        out: std::path::PathBuf,
+    },
+    /// Import an OKF bundle
+    Pull {
+        file: std::path::PathBuf,
+        #[arg(long)]
+        namespace: Option<String>,
+    },
+    /// Sync vault changes through git
+    Sync { action: String },
+}
+
+#[derive(Subcommand)]
+pub enum DocsCommand {
+    /// Render a use-case walkthrough
+    Usecase {
+        name: String,
+        #[arg(long)]
+        out: std::path::PathBuf,
     },
 }

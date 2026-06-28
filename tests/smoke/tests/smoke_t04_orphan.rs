@@ -31,12 +31,7 @@ fn t04_exactly_one_orphan() {
         .success();
     let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     let orph = v["data"]["orphans"].as_array().unwrap();
-    assert_eq!(
-        orph.len(),
-        1,
-        "expected exactly 1 orphan, got: {:?}",
-        orph
-    );
+    assert_eq!(orph.len(), 1, "expected exactly 1 orphan, got: {:?}", orph);
     assert_eq!(
         orph[0].as_str().unwrap(),
         "01FACT05ORPHAN0000000000",

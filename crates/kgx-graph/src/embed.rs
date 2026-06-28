@@ -50,6 +50,32 @@ impl Embedder for MockEmbedder {
     }
 }
 
+#[cfg(feature = "candle")]
+pub struct MiniLmEmbedder;
+
+#[cfg(feature = "candle")]
+impl MiniLmEmbedder {
+    pub fn load() -> Result<Self> {
+        Err(kgx_core::KgError::Other(
+            "feature 'candle' is scaffolded; MiniLM model loading is not bundled in this build"
+                .into(),
+        ))
+    }
+}
+
+#[cfg(feature = "candle")]
+impl Embedder for MiniLmEmbedder {
+    fn dim(&self) -> usize {
+        384
+    }
+
+    fn embed(&self, _texts: &[String]) -> Result<Vec<Vec<f32>>> {
+        Err(kgx_core::KgError::Other(
+            "MiniLM embedding is scaffolded but not implemented".into(),
+        ))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

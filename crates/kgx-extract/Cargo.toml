@@ -7,6 +7,7 @@ license.workspace = true
 kgx-core = { path = "../kgx-core" }
 kgx-vault = { path = "../kgx-vault" }
 kgx-llm = { path = "../kgx-llm" }
+kgx-ponytail = { path = "../kgx-ponytail" }
 serde.workspace = true
 serde_json.workspace = true
 [dev-dependencies]

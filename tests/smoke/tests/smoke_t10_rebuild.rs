@@ -50,5 +50,5 @@ fn t10_rebuild_is_deterministic() {
     let n2 = node_count(&d.path().join(".kg/brain.sqlite"));
 
     assert_eq!(n1, n2, "node count must be identical across rebuilds");
-    assert_eq!(n1, 15, "fixture should index exactly 15 notes");
+    assert_eq!(n1, 17, "fixture should index exactly 17 notes");
 }

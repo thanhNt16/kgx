@@ -1,4 +1,7 @@
-use kgx_core::{llm::{LlmProvider, Embedder}, KgError, Result};
+use kgx_core::{
+    llm::{Embedder, LlmProvider},
+    KgError, Result,
+};
 
 use crate::{
     claude::ClaudeProvider, mock::MockProvider, ollama::OllamaProvider, openai::OpenAiProvider,
@@ -10,8 +13,7 @@ pub fn provider_from_env() -> Result<Box<dyn LlmProvider>> {
         "claude" => {
             let k = std::env::var("ANTHROPIC_API_KEY")
                 .map_err(|_| KgError::Llm("ANTHROPIC_API_KEY not set".into()))?;
-            let m = std::env::var("KGX_MODEL")
-                .unwrap_or_else(|_| "claude-opus-4-8".into());
+            let m = std::env::var("KGX_MODEL").unwrap_or_else(|_| "claude-opus-4-8".into());
             Ok(Box::new(ClaudeProvider::new(k, m)))
         }
         "openai" => {
@@ -31,5 +33,12 @@ pub fn provider_from_env() -> Result<Box<dyn LlmProvider>> {
 }
 
 pub fn embedder_from_env() -> Box<dyn Embedder> {
+    #[cfg(feature = "candle")]
+    if std::env::var("KGX_EMBED").as_deref() == Ok("minilm") {
+        match kgx_graph::embed::MiniLmEmbedder::load() {
+            Ok(e) => return Box::new(e),
+            Err(_) => return Box::new(kgx_graph::embed::MockEmbedder::new()),
+        }
+    }
     Box::new(kgx_graph::embed::MockEmbedder::new())
 }

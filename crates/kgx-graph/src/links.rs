@@ -1,6 +1,6 @@
 // crates/kgx-graph/src/links.rs
+use kgx_core::{util, Note, NoteType};
 use std::collections::BTreeMap;
-use kgx_core::{Note, NoteType, util};
 
 fn resolver(notes: &[Note]) -> BTreeMap<String, String> {
     let mut m = BTreeMap::new();

@@ -35,3 +35,36 @@ fn init_creates_valid_okf_vault() {
         .assert()
         .success();
 }
+
+#[test]
+fn init_with_skills_and_rtk_writes_tool_artifacts() {
+    let d = tempfile::tempdir().unwrap();
+    let target = d.path().join("brain");
+    Command::cargo_bin("kg")
+        .unwrap()
+        .args([
+            "init",
+            "--template",
+            "research",
+            "--with-skills",
+            "--with-rtk",
+            "--vault",
+        ])
+        .arg(&target)
+        .assert()
+        .success();
+
+    for p in [
+        ".mcp.json",
+        ".claude/skills/kgx/SKILL.md",
+        "AGENTS.md",
+        "config.toml",
+        ".cursor/mcp.json",
+        ".cursor/rules/kgx.mdc",
+        ".claude/settings.json",
+        ".codex/rtk.toml",
+        ".cursor/rtk.json",
+    ] {
+        assert!(target.join(p).exists(), "missing {p}");
+    }
+}

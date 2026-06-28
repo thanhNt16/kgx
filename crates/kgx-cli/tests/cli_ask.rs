@@ -14,17 +14,11 @@ fn ask_returns_answer_with_citations() {
     let out = Command::cargo_bin("kg")
         .unwrap()
         .env("KGX_LLM", "mock")
-        .args([
-            "ask",
-            "What is the primary datastore?",
-            "--cite",
-            "--json",
-        ])
+        .args(["ask", "What is the primary datastore?", "--cite", "--json"])
         .current_dir(d.path())
         .assert()
         .success();
-    let v: serde_json::Value =
-        serde_json::from_slice(&out.get_output().stdout).unwrap();
+    let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     assert!(v["data"]["answer"]
         .as_str()
         .unwrap()
