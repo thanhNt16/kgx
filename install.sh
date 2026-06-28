@@ -11,11 +11,38 @@ case "$ARCH" in
   arm64|aarch64) ARCH="aarch64" ;;
 esac
 
-URL="${KGX_INSTALL_URL:-https://get.kgx.sh/bin/kg-${OS}-${ARCH}}"
-echo "Downloading kg (${OS}/${ARCH})..."
-curl -fsSL "$URL" -o "$BIN_DIR/kg"
-chmod +x "$BIN_DIR/kg"
-echo "Installed kg -> $BIN_DIR/kg"
+case "$OS" in
+  darwin) TARGET="macos-$ARCH" ;;
+  linux) TARGET="linux-$ARCH" ;;
+  mingw*|msys*|cygwin*) TARGET="windows-$ARCH" ;;
+  *) echo "Unsupported OS: $OS" >&2; exit 1 ;;
+esac
+
+REPO="${KGX_REPO:-thanhNt16/kgx}"
+VERSION="${KGX_VERSION:-latest}"
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+if [ "$VERSION" = "latest" ]; then
+  VERSION="$(
+    curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
+      | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+      | head -1
+  )"
+fi
+
+if [ -z "$VERSION" ]; then
+  echo "Could not determine latest KGX release version" >&2
+  exit 1
+fi
+
+ARCHIVE="kgx-${VERSION}-${TARGET}.tar.gz"
+URL="${KGX_INSTALL_URL:-https://github.com/$REPO/releases/download/$VERSION/$ARCHIVE}"
+
+echo "Downloading KGX ${VERSION} (${TARGET})..."
+curl -fsSL "$URL" -o "$TMP_DIR/$ARCHIVE"
+tar -xzf "$TMP_DIR/$ARCHIVE" -C "$TMP_DIR"
+"$TMP_DIR/kgx-${VERSION}-${TARGET}/install.sh"
 
 for arg in "$@"; do
   case "$arg" in
@@ -26,9 +53,4 @@ for arg in "$@"; do
   esac
 done
 
-if command -v claude >/dev/null 2>&1; then
-  claude mcp add --transport stdio kgx -- "$BIN_DIR/kg" mcp-server --transport stdio || true
-  echo "Registered kgx MCP server with Claude Code"
-fi
-
-echo "Next: cd <vault> && kg init --with-skills && kg capture --from <file>"
+echo "Next: cd <vault> && kg init --with-skills --with-rtk && kg capture --from <file>"

@@ -54,6 +54,7 @@ pub fn run(
         kgx_rtk::install_hooks(kgx_rtk::Tool::ClaudeCode, &root)?;
         kgx_rtk::install_hooks(kgx_rtk::Tool::Codex, &root)?;
         kgx_rtk::install_hooks(kgx_rtk::Tool::Cursor, &root)?;
+        kgx_rtk::install_hooks(kgx_rtk::Tool::Opencode, &root)?;
     }
     let created: Vec<String> = DIRS.iter().map(|s| s.to_string()).collect();
     emit(
@@ -88,6 +89,10 @@ fn write_skills(root: &std::path::Path) -> anyhow::Result<()> {
             include_str!("../../../../skills/claude/.claude/skills/kgx/SKILL.md"),
         ),
         (
+            ".claude/settings.json",
+            include_str!("../../../../skills/claude/.claude/settings.json"),
+        ),
+        (
             "AGENTS.md",
             include_str!("../../../../skills/codex/AGENTS.md"),
         ),
@@ -96,12 +101,32 @@ fn write_skills(root: &std::path::Path) -> anyhow::Result<()> {
             include_str!("../../../../skills/codex/config.toml"),
         ),
         (
+            ".codex/hooks.json",
+            include_str!("../../../../skills/codex/hooks.json"),
+        ),
+        (
+            ".kgx/hooks/verify-finished.sh",
+            include_str!("../../../../skills/hooks/verify-finished.sh"),
+        ),
+        (
             ".cursor/mcp.json",
             include_str!("../../../../skills/cursor/.cursor/mcp.json"),
         ),
         (
             ".cursor/rules/kgx.mdc",
             include_str!("../../../../skills/cursor/.cursor/rules/kgx.mdc"),
+        ),
+        (
+            "opencode.json",
+            include_str!("../../../../skills/opencode/opencode.json"),
+        ),
+        (
+            ".opencode/skills/kgx/SKILL.md",
+            include_str!("../../../../skills/opencode/.opencode/skills/kgx/SKILL.md"),
+        ),
+        (
+            ".opencode/plugins/kgx-verify-finished.js",
+            include_str!("../../../../skills/opencode/.opencode/plugins/kgx-verify-finished.js"),
         ),
     ];
     for (rel, content) in FILES {

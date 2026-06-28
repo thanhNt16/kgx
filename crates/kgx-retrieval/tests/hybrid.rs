@@ -18,6 +18,7 @@ fn hybrid_beats_keyword_on_postgres_query() {
             mode: Mode::Hybrid,
             limit: 5,
             expand_ppr: true,
+            filter_entities: true,
         },
     )
     .unwrap();

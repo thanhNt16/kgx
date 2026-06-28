@@ -62,8 +62,14 @@ fn init_with_skills_and_rtk_writes_tool_artifacts() {
         ".cursor/mcp.json",
         ".cursor/rules/kgx.mdc",
         ".claude/settings.json",
+        ".codex/hooks.json",
+        ".kgx/hooks/verify-finished.sh",
         ".codex/rtk.toml",
         ".cursor/rtk.json",
+        "opencode.json",
+        ".opencode/skills/kgx/SKILL.md",
+        ".opencode/plugins/kgx-verify-finished.js",
+        ".opencode/rtk.md",
     ] {
         assert!(target.join(p).exists(), "missing {p}");
     }

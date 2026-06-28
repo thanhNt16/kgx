@@ -32,7 +32,8 @@ impl LlmProvider for MockProvider {
             })
             .to_string()
         } else if req.prompt.contains("EXTRACT_FACTS") {
-            let body = req.prompt
+            let body = req
+                .prompt
                 .split_once("EXTRACT_FACTS\n")
                 .map(|x| x.1)
                 .unwrap_or("");

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$(git rev-parse --show-toplevel)/.kgx/hooks/verify-finished.sh\" --json",
+            "timeout": 600,
+            "statusMessage": "Running finish verification"
+          }
+        ]
+      }
+    ]
+  }
+}
