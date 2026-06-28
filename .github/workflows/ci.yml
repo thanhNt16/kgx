@@ -29,6 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build -p kgx-cli --bin kg
+      - run: echo "CARGO_BIN_EXE_kg=$PWD/target/debug/kg" >> "$GITHUB_ENV"
       - run: cargo test --workspace --test 'smoke*' -- --test-threads=1
   cross-tool:
     runs-on: ubuntu-latest
@@ -37,6 +39,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build -p kgx-cli --bin kg
+      - run: echo "CARGO_BIN_EXE_kg=$PWD/target/debug/kg" >> "$GITHUB_ENV"
       - run: cargo test --workspace -p smoke -- --test-threads=1
       - run: cargo test --workspace -p kgx-mcp --test protocol
   bench-ish:
