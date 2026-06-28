@@ -36,12 +36,27 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
-ARCHIVE="kgx-${VERSION}-${TARGET}.tar.gz"
+case "$VERSION" in
+  v*) ;;
+  *) VERSION="v$VERSION" ;;
+esac
+
+ARCHIVE="kgx-${VERSION}-${TARGET}.zip"
 URL="${KGX_INSTALL_URL:-https://github.com/$REPO/releases/download/$VERSION/$ARCHIVE}"
 
 echo "Downloading KGX ${VERSION} (${TARGET})..."
 curl -fsSL "$URL" -o "$TMP_DIR/$ARCHIVE"
-tar -xzf "$TMP_DIR/$ARCHIVE" -C "$TMP_DIR"
+if command -v unzip >/dev/null 2>&1; then
+  unzip -q "$TMP_DIR/$ARCHIVE" -d "$TMP_DIR"
+else
+  python3 - "$TMP_DIR/$ARCHIVE" "$TMP_DIR" <<'PY'
+import sys
+import zipfile
+
+with zipfile.ZipFile(sys.argv[1]) as zf:
+    zf.extractall(sys.argv[2])
+PY
+fi
 "$TMP_DIR/kgx-${VERSION}-${TARGET}/install.sh"
 
 for arg in "$@"; do

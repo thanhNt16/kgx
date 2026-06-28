@@ -20,14 +20,18 @@ fn release_package_contains_cli_mcp_skills_and_installer() {
         .unwrap();
     assert!(status.success());
 
-    let archive = out_dir.join("kgx-v0.1.0-test-test-target.tar.gz");
+    let archive = out_dir.join("kgx-v0.1.0-test-test-target.zip");
     assert!(archive.exists(), "{} missing", archive.display());
     assert!(out_dir
-        .join("kgx-v0.1.0-test-test-target.tar.gz.sha256")
+        .join("kgx-v0.1.0-test-test-target.zip.sha256")
         .exists());
 
-    let listing = Command::new("tar")
-        .args(["-tzf", archive.to_str().unwrap()])
+    let listing = Command::new("python3")
+        .args([
+            "-c",
+            "import sys, zipfile; print('\\n'.join(zipfile.ZipFile(sys.argv[1]).namelist()))",
+            archive.to_str().unwrap(),
+        ])
         .output()
         .unwrap();
     assert!(listing.status.success());
