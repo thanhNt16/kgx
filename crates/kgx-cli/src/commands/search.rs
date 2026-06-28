@@ -23,6 +23,7 @@ pub fn run(json: bool, query: &str, mode: &str, limit: usize) -> anyhow::Result<
             mode: m,
             limit,
             expand_ppr: true,
+            filter_entities: true,
         },
     )?;
     emit(

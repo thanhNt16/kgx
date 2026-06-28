@@ -47,6 +47,7 @@ pub fn run(
                 mode: m,
                 limit: 8,
                 expand_ppr: true,
+                filter_entities: true,
             },
         )?;
         for h in &hits {

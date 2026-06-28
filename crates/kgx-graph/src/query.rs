@@ -14,10 +14,13 @@ pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(Stri
             }
         })
         .collect();
-    let sanitized = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
-    if sanitized.is_empty() {
+    let tokens: Vec<&str> = sanitized.split_whitespace().collect();
+    if tokens.is_empty() {
         return Ok(vec![]);
     }
+    // OR semantics: BM25 scoring naturally rewards docs with more matching terms.
+    // AND (the FTS5 default) kills recall on multi-token queries.
+    let fts_query = tokens.join(" OR ");
     let mut stmt = brain
         .conn()
         .prepare(
@@ -26,13 +29,25 @@ pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(Stri
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;
     let rows = stmt
-        .query_map(rusqlite::params![sanitized, limit as i64], |r| {
+        .query_map(rusqlite::params![fts_query, limit as i64], |r| {
             let id: String = r.get(0)?;
             let score: f64 = r.get(1)?;
             Ok((id, -score as f32))
         })
         .map_err(|e| KgError::Brain(e.to_string()))?;
     rows.collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|e| KgError::Brain(e.to_string()))
+}
+
+pub fn entity_ids(brain: &Brain) -> Result<std::collections::HashSet<String>> {
+    let mut stmt = brain
+        .conn()
+        .prepare("SELECT id FROM notes WHERE type = 'entity'")
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    let rows = stmt
+        .query_map([], |r| r.get::<_, String>(0))
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    rows.collect::<std::result::Result<_, _>>()
         .map_err(|e| KgError::Brain(e.to_string()))
 }
 

@@ -173,6 +173,40 @@ pub enum Commands {
     },
     /// Sync vault changes through git
     Sync { action: String },
+    /// Codebase graph operations via codebase-memory-mcp
+    Codebase {
+        #[command(subcommand)]
+        command: CodebaseCommand,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum CodebaseCommand {
+    /// Install codebase-memory-mcp binary
+    Install,
+    /// Index the codebase into the graph
+    Index {
+        #[arg(long)]
+        path: Option<std::path::PathBuf>,
+    },
+    /// Search the codebase graph
+    Search {
+        query: String,
+        #[arg(long, default_value = "10")]
+        limit: usize,
+    },
+    /// Trace call paths for a function
+    Trace {
+        function: String,
+        #[arg(long, default_value = "inbound")]
+        direction: String,
+    },
+    /// Show architecture overview
+    Architecture,
+    /// Show indexing status
+    Status,
+    /// Update codebase-memory-mcp binary
+    Update,
 }
 
 #[derive(Subcommand)]

@@ -4,6 +4,7 @@ mod output;
 mod commands {
     pub mod ask;
     pub mod capture;
+    pub mod codebase;
     pub mod cron;
     pub mod dashboard;
     pub mod docs;
@@ -105,5 +106,6 @@ fn main() -> anyhow::Result<()> {
         Commands::Ship { out } => commands::ship::run(cli.json, out),
         Commands::Pull { file, namespace } => commands::pull::run(cli.json, file, namespace),
         Commands::Sync { action } => commands::sync::run(cli.json, &action),
+        Commands::Codebase { command } => commands::codebase::run(cli.json, command),
     }
 }

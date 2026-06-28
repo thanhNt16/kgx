@@ -1,0 +1,87 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, for example v0.1.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: package (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux-x86_64
+            bin: target/release/kg
+          - os: ubuntu-24.04-arm
+            target: linux-aarch64
+            bin: target/release/kg
+          - os: macos-15-intel
+            target: macos-x86_64
+            bin: target/release/kg
+          - os: macos-15
+            target: macos-aarch64
+            bin: target/release/kg
+          - os: windows-latest
+            target: windows-x86_64
+            bin: target/release/kg.exe
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build kg
+        run: cargo build --release -p kgx-cli
+
+      - name: Package release archive
+        shell: bash
+        env:
+          KGX_RELEASE_BIN: ${{ matrix.bin }}
+          KGX_RELEASE_OUT_DIR: dist
+          KGX_RELEASE_TARGET: ${{ matrix.target }}
+          KGX_RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+        run: bash scripts/package-release.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kgx-${{ matrix.target }}
+          path: |
+            dist/*.tar.gz
+            dist/*.sha256
+
+  release:
+    name: publish release
+    needs: package
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.inputs.version || github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$RELEASE_TAG" dist/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "KGX $RELEASE_TAG" \
+              --notes "Release archives include the kg CLI binary, MCP server entrypoint, skill templates, shared hooks, and an archive-local installer."
+          fi

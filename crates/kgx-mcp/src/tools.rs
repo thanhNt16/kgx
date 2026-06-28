@@ -31,6 +31,7 @@ pub async fn dispatch(root: &Path, name: &str, args: &Value) -> Result<Value> {
                     mode,
                     limit: args["limit"].as_u64().unwrap_or(10) as usize,
                     expand_ppr: true,
+                    filter_entities: true,
                 },
             )?;
             Ok(json!(hits))

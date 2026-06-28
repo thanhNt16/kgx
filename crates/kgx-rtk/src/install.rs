@@ -6,6 +6,7 @@ pub enum Tool {
     ClaudeCode,
     Codex,
     Cursor,
+    Opencode,
 }
 
 pub fn install_hooks(tool: Tool, root: &Path) -> Result<()> {
@@ -24,11 +25,26 @@ pub fn install_hooks(tool: Tool, root: &Path) -> Result<()> {
             source: e,
         })
     };
+    write(
+        ".kgx/hooks/verify-finished.sh",
+        include_str!("../../../skills/hooks/verify-finished.sh"),
+    )?;
     match tool {
         Tool::ClaudeCode => write(
             ".claude/settings.json",
             r#"{
   "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$(git rev-parse --show-toplevel)/.kgx/hooks/verify-finished.sh\" --json",
+            "timeout": 600
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       { "matcher": "Bash",
         "hooks": [ { "type": "command", "command": "rtk compress" } ] }
@@ -43,6 +59,10 @@ pub fn install_hooks(tool: Tool, root: &Path) -> Result<()> {
         Tool::Cursor => write(
             ".cursor/rtk.json",
             r#"{ "terminal.outputFilter": "rtk compress" }"#,
+        ),
+        Tool::Opencode => write(
+            ".opencode/rtk.md",
+            "# RTK (Response Token Kiln)\n\nRTK compresses verbose Bash output. Pipe long-running or\noutput-heavy commands through `rtk compress`:\n\n    kg index --full --communities | rtk compress\n\nOpencode has no native output filter hook, but `rtk`\nworks as a standard Unix pipe.\n",
         ),
     }
 }

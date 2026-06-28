@@ -39,6 +39,7 @@ pub async fn run(ctx: &DreamContext<'_>) -> Result<Vec<ProposedDiff>> {
                 mode: kgx_retrieval::Mode::Hybrid,
                 limit: 5,
                 expand_ppr: false,
+                filter_entities: true,
             },
         )?;
 
