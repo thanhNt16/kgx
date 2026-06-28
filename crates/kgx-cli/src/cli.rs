@@ -80,6 +80,12 @@ pub enum Commands {
         mode: String,
         #[arg(long, default_value = "10")]
         limit: usize,
+        /// Use two-stage retrieve → graph rerank pipeline instead of fused RRF
+        #[arg(long)]
+        rerank_graph: bool,
+        /// Rerank fused RRF results by LLM relevance scoring
+        #[arg(long)]
+        rerank_llm: bool,
     },
     /// Recall an entity's neighborhood
     Recall {

@@ -28,7 +28,7 @@
 | Problem (without KGX) | Solution (with KGX) |
 |---|---|
 | Raw notes pile up, never get structured | `kg capture` + `kg extract` turns any file into atomic, linked facts automatically |
-| Classic RAG re-derives answers from scratch every time | Persistent hybrid brain: vector + BM25 + entity graph + PageRank |
+| Classic RAG re-derives answers from scratch every time | Persistent hybrid brain: vector + BM25 + tag expansion + entity graph + PageRank |
 | Wikis rot because humans don't maintain them | `kg dream` runs consolidation unattended (dedup, contradiction, archival, link repair) |
 | Agent sessions burn tokens on large contexts | Hybrid retrieval sends only relevant context (verified: 371 tokens vs ~3,400 full-vault on 17-note fixture) |
 | No standard format for sharing knowledge bundles | OKF-compatible: `kg ship` + `kg pull` for lossless round-trip bundles |
@@ -55,14 +55,16 @@ Markdown Vault (git)
     metrics.log
 
 Brain Layers
-  ┌─────────────────────────────────────────────┐
-  │  Vector KNN (sqlite-vec, 384-dim MiniLM)    │
-  │  BM25 / FTS5 (porter-stemmed)               │
-  │  Entity NER → 1-hop graph expansion         │
-  │  Leiden community summaries (GraphRAG)       │
-  │  Personalized PageRank (HippoRAG)           │
-  └─────────────────────────────────────────────┘
-          ↓ Reciprocal Rank Fusion (k=60)
+  ┌──────────────────────────────────────────────────┐
+  │  Vector KNN (sqlite-vec, 384-dim MiniLM)         │
+  │  BM25 / FTS5 (porter-stemmed)                    │
+  │  Tags-in-LIKE substring search                   │
+  │  Tag-frequency-weighted expansion (k=300)        │
+  │  Entity NER → 1-hop graph expansion              │
+  │  Leiden community summaries (GraphRAG)            │
+  │  Personalized PageRank (HippoRAG)                │
+  └──────────────────────────────────────────────────┘
+          ↓ Reciprocal Rank Fusion (multi-k)
       Hybrid ranked results
           ↓
       kg ask / kg recall / kg search
@@ -642,6 +644,19 @@ Without KGX, finding these 12 connected notes requires reading all files and man
 ## Sprint Simulation
 
 A full 2-week sprint simulation (DataLake 2.0, 4 engineers, 11 tickets) was run with real `kg` commands. See [`docs/sprint-simulation.md`](docs/sprint-simulation.md) for the complete day-by-day breakdown.
+
+### Keyword search benchmark: beats ripgrep by +22% P@5
+
+A 15-query golden benchmark (Sprint 9 vault, 32 nodes / 57 edges) compares `kg search --mode keyword` against a ripgrep baseline. Keyword mode combines BM25/FTS5, tags-in-LIKE substring matching, and tag-frequency-weighted expansion (k=300 RRF).
+
+| Metric | ripgrep | kg keyword | vs rg |
+|--------|---------|------------|-------|
+| P@5    | 0.360   | **0.440**  | **+22%** |
+| R@5    | 0.911   | 0.911      | same   |
+| F1     | 0.528   | **0.585**  | **+11%** |
+| NDCG@5 | 0.835  | **0.889**  | **+6.5%** |
+
+Full results: [`docs/kgx-guide.html#eval`](docs/kgx-guide.html)
 
 ### What was simulated
 

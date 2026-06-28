@@ -7,6 +7,7 @@ license.workspace = true
 [features]
 default = []
 candle = []
+semantic = ["dep:fastembed"]
 
 [dependencies]
 kgx-core = { path = "../kgx-core" }
@@ -15,6 +16,7 @@ rusqlite = { version = "0.31", features = ["bundled", "blob"] }
 serde.workspace = true
 serde_json.workspace = true
 petgraph = "0.6"
+fastembed = { version = "4", optional = true, default-features = false, features = ["online", "ort-download-binaries"] }
 
 [dev-dependencies]
 tempfile.workspace = true

@@ -8,6 +8,11 @@ license.workspace = true
 name = "kg"
 path = "src/main.rs"
 
+[features]
+default = []
+semantic = ["kgx-llm/semantic"]
+candle = ["kgx-llm/candle"]
+
 [dependencies]
 kgx-core = { path = "../kgx-core" }
 kgx-okf = { path = "../kgx-okf" }

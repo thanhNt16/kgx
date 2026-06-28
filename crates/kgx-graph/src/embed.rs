@@ -76,6 +76,45 @@ impl Embedder for MiniLmEmbedder {
     }
 }
 
+/// Real semantic embedder using bundled fastembed (all-MiniLM-L6-v2).
+/// Downloads model on first use (~40MB), caches in ~/.cache/fastembed/.
+/// No API key, no Docker, no Ollama required.
+#[cfg(feature = "semantic")]
+pub struct FastEmbedEmbedder {
+    model: fastembed::TextEmbedding,
+}
+
+#[cfg(feature = "semantic")]
+impl FastEmbedEmbedder {
+    pub fn load() -> Result<Self> {
+        let model = fastembed::TextEmbedding::try_new(
+            fastembed::InitOptions::new(fastembed::EmbeddingModel::AllMiniLML6V2)
+                .with_show_download_progress(false),
+        )
+        .map_err(|e| kgx_core::KgError::Other(format!("failed to load fastembed model: {e}")))?;
+        Ok(Self { model })
+    }
+}
+
+#[cfg(feature = "semantic")]
+impl Embedder for FastEmbedEmbedder {
+    fn dim(&self) -> usize {
+        384
+    }
+
+    fn is_semantic(&self) -> bool {
+        true
+    }
+
+    fn embed(&self, texts: &[String]) -> Result<Vec<Vec<f32>>> {
+        let results = self
+            .model
+            .embed(texts.to_vec(), None)
+            .map_err(|e| kgx_core::KgError::Other(format!("fastembed error: {e}")))?;
+        Ok(results)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

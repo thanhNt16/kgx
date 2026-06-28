@@ -63,9 +63,13 @@ fn main() -> anyhow::Result<()> {
             orphans,
             fix,
         } => commands::link::run(cli.json, suggest, orphans, fix),
-        Commands::Search { query, mode, limit } => {
-            commands::search::run(cli.json, &query, &mode, limit)
-        }
+        Commands::Search {
+            query,
+            mode,
+            limit,
+            rerank_graph,
+            rerank_llm,
+        } => commands::search::run(cli.json, &query, &mode, limit, rerank_graph, rerank_llm),
         Commands::Recall { entity } => commands::recall::run(cli.json, &entity),
         Commands::Ask {
             question,

@@ -48,7 +48,10 @@ pub fn run(
                 limit: 8,
                 expand_ppr: true,
                 filter_entities: true,
+                rerank_graph: false,
+                rerank_llm: false,
             },
+            None,
         )?;
         for h in &hits {
             if let Some(n) = notes.iter().find(|n| n.fm.id == h.id) {

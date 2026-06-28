@@ -72,6 +72,40 @@ impl LlmProvider for MockProvider {
                 "summary": "This community covers datastore infrastructure decisions."
             })
             .to_string()
+        } else if req.prompt.contains("RERANK") {
+            // Parse query and candidates from prompt, score by token overlap
+            let body = req
+                .prompt
+                .split_once("Candidates:\n")
+                .map(|x| x.1)
+                .unwrap_or("");
+            let query_line = req
+                .prompt
+                .split_once("Query: ")
+                .and_then(|x| x.1.split_once('\n'))
+                .map(|x| x.0)
+                .unwrap_or("");
+            let query_tokens: Vec<&str> = query_line.split_whitespace().collect();
+            let mut scores = Vec::new();
+            for line in body.lines() {
+                if let Some(rest) = line.strip_prefix('[') {
+                    if let Some(idx_str) = rest.split(']').next() {
+                        if let Ok(idx) = idx_str.parse::<usize>() {
+                            let content = rest
+                                .split(']')
+                                .skip(1)
+                                .collect::<Vec<_>>()
+                                .join(" ")
+                                .to_lowercase();
+                            let matches =
+                                query_tokens.iter().filter(|t| content.contains(*t)).count();
+                            let score = (matches as f64).min(5.0);
+                            scores.push(serde_json::json!({"idx": idx, "score": score}));
+                        }
+                    }
+                }
+            }
+            serde_json::json!({"scores": scores}).to_string()
         } else {
             serde_json::json!({ "text": "ok" }).to_string()
         };

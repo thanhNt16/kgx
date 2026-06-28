@@ -6,14 +6,16 @@ use kgx_core::{
 pub struct ClaudeProvider {
     api_key: String,
     model: String,
+    base_url: String,
     client: reqwest::Client,
 }
 
 impl ClaudeProvider {
-    pub fn new(api_key: String, model: String) -> Self {
+    pub fn new(api_key: String, model: String, base_url: String) -> Self {
         Self {
             api_key,
             model,
+            base_url,
             client: reqwest::Client::new(),
         }
     }
@@ -32,9 +34,10 @@ impl LlmProvider for ClaudeProvider {
             "system": req.system,
             "messages": [{"role": "user", "content": req.prompt}]
         });
+        let url = format!("{}/v1/messages", self.base_url.trim_end_matches('/'));
         let resp = self
             .client
-            .post("https://api.anthropic.com/v1/messages")
+            .post(&url)
             .header("x-api-key", &self.api_key)
             .header("anthropic-version", "2023-06-01")
             .json(&body)
@@ -42,7 +45,12 @@ impl LlmProvider for ClaudeProvider {
             .await
             .map_err(|e| KgError::Llm(e.to_string()))?;
         let v: serde_json::Value = resp.json().await.map_err(|e| KgError::Llm(e.to_string()))?;
-        let text = v["content"][0]["text"].as_str().unwrap_or("").to_string();
+        let text = v["content"]
+            .as_array()
+            .and_then(|arr| arr.iter().find(|c| c["type"] == "text"))
+            .and_then(|c| c["text"].as_str())
+            .unwrap_or("")
+            .to_string();
         Ok(LlmResponse {
             text,
             input_tokens: v["usage"]["input_tokens"].as_u64().unwrap_or(0) as u32,

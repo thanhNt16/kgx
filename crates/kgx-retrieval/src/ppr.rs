@@ -125,3 +125,119 @@ pub fn personalized(
     });
     Ok(out)
 }
+
+/// Pool-scoped Personalized PageRank: runs PPR on a subgraph containing only the
+/// given `scope` nodes and edges where both endpoints are in scope.
+///
+/// `scope` — candidate pool IDs (the retrieved set to rerank).
+/// `seeds` — PPR teleport seeds with weights (e.g. BM25 top-5 harmonic weights).
+///
+/// Useful for "retrieve → rerank" pipelines where the first stage casts a wide
+/// net and the second stage reranks via graph proximity.
+pub fn personalized_scoped(
+    brain: &Brain,
+    scope: &[String],
+    seeds: &[(String, f32)],
+    damping: f32,
+    iters: u32,
+) -> Result<Vec<(String, f32)>> {
+    let n = scope.len();
+    if n == 0 {
+        return Ok(vec![]);
+    }
+
+    // Map scope IDs to dense indices
+    let index: HashMap<&str, usize> = scope
+        .iter()
+        .enumerate()
+        .map(|(i, s)| (s.as_str(), i))
+        .collect();
+
+    // Build subgraph adjacency for scope nodes only
+    let mut adj: Vec<Vec<usize>> = vec![vec![]; n];
+    {
+        let mut s = brain
+            .conn()
+            .prepare("SELECT src_id, dst_id FROM edges")
+            .map_err(|e| KgError::Brain(e.to_string()))?;
+        let rows = s
+            .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))
+            .map_err(|e| KgError::Brain(e.to_string()))?;
+        for row in rows {
+            let (a, b) = row.map_err(|e| KgError::Brain(e.to_string()))?;
+            if let (Some(&i), Some(&j)) = (index.get(a.as_str()), index.get(b.as_str())) {
+                adj[i].push(j);
+                adj[j].push(i);
+            }
+        }
+    }
+
+    // Resolve seed ids → (graph_index, weight), drop seeds outside scope
+    let seed_set: Vec<(usize, f32)> = seeds
+        .iter()
+        .filter_map(|(id, w)| index.get(id.as_str()).map(|&i| (i, *w)))
+        .collect();
+
+    let teleport = if seed_set.is_empty() {
+        vec![1.0 / n as f32; n]
+    } else {
+        let total: f32 = seed_set.iter().map(|(_, w)| w).sum();
+        let mut t = vec![0.0f32; n];
+        for &(idx, w) in &seed_set {
+            t[idx] = w / total;
+        }
+        t
+    };
+
+    let mut rank = teleport.clone();
+    for _ in 0..iters {
+        let mut next = vec![0.0f32; n];
+        for i in 0..n {
+            next[i] = (1.0 - damping) * teleport[i];
+        }
+        for i in 0..n {
+            if adj[i].is_empty() {
+                continue;
+            }
+            let share = damping * rank[i] / adj[i].len() as f32;
+            for &j in &adj[i] {
+                next[j] += share;
+            }
+        }
+        rank = next;
+    }
+
+    // BFS hop-distance damping
+    if !seed_set.is_empty() {
+        let mut hop_dist = vec![u32::MAX; n];
+        let mut queue = VecDeque::new();
+        for &(idx, _) in &seed_set {
+            hop_dist[idx] = 0;
+            queue.push_back(idx);
+        }
+        while let Some(node) = queue.pop_front() {
+            let d = hop_dist[node];
+            for &neighbor in &adj[node] {
+                if hop_dist[neighbor] == u32::MAX {
+                    hop_dist[neighbor] = d + 1;
+                    queue.push_back(neighbor);
+                }
+            }
+        }
+        for i in 0..n {
+            rank[i] *= if hop_dist[i] == u32::MAX {
+                0.0
+            } else {
+                1.0 / (hop_dist[i] + 1) as f32
+            };
+        }
+    }
+
+    let mut out: Vec<(String, f32)> = scope.iter().cloned().zip(rank).collect();
+    out.sort_by(|a, b| {
+        b.1.partial_cmp(&a.1)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then(a.0.cmp(&b.0))
+    });
+    Ok(out)
+}

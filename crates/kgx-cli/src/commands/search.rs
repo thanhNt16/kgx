@@ -2,10 +2,18 @@
 use std::time::Instant;
 
 use crate::output::emit;
+use kgx_core::llm::LlmProvider;
 use kgx_graph::Brain;
 use kgx_retrieval::{search, Mode, SearchOpts};
 
-pub fn run(json: bool, query: &str, mode: &str, limit: usize) -> anyhow::Result<()> {
+pub fn run(
+    json: bool,
+    query: &str,
+    mode: &str,
+    limit: usize,
+    rerank_graph: bool,
+    rerank_llm: bool,
+) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = std::env::current_dir()?;
     let brain = Brain::open(&root.join(".kg/brain.sqlite"))?;
@@ -15,6 +23,11 @@ pub fn run(json: bool, query: &str, mode: &str, limit: usize) -> anyhow::Result<
         "semantic" => Mode::Semantic,
         _ => Mode::Hybrid,
     };
+    let llm: Option<Box<dyn LlmProvider>> = if rerank_llm {
+        Some(kgx_llm::select::provider_from_env()?)
+    } else {
+        None
+    };
     let hits = search(
         &brain,
         embedder.as_ref(),
@@ -23,8 +36,11 @@ pub fn run(json: bool, query: &str, mode: &str, limit: usize) -> anyhow::Result<
             mode: m,
             limit,
             expand_ppr: true,
-            filter_entities: true,
+            filter_entities: false,
+            rerank_graph,
+            rerank_llm,
         },
+        llm.as_deref(),
     )?;
     emit(
         "search",

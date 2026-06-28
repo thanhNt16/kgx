@@ -9,8 +9,8 @@ kgx-graph = { path = "../kgx-graph" }
 serde.workspace = true
 serde_json.workspace = true
 rusqlite = { version = "0.31", features = ["bundled", "blob"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 [dev-dependencies]
 kgx-vault = { path = "../kgx-vault" }
 kgx-llm = { path = "../kgx-llm" }
 tempfile.workspace = true
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }

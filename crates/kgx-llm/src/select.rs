@@ -12,9 +12,14 @@ pub fn provider_from_env() -> Result<Box<dyn LlmProvider>> {
         "mock" => Ok(Box::new(MockProvider::new())),
         "claude" => {
             let k = std::env::var("ANTHROPIC_API_KEY")
-                .map_err(|_| KgError::Llm("ANTHROPIC_API_KEY not set".into()))?;
+                .or_else(|_| std::env::var("ANTHROPIC_AUTH_TOKEN"))
+                .map_err(|_| {
+                    KgError::Llm("ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN not set".into())
+                })?;
             let m = std::env::var("KGX_MODEL").unwrap_or_else(|_| "claude-opus-4-8".into());
-            Ok(Box::new(ClaudeProvider::new(k, m)))
+            let base_url = std::env::var("ANTHROPIC_BASE_URL")
+                .unwrap_or_else(|_| "https://api.anthropic.com".into());
+            Ok(Box::new(ClaudeProvider::new(k, m, base_url)))
         }
         "openai" => {
             let k = std::env::var("OPENAI_API_KEY")
@@ -38,6 +43,13 @@ pub fn embedder_from_env() -> Box<dyn Embedder> {
         match kgx_graph::embed::MiniLmEmbedder::load() {
             Ok(e) => return Box::new(e),
             Err(_) => return Box::new(kgx_graph::embed::MockEmbedder::new()),
+        }
+    }
+    #[cfg(feature = "semantic")]
+    if std::env::var("KGX_EMBED").as_deref() == Ok("fastembed") {
+        match kgx_graph::embed::FastEmbedEmbedder::load() {
+            Ok(e) => return Box::new(e),
+            Err(e) => eprintln!("warning: fastembed failed to load, falling back to mock: {e}"),
         }
     }
     Box::new(kgx_graph::embed::MockEmbedder::new())

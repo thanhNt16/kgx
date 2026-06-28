@@ -34,7 +34,10 @@ pub async fn run(ctx: &DreamContext<'_>) -> Result<Vec<ProposedDiff>> {
                 limit: 5,
                 expand_ppr: false,
                 filter_entities: true,
+                rerank_graph: false,
+                rerank_llm: false,
             },
+            None,
         )?;
 
         // Filter hits to active facts (not the question itself)

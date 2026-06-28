@@ -19,7 +19,10 @@ fn hybrid_beats_keyword_on_postgres_query() {
             limit: 5,
             expand_ppr: true,
             filter_entities: true,
+            rerank_graph: false,
+            rerank_llm: false,
         },
+        None,
     )
     .unwrap();
     assert!(!hits.is_empty());

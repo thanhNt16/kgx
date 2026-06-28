@@ -282,6 +282,23 @@ kg recall --entity "Kafka"
 
 ---
 
+## Retrieval Benchmark
+
+A 15-query golden benchmark (run against the Sprint 9 vault, 32 nodes / 57 edges) compares `kg search --mode keyword` against a ripgrep baseline. The keyword mode combines BM25/FTS5, tags-in-LIKE substring search, and tag-frequency-weighted expansion (RRF k=300) — achieving **P@5=0.440 vs ripgrep 0.360 (+22%)** with the same R@5=0.911.
+
+| Metric | ripgrep | kg keyword | vs rg |
+|--------|---------|------------|-------|
+| P@5    | 0.360   | **0.440**  | **+22%** |
+| F1     | 0.528   | **0.585**  | **+11%** |
+| NDCG@5 | 0.835  | **0.889**  | **+6.5%** |
+| MRR    | 0.983   | 0.883      | −10%  |
+
+The MRR gap (ripgrep finds the best match at rank 1 more consistently) is offset by higher precision-at-5. Tag expansion surfaces notes that lack any query term overlap — something grep-based tools cannot do.
+
+Full per-query table: [`kgx-guide.html#eval`](kgx-guide.html)
+
+---
+
 ## Running This Simulation Yourself
 
 ```bash
