@@ -10,35 +10,49 @@ use kgx_vault::scan::scan_vault;
 pub fn run(
     json: bool,
     question: &str,
-    _scope: &str,
+    scope: &str,
     mode: &str,
     _cite: bool,
     _write: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = std::env::current_dir()?;
-    let brain = Brain::open(&root.join(".kg/brain.sqlite"))?;
+    let brain_path = root.join(".kg/brain.sqlite");
+    if !brain_path.exists() {
+        anyhow::bail!("brain not built — run `kg index --full` first");
+    }
+    let brain = Brain::open(&brain_path)?;
     let notes = scan_vault(&root)?;
     let embedder = kgx_llm::select::embedder_from_env();
-    let m = match mode {
-        "keyword" => Mode::Keyword,
-        "semantic" => Mode::Semantic,
-        _ => Mode::Hybrid,
-    };
-    let hits = search(
-        &brain,
-        embedder.as_ref(),
-        question,
-        SearchOpts {
-            mode: m,
-            limit: 8,
-            expand_ppr: true,
-        },
-    )?;
     let mut ctx = String::from("ANSWER_QUESTION\nContext:\n");
-    for h in &hits {
-        if let Some(n) = notes.iter().find(|n| n.fm.id == h.id) {
-            ctx.push_str(&format!("[{}] {}: {}\n", n.fm.id, n.fm.title, n.body));
+    if scope == "global" {
+        ctx.push_str(&kgx_retrieval::global::global_context(
+            &brain,
+            question,
+            embedder.as_ref(),
+            5,
+        )?);
+        ctx.push('\n');
+    } else {
+        let m = match mode {
+            "keyword" => Mode::Keyword,
+            "semantic" => Mode::Semantic,
+            _ => Mode::Hybrid,
+        };
+        let hits = search(
+            &brain,
+            embedder.as_ref(),
+            question,
+            SearchOpts {
+                mode: m,
+                limit: 8,
+                expand_ppr: true,
+            },
+        )?;
+        for h in &hits {
+            if let Some(n) = notes.iter().find(|n| n.fm.id == h.id) {
+                ctx.push_str(&format!("[{}] {}: {}\n", n.fm.id, n.fm.title, n.body));
+            }
         }
     }
     ctx.push_str(&format!("\nQuestion: {question}\n"));
@@ -50,9 +64,8 @@ pub fn run(
         max_tokens: 1024,
         temperature: 0.0,
     }))?;
-    let parsed: serde_json::Value = serde_json::from_str(&resp.text).unwrap_or(
-        serde_json::json!({"answer": resp.text, "citations": []}),
-    );
+    let parsed: serde_json::Value = serde_json::from_str(&resp.text)
+        .unwrap_or(serde_json::json!({"answer": resp.text, "citations": []}));
     kgx_tokens::record::append(
         &root.join(".kg"),
         &kgx_tokens::TokenRecord {

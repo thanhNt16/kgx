@@ -3,6 +3,11 @@ name = "kgx-llm"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+
+[features]
+default = []
+candle = ["kgx-graph/candle"]
+
 [dependencies]
 kgx-core = { path = "../kgx-core" }
 kgx-graph = { path = "../kgx-graph" }

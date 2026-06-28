@@ -20,9 +20,15 @@ pub struct ExtractResult {
 pub async fn extract(
     provider: &dyn LlmProvider,
     source: &Note,
-    _intensity: Intensity,
+    intensity: Intensity,
 ) -> Result<ExtractResult> {
-    let prompt = crate::prompt::extract_prompt(&source.body, None);
+    let ponytail_intensity = match intensity {
+        Intensity::Lite => kgx_ponytail::Intensity::Lite,
+        Intensity::Full => kgx_ponytail::Intensity::Full,
+        Intensity::Ultra => kgx_ponytail::Intensity::Ultra,
+    };
+    let ladder = kgx_ponytail::ladder_for(kgx_ponytail::Operation::Extract, ponytail_intensity);
+    let prompt = crate::prompt::extract_prompt(&source.body, Some(ladder));
     let resp = provider
         .complete(LlmRequest {
             system: crate::prompt::EXTRACT_SYSTEM.into(),

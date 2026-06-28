@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KGX {{ title }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.5; margin: 2rem auto; max-width: 860px; color: #202124; }
+    pre { background: #f3f4f6; border: 1px solid #d1d5db; padding: 1rem; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+  <p>{{ narrative }}</p>
+  <h2>Commands</h2>
+  <pre><code>{{ commands }}</code></pre>
+  <h2>Flow</h2>
+  <pre><code>```mermaid
+{{ mermaid }}
+```</code></pre>
+</body>
+</html>

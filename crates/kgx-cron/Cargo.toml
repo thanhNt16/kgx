@@ -1,0 +1,12 @@
+[package]
+name = "kgx-cron"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+serde.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

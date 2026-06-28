@@ -30,3 +30,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --workspace --test 'smoke*' -- --test-threads=1
+  cross-tool:
+    runs-on: ubuntu-latest
+    env:
+      KGX_LLM: mock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --workspace -p smoke -- --test-threads=1
+      - run: cargo test --workspace -p kgx-mcp --test protocol
+  bench-ish:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      KGX_LLM: mock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test -p kgx-retrieval --test hybrid -- --nocapture

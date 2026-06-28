@@ -1,0 +1,18 @@
+---
+description: KGX knowledge-graph vault workflows and rules
+globs: ["**/*.md"]
+alwaysApply: false
+---
+
+# KGX
+
+When editing a KGX vault:
+- Capture: `kg capture --from - --type doc`
+- Extract: `kg extract --source <id> --intensity full`
+- Ask: `kg ask "<q>" --cite [--scope global]`
+- Consolidate: `kg dream --max-iterations 3`, then `kg review --approve all --ponytail-audit`
+- Rebuild: `kg index --full --communities`
+
+Never delete notes. Use supersession or archival. Cite note ids.
+
+MCP tools: search_notes, get_note, upsert_note, ask_question, capture_raw, dream_step.

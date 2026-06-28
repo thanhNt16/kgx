@@ -1,5 +1,6 @@
 pub mod brain;
 pub mod build;
+pub mod community;
 pub mod embed;
 pub mod knn;
 pub mod links;

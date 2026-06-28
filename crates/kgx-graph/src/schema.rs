@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS edges (
 CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts USING fts5(id, raw_text, tags, tokenize='porter');
 CREATE TABLE IF NOT EXISTS pagerank (id TEXT PRIMARY KEY, score REAL);
 CREATE TABLE IF NOT EXISTS communities (id TEXT, community_id INTEGER, PRIMARY KEY (id, community_id));
+CREATE TABLE IF NOT EXISTS community_summaries (
+  community_id INTEGER PRIMARY KEY, title TEXT, summary TEXT, member_count INTEGER);
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
 CREATE INDEX IF NOT EXISTS idx_edges_src ON edges(src_id);
 CREATE INDEX IF NOT EXISTS idx_edges_dst ON edges(dst_id);

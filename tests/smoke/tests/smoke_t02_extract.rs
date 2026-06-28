@@ -47,13 +47,18 @@ fn t02_extract_produces_provenance_facts() {
         })
         .collect();
 
-    assert!(
-        !new_facts.is_empty(),
-        "no new facts with recorded_at stamp"
-    );
+    assert!(!new_facts.is_empty(), "no new facts with recorded_at stamp");
     for e in &new_facts {
         let c = std::fs::read_to_string(e.path()).unwrap();
-        assert!(c.contains("source:"), "fact missing source provenance: {:?}", e.path());
-        assert!(c.contains("recorded_at:"), "fact missing recorded_at stamp: {:?}", e.path());
+        assert!(
+            c.contains("source:"),
+            "fact missing source provenance: {:?}",
+            e.path()
+        );
+        assert!(
+            c.contains("recorded_at:"),
+            "fact missing recorded_at stamp: {:?}",
+            e.path()
+        );
     }
 }

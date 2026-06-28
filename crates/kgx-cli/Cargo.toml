@@ -17,6 +17,13 @@ kgx-tokens = { path = "../kgx-tokens" }
 kgx-extract = { path = "../kgx-extract" }
 kgx-llm = { path = "../kgx-llm" }
 kgx-retrieval = { path = "../kgx-retrieval" }
+kgx-dream = { path = "../kgx-dream" }
+kgx-ponytail = { path = "../kgx-ponytail" }
+kgx-cron = { path = "../kgx-cron" }
+kgx-mcp = { path = "../kgx-mcp" }
+kgx-rtk = { path = "../kgx-rtk" }
+kgx-viz = { path = "../kgx-viz" }
+kgx-docs = { path = "../kgx-docs" }
 clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true
@@ -27,3 +34,4 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 assert_cmd.workspace = true
 tempfile.workspace = true
 walkdir.workspace = true
+rusqlite = { version = "0.31", features = ["bundled", "blob"] }

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KGX Graph</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; color: #1f2937; background: #f7f7f4; }
+    header { padding: 12px 16px; border-bottom: 1px solid #d7d7cf; background: #ffffff; }
+    main { display: grid; grid-template-columns: 1fr 280px; min-height: calc(100vh - 50px); }
+    svg { width: 100%; height: calc(100vh - 50px); background: #fafaf8; }
+    aside { border-left: 1px solid #d7d7cf; padding: 16px; background: #ffffff; overflow: auto; }
+    .node { cursor: pointer; }
+    .edge { stroke: #8b8f97; stroke-width: 1.4; }
+    .label { font-size: 11px; fill: #1f2937; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <header><strong>KGX Graph</strong> <span id="counts"></span></header>
+  <main>
+    <svg id="graph" role="img" aria-label="Knowledge graph"></svg>
+    <aside id="detail">Select a node</aside>
+  </main>
+  <script>
+    const DATA = {{ graph_data | safe }};
+    const svg = document.getElementById("graph");
+    const detail = document.getElementById("detail");
+    const counts = document.getElementById("counts");
+    counts.textContent = ` - ${DATA.nodes.length} nodes, ${DATA.edges.length} edges`;
+    const width = () => svg.clientWidth || 800;
+    const height = () => svg.clientHeight || 600;
+    const ns = ["http:", "", "www.w3.org", "2000", "svg"].join("/");
+    const nodes = DATA.nodes.map((n, i) => ({
+      ...n,
+      x: width() / 2 + Math.cos(i) * Math.min(width(), height()) * 0.28,
+      y: height() / 2 + Math.sin(i) * Math.min(width(), height()) * 0.28
+    }));
+    const byId = new Map(nodes.map(n => [n.id, n]));
+    function el(name, attrs = {}) {
+      const e = document.createElementNS(ns, name);
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+      return e;
+    }
+    function render() {
+      svg.textContent = "";
+      for (const edge of DATA.edges) {
+        const a = byId.get(edge.src), b = byId.get(edge.dst);
+        if (!a || !b) continue;
+        svg.appendChild(el("line", { class: "edge", x1: a.x, y1: a.y, x2: b.x, y2: b.y }));
+      }
+      for (const node of nodes) {
+        const g = el("g", { class: "node" });
+        const radius = String(7 + Math.min(12, node.pagerank * 100));
+        const color = node.type === "entity" ? "#2563eb" : node.type === "decision" ? "#b45309" : "#059669";
+        g.appendChild(el("circle", { cx: node.x, cy: node.y, r: radius, fill: color }));
+        const t = el("text", { class: "label", x: node.x + 10, y: node.y + 4 });
+        t.textContent = node.title;
+        g.appendChild(t);
+        g.addEventListener("click", () => {
+          detail.innerHTML = `<h2>${node.title}</h2><p><b>ID</b><br>${node.id}</p><p><b>Type</b><br>${node.type}</p><p><b>Status</b><br>${node.status}</p>`;
+        });
+        svg.appendChild(g);
+      }
+    }
+    render();
+  </script>
+</body>
+</html>

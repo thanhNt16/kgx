@@ -1,4 +1,7 @@
-use kgx_core::{llm::{LlmProvider, LlmRequest, LlmResponse}, KgError, Result};
+use kgx_core::{
+    llm::{LlmProvider, LlmRequest, LlmResponse},
+    KgError, Result,
+};
 
 pub struct OpenAiProvider {
     api_key: String,
@@ -39,10 +42,7 @@ impl LlmProvider for OpenAiProvider {
             .send()
             .await
             .map_err(|e| KgError::Llm(e.to_string()))?;
-        let v: serde_json::Value = resp
-            .json()
-            .await
-            .map_err(|e| KgError::Llm(e.to_string()))?;
+        let v: serde_json::Value = resp.json().await.map_err(|e| KgError::Llm(e.to_string()))?;
         let text = v["choices"][0]["message"]["content"]
             .as_str()
             .unwrap_or("")

@@ -1,0 +1,1 @@
+{ "mcpServers": { "kgx": { "command": "kg", "args": ["mcp-server", "--transport", "stdio"] } } }
