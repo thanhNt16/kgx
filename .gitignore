@@ -1,5 +1,2 @@
-/target
 .kg/
-**/*.rs.bk
-.fastembed_cache/
-.cellockai/profiles.json
+.obsidian/workspace*

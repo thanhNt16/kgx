@@ -1,10 +1,11 @@
 ---
-description: KGX knowledge-graph vault workflows and rules
-globs: ["**/*.md"]
-alwaysApply: false
+name: kgx
+description: Use when working with a KGX knowledge vault: capture sources, extract atomic facts, ask graph questions, run dream consolidation, and review staged diffs.
 ---
 
-# KGX
+# KGX Knowledge Graph
+
+Use `kg` for Markdown vault work. The MCP server exposes the same six tools.
 
 ## Composite Verbs (kgx:)
 
@@ -24,8 +25,6 @@ alwaysApply: false
 | `kgx:init` | Scaffold a new vault |
 | `kgx:ship` | Create an OKF bundle for sharing |
 | `kgx:sync` | Pull and merge remote changes |
-| `kgx:codebase` | Search, trace, inspect codebase graph |
-| `kgx:codebase-index` | Index repo into codebase-memory-mcp graph |
 
 ### kgx:ingest
 Capture a raw source and extract atomic facts from it.
@@ -113,13 +112,17 @@ Pull remote changes and reindex.
 kg sync
 ```
 
-## Quick Commands
-- Capture: `kg capture --from - --type doc`
+## Quick Workflows
+- Capture: `kg capture --from <file|-> --type doc`
 - Extract: `kg extract --source <id> --intensity full`
-- Ask: `kg ask "<q>" --cite [--scope global]`
+- Ask: `kg ask "<question>" --cite [--scope global]`
 - Consolidate: `kg dream --max-iterations 3`, then `kg review --approve all --ponytail-audit`
 - Rebuild: `kg index --full --communities`
 
-Never delete notes. Use supersession or archival. Cite note ids.
+## Rules
+- Never edit `raw/` destructively.
+- Supersede or archive notes; never delete knowledge.
+- Cite note ids in answers.
 
-MCP tools: search_notes, get_note, upsert_note, ask_question, capture_raw, dream_step.
+## MCP Tools
+`search_notes`, `get_note`, `upsert_note`, `ask_question`, `capture_raw`, `dream_step`

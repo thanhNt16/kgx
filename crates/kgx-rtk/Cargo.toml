@@ -4,6 +4,10 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 
+[[bin]]
+name = "rtk"
+path = "src/bin/rtk.rs"
+
 [dependencies]
 kgx-core = { path = "../kgx-core" }
 serde.workspace = true

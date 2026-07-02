@@ -128,6 +128,24 @@ fn write_skills(root: &std::path::Path) -> anyhow::Result<()> {
             ".opencode/plugins/kgx-verify-finished.js",
             include_str!("../../../../skills/opencode/.opencode/plugins/kgx-verify-finished.js"),
         ),
+        (
+            ".claude/skills/kgx-codebase/SKILL.md",
+            include_str!("../../../../skills/claude/.claude/skills/kgx-codebase/SKILL.md"),
+        ),
+        (
+            ".opencode/skills/kgx-codebase/SKILL.md",
+            include_str!("../../../../skills/opencode/.opencode/skills/kgx-codebase/SKILL.md"),
+        ),
+        (
+            ".claude/skills/kgx-codebase-index/SKILL.md",
+            include_str!("../../../../skills/claude/.claude/skills/kgx-codebase-index/SKILL.md"),
+        ),
+        (
+            ".opencode/skills/kgx-codebase-index/SKILL.md",
+            include_str!(
+                "../../../../skills/opencode/.opencode/skills/kgx-codebase-index/SKILL.md"
+            ),
+        ),
     ];
     for (rel, content) in FILES {
         let path = root.join(rel);

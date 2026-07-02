@@ -1,0 +1,850 @@
+
+$ git diff --check
+
+$ cargo fmt --all --check
+
+$ cargo test --workspace
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling libc v0.2.186
+   Compiling cfg-if v1.0.4
+   Compiling memchr v2.8.2
+   Compiling zerocopy v0.8.52
+   Compiling itoa v1.0.18
+   Compiling getrandom v0.3.4
+   Compiling equivalent v1.0.2
+   Compiling regex-syntax v0.8.11
+   Compiling hashbrown v0.17.1
+   Compiling serde_core v1.0.228
+   Compiling serde v1.0.228
+   Compiling aho-corasick v1.1.4
+   Compiling indexmap v2.14.0
+   Compiling zmij v1.0.21
+   Compiling regex-automata v0.4.14
+   Compiling serde_json v1.0.150
+   Compiling ryu v1.0.23
+   Compiling bitflags v2.13.0
+   Compiling thiserror v1.0.69
+   Compiling regex v1.12.4
+   Compiling deranged v0.5.8
+   Compiling time-core v0.1.9
+   Compiling num-conv v0.2.2
+   Compiling powerfmt v0.2.0
+   Compiling unsafe-libyaml v0.2.11
+   Compiling time v0.3.51
+   Compiling once_cell v1.21.4
+   Compiling rustix v1.1.4
+   Compiling rand_core v0.9.5
+   Compiling errno v0.3.14
+   Compiling fastrand v2.4.1
+   Compiling same-file v1.0.6
+   Compiling smallvec v1.15.2
+   Compiling walkdir v2.5.0
+   Compiling version_check v0.9.5
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling ahash v0.8.12
+   Compiling cc v1.2.65
+   Compiling pkg-config v0.3.33
+   Compiling syn v2.0.118
+   Compiling vcpkg v0.2.15
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling core-foundation-sys v0.8.7
+   Compiling percent-encoding v2.3.2
+   Compiling libsqlite3-sys v0.28.0
+   Compiling stable_deref_trait v1.2.1
+   Compiling bytes v1.12.0
+   Compiling fixedbitset v0.4.2
+   Compiling pin-project-lite v0.2.17
+   Compiling petgraph v0.6.5
+   Compiling log v0.4.33
+   Compiling futures-core v0.3.32
+   Compiling socket2 v0.6.4
+   Compiling mio v1.2.1
+   Compiling bstr v1.12.3
+   Compiling litemap v0.8.2
+   Compiling writeable v0.6.3
+   Compiling http v1.4.2
+   Compiling icu_normalizer_data v2.2.0
+   Compiling utf8_iter v1.0.4
+   Compiling synstructure v0.13.2
+   Compiling icu_properties_data v2.2.0
+   Compiling slab v0.4.12
+   Compiling ppv-lite86 v0.2.21
+   Compiling http-body v1.0.1
+   Compiling tracing-core v0.1.36
+   Compiling futures-task v0.3.32
+   Compiling rand_chacha v0.9.0
+   Compiling system-configuration-sys v0.6.0
+   Compiling futures-sink v0.3.32
+   Compiling rand v0.9.4
+   Compiling httparse v1.10.1
+   Compiling tracing v0.1.44
+   Compiling ulid v1.2.1
+   Compiling futures-util v0.3.32
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling async-trait v0.1.89
+   Compiling tempfile v3.27.0
+   Compiling zerofrom-derive v0.1.7
+   Compiling hashbrown v0.14.5
+   Compiling yoke-derive v0.8.2
+   Compiling hashlink v0.9.1
+   Compiling zerovec-derive v0.11.3
+   Compiling displaydoc v0.2.6
+   Compiling zerofrom v0.1.8
+   Compiling tokio-macros v2.7.0
+   Compiling tokio v1.52.3
+   Compiling security-framework-sys v2.17.0
+   Compiling core-foundation v0.10.1
+   Compiling fnv v1.0.7
+   Compiling atomic-waker v1.1.2
+   Compiling native-tls v0.2.18
+   Compiling tower-service v0.3.3
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling security-framework v3.7.0
+   Compiling futures-channel v0.3.32
+   Compiling core-foundation v0.9.4
+   Compiling form_urlencoded v1.2.2
+   Compiling system-configuration v0.7.0
+   Compiling sync_wrapper v1.0.2
+   Compiling tower-layer v0.3.3
+   Compiling base64 v0.22.1
+   Compiling ipnet v2.12.0
+   Compiling http-body-util v0.1.3
+   Compiling zeroize v1.9.0
+   Compiling encoding_rs v0.8.35
+   Compiling rustls-pki-types v1.14.1
+   Compiling anstyle v1.0.14
+   Compiling mime v0.3.17
+   Compiling predicates-core v1.0.10
+   Compiling difflib v0.4.0
+   Compiling assert_cmd v2.2.2
+   Compiling siphasher v1.0.3
+   Compiling rusqlite v0.31.0
+   Compiling termtree v0.5.1
+   Compiling predicates-tree v1.0.13
+   Compiling predicates v3.1.4
+   Compiling wait-timeout v0.2.1
+   Compiling phf_shared v0.11.3
+   Compiling rand_core v0.6.4
+   Compiling rand v0.8.6
+   Compiling crossbeam-utils v0.8.21
+   Compiling yoke v0.8.3
+   Compiling phf_generator v0.11.3
+   Compiling autocfg v1.5.1
+   Compiling phf_codegen v0.11.3
+   Compiling phf v0.11.3
+   Compiling ucd-trie v0.1.7
+   Compiling getrandom v0.2.17
+   Compiling num-traits v0.2.19
+   Compiling pest v2.8.6
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling serde_urlencoded v0.7.1
+   Compiling libm v0.2.16
+   Compiling pest_meta v2.8.6
+   Compiling kgx-core v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-core)
+   Compiling parse-zoneinfo v0.3.1
+   Compiling globset v0.4.18
+   Compiling iana-time-zone v0.1.65
+   Compiling anyhow v1.0.103
+   Compiling chrono-tz-build v0.3.0
+   Compiling chrono-tz v0.9.0
+   Compiling rand_chacha v0.3.1
+   Compiling pest_generator v2.8.6
+   Compiling tokio-util v0.7.18
+   Compiling zerovec v0.11.6
+   Compiling zerotrie v0.2.4
+   Compiling h2 v0.4.15
+   Compiling tokio-native-tls v0.3.1
+   Compiling tower v0.5.3
+   Compiling crossbeam-epoch v0.9.18
+   Compiling crossbeam-deque v0.8.6
+   Compiling ignore v0.4.26
+   Compiling deunicode v1.6.2
+   Compiling slug v0.1.6
+   Compiling hyper v1.10.1
+   Compiling chrono v0.4.45
+   Compiling hyper-util v0.1.20
+   Compiling humansize v2.1.3
+   Compiling globwalk v0.9.1
+   Compiling pest_derive v2.8.6
+   Compiling kgx-vault v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-vault)
+   Compiling kgx-rtk v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-rtk)
+   Compiling kgx-ponytail v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-ponytail)
+   Compiling kgx-graph v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-graph)
+   Compiling hyper-tls v0.6.0
+   Compiling unicode-segmentation v1.13.3
+   Compiling lazy_static v1.5.0
+   Compiling crc32fast v1.5.0
+   Compiling simd-adler32 v0.3.9
+   Compiling adler2 v2.0.1
+   Compiling kgx-retrieval v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-retrieval)
+   Compiling miniz_oxide v0.8.9
+   Compiling xattr v1.6.1
+   Compiling filetime v0.2.29
+   Compiling tar v0.4.46
+   Compiling utf8parse v0.2.2
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling anstyle-parse v1.0.0
+   Compiling anstyle-query v1.1.5
+   Compiling colorchoice v1.0.5
+   Compiling anstream v1.0.0
+   Compiling kgx-tokens v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-tokens)
+   Compiling heck v0.5.0
+   Compiling strsim v0.11.1
+   Compiling clap_lex v1.1.0
+   Compiling tinystr v0.8.3
+   Compiling potential_utf v0.1.5
+   Compiling icu_collections v2.2.0
+   Compiling clap_builder v4.6.0
+   Compiling icu_locale_core v2.2.0
+   Compiling clap_derive v4.6.1
+   Compiling kgx-cron v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-cron)
+   Compiling smoke v0.1.0 (/Users/harry/Desktop/kgx/tests/smoke)
+   Compiling icu_provider v2.2.0
+   Compiling flate2 v1.1.9
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling kgx-okf v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-okf)
+   Compiling clap v4.6.1
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling tower-http v0.6.11
+   Compiling tera v1.20.1
+   Compiling reqwest v0.12.28
+   Compiling kgx-llm v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-llm)
+   Compiling kgx-extract v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-extract)
+   Compiling kgx-dream v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-dream)
+   Compiling kgx-docs v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-docs)
+   Compiling kgx-viz v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-viz)
+   Compiling kgx-mcp v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-mcp)
+   Compiling kgx-cli v0.1.0 (/Users/harry/Desktop/kgx/crates/kgx-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.82s
+     Running unittests src/main.rs (target/debug/deps/kg-1ccd4ccb224c4f66)
+
+running 2 tests
+test commands::codebase::tests::regex_search_pattern_escapes_user_query ... ok
+test commands::codebase::tests::failed_external_status_is_an_error ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cli_ask.rs (target/debug/deps/cli_ask-6edfdc0e4528f840)
+
+running 1 test
+test ask_returns_answer_with_citations ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s
+
+     Running tests/cli_ask_global.rs (target/debug/deps/cli_ask_global-59945d0383ad6463)
+
+running 1 test
+test ask_global_uses_community_summaries ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/cli_capture.rs (target/debug/deps/cli_capture-1660791b5d019002)
+
+running 1 test
+test capture_from_stdin_creates_immutable_raw ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cli_cron.rs (target/debug/deps/cli_cron-112503d804963b53)
+
+running 1 test
+test cron_add_writes_unit_file ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cli_dashboard.rs (target/debug/deps/cli_dashboard-d522d639780233ac)
+
+running 1 test
+test dashboard_json_reports_status_and_token_series ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/cli_docs.rs (target/debug/deps/cli_docs-a66e03950e4d3830)
+
+running 1 test
+test docs_usecase_writes_html ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cli_dream.rs (target/debug/deps/cli_dream-d15c38765d8e1dfd)
+
+running 1 test
+test dream_stages_without_touching_files ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/cli_extract.rs (target/debug/deps/cli_extract-c3dfcd511b9b70a7)
+
+running 1 test
+test extract_creates_facts_with_provenance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/cli_graph.rs (target/debug/deps/cli_graph-f76065fb371633d0)
+
+running 1 test
+test graph_html_node_count_matches_brain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/cli_index.rs (target/debug/deps/cli_index-11a3b16ff9769577)
+
+running 1 test
+test index_full_builds_brain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cli_index_communities.rs (target/debug/deps/cli_index_communities-468840caf32d577f)
+
+running 1 test
+test index_communities_writes_summaries_and_moc ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/cli_init.rs (target/debug/deps/cli_init-97bbdc82b39339d5)
+
+running 2 tests
+test init_creates_valid_okf_vault ... ok
+test init_with_skills_and_rtk_writes_tool_artifacts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cli_link.rs (target/debug/deps/cli_link-255ce08070142c31)
+
+running 1 test
+test link_orphans_finds_exactly_one ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cli_review.rs (target/debug/deps/cli_review-647d431d08d352dc)
+
+running 1 test
+test review_approve_all_applies_soft_but_blocks_hard ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/cli_search.rs (target/debug/deps/cli_search-857b3d103697e13a)
+
+running 1 test
+test search_hybrid_json_returns_hits ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/cli_status.rs (target/debug/deps/cli_status-4eed73a9c320af7e)
+
+running 2 tests
+test tokens_by_operation_json ... ok
+test status_json_reports_counts_and_orphans ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/cli_sync.rs (target/debug/deps/cli_sync-bf82725f50c83c28)
+
+running 1 test
+test sync_status_runs_git_status_through_rtk_wrapper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/cli_validate.rs (target/debug/deps/cli_validate-d6c6f3bd9d4ec15b)
+
+running 1 test
+test validate_json_reports_ok_on_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_core-4f918c47da322e4e)
+
+running 5 tests
+test util::tests::slugify_basic ... ok
+test types::tests::unknown_keys_preserved ... ok
+test types::tests::frontmatter_roundtrips_minimal ... ok
+test util::tests::ulid_is_26_chars_and_monotonic ... ok
+test util::tests::wikilinks_extracted_and_deduped ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_cron-144df8a28ec5cc4d)
+
+running 2 tests
+test unit::tests::systemd_timer_has_calendar ... ok
+test unit::tests::launchd_plist_has_calendar_interval ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_docs-b339132917160c11)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/usecase.rs (target/debug/deps/usecase-57430bb233d58612)
+
+running 2 tests
+test parses_all_six_use_cases ... ok
+test research_html_contains_copy_pasteable_flow ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_dream-1f6e54c5d1d9ff29)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/run.rs (target/debug/deps/run-a239c880050103b8)
+
+running 2 tests
+test dream_converges_on_empty_input ... ok
+test dream_respects_max_iterations ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_extract-9bd20f55f1407599)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pipeline.rs (target/debug/deps/pipeline-f44a35123d7ed8aa)
+
+running 1 test
+test extract_produces_facts_with_provenance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/prompt.rs (target/debug/deps/prompt-8f41fea76b053f3e)
+
+running 1 test
+test extract_prompt_prepends_ladder_when_supplied ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_graph-7bf8f5a434ba96de)
+
+running 2 tests
+test embed::tests::blob_roundtrip ... ok
+test embed::tests::mock_is_deterministic_384 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/build.rs (target/debug/deps/build-453ceec4b2085a38)
+
+running 2 tests
+test derive_edges_includes_supersedes_and_source ... ok
+test build_full_populates_nodes_and_edges_deterministically ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/community.rs (target/debug/deps/community-d0c39e822484b547)
+
+running 1 test
+test detect_produces_connected_communities_deterministically ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/incremental.rs (target/debug/deps/incremental-1d13eb3c123967fd)
+
+running 2 tests
+test pagerank_writes_scores ... ok
+test incremental_matches_full_for_single_change ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/query.rs (target/debug/deps/query-d8da770b082207aa)
+
+running 3 tests
+test neighbors_one_hop ... ok
+test bm25_finds_postgres ... ok
+test vector_search_returns_ranked ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/schema.rs (target/debug/deps/schema-84198278ea77d19f)
+
+running 1 test
+test open_creates_all_tables ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_llm-e0173b86335e0a72)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/mock.rs (target/debug/deps/mock-84fdb4497c7e46af)
+
+running 1 test
+test mock_extract_returns_canned_facts_json ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_mcp-9d542d1d1e10cba3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/protocol.rs (target/debug/deps/protocol-8d7dd3c290a185c6)
+
+running 1 test
+test initialize_and_tools_list ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/tools_dispatch.rs (target/debug/deps/tools_dispatch-ca7e4596385f5485)
+
+running 2 tests
+test upsert_note_writes_valid_mcp_frontmatter ... ok
+test dream_step_returns_diffs_without_staging_or_applying ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_okf-1b2877ec5a4925d3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/bundle.rs (target/debug/deps/bundle-8800fde1b2a9a243)
+
+running 1 test
+test ship_then_pull_is_lossless_and_valid ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/validate_integration.rs (target/debug/deps/validate_integration-6e72763c6226d05b)
+
+running 4 tests
+test fixture_vault_is_okf_valid ... ignored
+test missing_reserved_file_flagged ... ok
+test bitemporal_violation_flagged ... ok
+test valid_vault_passes ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_ponytail-015b172030eff3df)
+
+running 2 tests
+test audit::tests::never_flags_hard_contradiction ... ok
+test audit::tests::flags_over_broad_diff ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ladder.rs (target/debug/deps/ladder-9f2ad493d9dabacd)
+
+running 1 test
+test ladder_for_returns_operation_intensity_prompt ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_retrieval-48cfac2b9bdc7740)
+
+running 2 tests
+test rrf::tests::rrf_rewards_consensus ... ok
+test rrf::tests::higher_k_dilutes_ranking ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/community_summary.rs (target/debug/deps/community_summary-f49781120ca14073)
+
+running 1 test
+test summaries_one_per_community ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/hybrid.rs (target/debug/deps/hybrid-6268c063e6d159a6)
+
+running 1 test
+test hybrid_beats_keyword_on_postgres_query ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_rtk-1d95cd3f2b10b153)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/rtk.rs (target/debug/deps/rtk-c1f001b7b0ed6103)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wrap.rs (target/debug/deps/wrap-8617138f27db5111)
+
+running 1 test
+test falls_back_to_raw_when_rtk_off ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_tokens-e214c359c4e0ab4c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/persist.rs (target/debug/deps/persist-865b89e3eff38951)
+
+running 1 test
+test append_then_aggregate_by_operation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_vault-f707a207ca731e60)
+
+running 3 tests
+test parse::tests::missing_frontmatter_errors ... ok
+test parse::tests::parses_frontmatter_and_body ... ok
+test write::tests::render_is_deterministic_and_sorted ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/scan_integration.rs (target/debug/deps/scan_integration-0a2d50c02db1e368)
+
+running 1 test
+test scans_notes_and_raw_skipping_derived ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/kgx_viz-eff7ea228be84365)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/html.rs (target/debug/deps/html-690b45817cbc8115)
+
+running 2 tests
+test mermaid_renders_edges ... ok
+test html_is_self_contained_and_counts_match ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/smoke-3011e6090ca74d4d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/smoke-67604f00d61c24a1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/common.rs (target/debug/deps/common-bbdd018401f6b4b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/smoke_t01_capture_immutability.rs (target/debug/deps/smoke_t01_capture_immutability-bee516c52a8845dc)
+
+running 1 test
+test t01_raw_hash_unchanged_after_extract ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/smoke_t02_extract.rs (target/debug/deps/smoke_t02_extract-05e56db476ab4014)
+
+running 1 test
+test t02_extract_produces_provenance_facts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/smoke_t03_link.rs (target/debug/deps/smoke_t03_link-8e5a8b3a9682f316)
+
+running 1 test
+test t03_link_phantoms_zero_for_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/smoke_t04_orphan.rs (target/debug/deps/smoke_t04_orphan-6ceaadcdf1749a23)
+
+running 1 test
+test t04_exactly_one_orphan ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/smoke_t05_t06_t07_t08_t14_t15_dream.rs (target/debug/deps/smoke_t05_t06_t07_t08_t14_t15_dream-23a392aea4cadd78)
+
+running 3 tests
+test t14_stale_archival_retains_note_file ... ok
+test t06_dedup_merge_archives_duplicate_and_keeps_files ... ok
+test t05_t07_t08_t15_dream_stages_then_review_applies_soft_and_blocks_hard ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/smoke_t10_rebuild.rs (target/debug/deps/smoke_t10_rebuild-d465a791577725b4)
+
+running 1 test
+test t10_rebuild_is_deterministic ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/smoke_t11_okf.rs (target/debug/deps/smoke_t11_okf-bdb935e1012a6970)
+
+running 2 tests
+test t11_init_then_validate_passes ... ok
+test t11_ship_pull_validate_roundtrip ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/smoke_t12_graph.rs (target/debug/deps/smoke_t12_graph-0a37aaf66d101ac6)
+
+running 1 test
+test t12_graph_html_counts_match_brain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/smoke_t13_communities.rs (target/debug/deps/smoke_t13_communities-8e02331a88371961)
+
+running 1 test
+test t13_every_community_has_summary_and_moc ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/smoke_t16_tokens.rs (target/debug/deps/smoke_t16_tokens-31991ccc33dbba43)
+
+running 1 test
+test t16_index_writes_token_record ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/smoke_t17_t18_phase5.rs (target/debug/deps/smoke_t17_t18_phase5-de53219de9434906)
+
+running 2 tests
+test t18_ponytail_audit_reports_over_broad_review_flags ... ok
+test t17_rtk_wrapper_uses_rtk_or_raw_fallback ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/smoke_t_install.rs (target/debug/deps/smoke_t_install-cf1cfb63fa3e1197)
+
+running 1 test
+test install_script_is_valid_bash ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/t_release_package.rs (target/debug/deps/t_release_package-b63afa21a768e4ea)
+
+running 1 test
+/var/folders/rw/lz_rc3xs33q9rb8c3jp7whn80000gn/T/.tmpVZkhCr/dist/kgx-v0.1.0-test-test-target.zip
+test release_package_contains_cli_mcp_skills_and_installer ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/t_skills_valid.rs (target/debug/deps/t_skills_valid-f67b88b944de1404)
+
+running 1 test
+test native_skill_packages_reference_same_mcp_tools ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_cron
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_docs
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_dream
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_extract
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_graph
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_llm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_mcp
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_okf
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_ponytail
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_retrieval
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_rtk
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_tokens
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_vault
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests kgx_viz
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests smoke
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

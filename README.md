@@ -146,6 +146,33 @@ kg --version                 # kg 0.1.0
 
 Binary size: 12.5 MB (statically linked, no runtime deps).
 
+### One-Command Dev Install
+
+The `dev-install.sh` script builds from source, installs the binary, scaffolds a vault, and wires MCP + skills/rules for your AI tool — all in one command:
+
+```bash
+# Default: Claude Code
+./dev-install.sh
+
+# Pick your agent:
+./dev-install.sh --agent claude      # Claude Code (default)
+./dev-install.sh --agent opencode    # OpenCode
+./dev-install.sh --agent codex       # Codex CLI
+./dev-install.sh --agent cursor      # Cursor
+
+# Custom vault location:
+./dev-install.sh --agent cursor --vault ~/my-project
+```
+
+Per-agent, it installs:
+
+| Agent | MCP Config | Skill / Rules | Config Files |
+|-------|-----------|---------------|--------------|
+| claude | `claude mcp add` (auto) | `~/.claude/skills/kgx/SKILL.md` | — |
+| opencode | `opencode.json` | `.opencode/skills/kgx/SKILL.md` | `.opencode/plugins/kgx-verify-finished.js` |
+| codex | `config.toml` | `AGENTS.md` | `hooks.json` |
+| cursor | `.cursor/mcp.json` (merged) | `.cursor/rules/kgx.mdc` | — |
+
 ### Initialize a Vault
 
 ```bash
