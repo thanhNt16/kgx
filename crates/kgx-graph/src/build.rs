@@ -115,7 +115,10 @@ pub fn build_full(
         .conn_mut()
         .transaction()
         .map_err(|e| KgError::Brain(e.to_string()))?;
-    tx.execute_batch("DELETE FROM notes; DELETE FROM edges; DELETE FROM notes_fts;")
+    tx.execute_batch(
+            "DELETE FROM notes; DELETE FROM edges; DELETE FROM notes_fts; \
+             DELETE FROM pagerank; DELETE FROM communities; DELETE FROM community_summaries;",
+        )
         .map_err(|e| KgError::Brain(e.to_string()))?;
     let texts: Vec<String> = notes
         .iter()
@@ -173,6 +176,37 @@ pub fn build_full(
         .map_err(|e| KgError::Brain(e.to_string()))?;
     }
     tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
+
+    let meta_tx = brain
+        .conn_mut()
+        .transaction()
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('last_index', ?1)",
+            rusqlite::params![kgx_core::util::now_iso()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('node_count', ?1)",
+            rusqlite::params![notes.len().to_string()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('edge_count', ?1)",
+            rusqlite::params![edges.len().to_string()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('build_mode', 'full')",
+            [],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
+
     Ok(BuildStats {
         nodes: notes.len(),
         edges: edges.len(),
@@ -267,6 +301,25 @@ pub fn build_incremental(
         .map_err(|e| KgError::Brain(e.to_string()))?;
     }
     tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
+
+    let meta_tx = brain
+        .conn_mut()
+        .transaction()
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('last_index', ?1)",
+            rusqlite::params![kgx_core::util::now_iso()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('build_mode', 'incremental')",
+            [],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
+
     let edge_count = all_edges
         .iter()
         .filter(|e| changed.contains(e.src_id.as_str()))

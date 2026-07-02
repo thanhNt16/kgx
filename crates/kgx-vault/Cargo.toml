@@ -9,6 +9,8 @@ kgx-core = { path = "../kgx-core" }
 serde.workspace = true
 serde_yaml.workspace = true
 walkdir.workspace = true
+pulldown-cmark.workspace = true
+regex = "1"
 
 [dev-dependencies]
 tempfile.workspace = true

@@ -1,4 +1,4 @@
-use crate::schema::SCHEMA;
+use crate::migrate;
 use kgx_core::{KgError, Result};
 use rusqlite::Connection;
 use std::path::Path;
@@ -22,8 +22,7 @@ impl Brain {
     }
 
     fn init(conn: Connection) -> Result<Brain> {
-        conn.execute_batch(SCHEMA)
-            .map_err(|e| KgError::Brain(e.to_string()))?;
+        migrate::ensure_schema(&conn)?;
         Ok(Brain { conn })
     }
 

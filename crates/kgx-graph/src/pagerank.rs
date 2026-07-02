@@ -40,17 +40,23 @@ pub fn compute(brain: &mut Brain, damping: f32, iters: u32) -> Result<()> {
     for _ in 0..iters {
         let mut next: HashMap<NodeIndex, f32> =
             g.node_indices().map(|i| (i, (1.0 - damping) / n)).collect();
+        let mut dangling_mass = 0.0;
         for node in g.node_indices() {
             let out: Vec<_> = g
                 .neighbors_directed(node, petgraph::Direction::Outgoing)
                 .collect();
             if out.is_empty() {
+                dangling_mass += damping * rank[&node];
                 continue;
             }
             let share = damping * rank[&node] / out.len() as f32;
             for o in out {
                 *next.get_mut(&o).unwrap() += share;
             }
+        }
+        let per_node = dangling_mass / n;
+        for v in next.values_mut() {
+            *v += per_node;
         }
         rank = next;
     }

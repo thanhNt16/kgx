@@ -1,3 +1,5 @@
+pub const SCHEMA_VERSION: i32 = 1;
+
 pub const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS notes (
   id TEXT PRIMARY KEY, path TEXT NOT NULL, type TEXT NOT NULL, status TEXT NOT NULL,
@@ -11,6 +13,7 @@ CREATE TABLE IF NOT EXISTS communities (id TEXT, community_id INTEGER, PRIMARY K
 CREATE TABLE IF NOT EXISTS community_summaries (
   community_id INTEGER PRIMARY KEY, title TEXT, summary TEXT, member_count INTEGER);
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
+CREATE TABLE IF NOT EXISTS schema_version (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS idx_edges_src ON edges(src_id);
 CREATE INDEX IF NOT EXISTS idx_edges_dst ON edges(dst_id);
 CREATE INDEX IF NOT EXISTS idx_notes_type ON notes(type);

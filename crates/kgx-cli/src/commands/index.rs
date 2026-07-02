@@ -1,13 +1,14 @@
 use std::time::Instant;
 
 use crate::output::emit;
-use kgx_graph::{build::build_full, embed::MockEmbedder, pagerank, Brain};
+use kgx_core::Note;
+use kgx_graph::{build::build_full, build::build_incremental, embed::MockEmbedder, pagerank, Brain};
 use kgx_tokens::record::{append, TokenRecord};
 
 pub fn run(
     json: bool,
     full: bool,
-    _incremental: bool,
+    incremental: bool,
     do_pagerank: bool,
     communities: bool,
 ) -> anyhow::Result<()> {
@@ -17,8 +18,14 @@ pub fn run(
     let notes = kgx_vault::scan::scan_vault(&root)?;
     let mut brain = Brain::open(&kg_dir.join("brain.sqlite"))?;
     let embedder = MockEmbedder::new();
-    let stats = build_full(&mut brain, &notes, &embedder)?;
-    let _ = full;
+
+    let stats = if incremental && !full {
+        let changed_ids = find_changed_ids(&brain, &notes)?;
+        build_incremental(&mut brain, &notes, &changed_ids, &embedder)?
+    } else {
+        build_full(&mut brain, &notes, &embedder)?
+    };
+
     if do_pagerank {
         pagerank::compute(&mut brain, 0.85, 30)?;
     }
@@ -73,4 +80,39 @@ pub fn run(
         println!("\u{2714} indexed {} nodes, {} edges", s.nodes, s.edges)
     });
     Ok(())
+}
+
+fn find_changed_ids(brain: &Brain, notes: &[Note]) -> anyhow::Result<Vec<String>> {
+    use std::collections::BTreeSet;
+    let existing: BTreeSet<String> = {
+        let mut stmt = brain
+            .conn()
+            .prepare("SELECT id FROM notes")
+            .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
+        let rows = stmt
+            .query_map([], |r| r.get::<_, String>(0))
+            .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
+        rows.collect::<std::result::Result<_, _>>()
+            .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?
+    };
+
+    let current: BTreeSet<String> = notes.iter().map(|n| n.fm.id.clone()).collect();
+
+    let added: Vec<String> = current.difference(&existing).cloned().collect();
+    let removed: Vec<String> = existing.difference(&current).cloned().collect();
+
+    let mut changed = Vec::new();
+    // Re-index all notes: added ones, and potentially changed ones (all for simplicity)
+    changed.extend(added);
+    changed.extend(removed);
+    // For incremental we re-index current notes that exist
+    let remaining: Vec<String> = current
+        .intersection(&existing)
+        .cloned()
+        .collect();
+    changed.extend(remaining);
+
+    changed.sort();
+    changed.dedup();
+    Ok(changed)
 }

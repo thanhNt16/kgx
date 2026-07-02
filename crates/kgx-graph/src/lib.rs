@@ -4,6 +4,7 @@ pub mod community;
 pub mod embed;
 pub mod knn;
 pub mod links;
+pub mod migrate;
 pub mod pagerank;
 pub mod query;
 pub mod schema;

@@ -1,3 +1,4 @@
+pub mod markdown;
 pub mod parse;
 pub mod scan;
 pub mod write;
