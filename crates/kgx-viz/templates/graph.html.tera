@@ -153,13 +153,13 @@ const vel = new Float32Array(N * 3);
 for (let i = 0; i < N; i++) {
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos(2 * Math.random() - 1);
-  const r = Math.cbrt(Math.random()) * 4;
+  const r = Math.cbrt(Math.random()) * 8;
   pos[i*3] = r * Math.sin(phi) * Math.cos(theta);
   pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
   pos[i*3+2] = r * Math.cos(phi);
 }
 for (let iter = 0; iter < 150; iter++) {
-  const rep = 0.008, attr = 0.012, center = 0.002, damp = 0.85;
+  const rep = 0.025, attr = 0.006, center = 0.0015, damp = 0.85;
   for (let i = 0; i < N; i++) {
     for (let j = i + 1; j < N; j++) {
       const dx = pos[i*3]-pos[j*3], dy = pos[i*3+1]-pos[j*3+1], dz = pos[i*3+2]-pos[j*3+2];
@@ -174,7 +174,7 @@ for (let iter = 0; iter < 150; iter++) {
     if (ai<0||bi<0) continue;
     const dx=pos[bi*3]-pos[ai*3], dy=pos[bi*3+1]-pos[ai*3+1], dz=pos[bi*3+2]-pos[ai*3+2];
     const dist=Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
-    const f=(dist-2.5)*attr;
+    const f=(dist-6.0)*attr;
     vel[ai*3]+=dx/dist*f; vel[ai*3+1]+=dy/dist*f; vel[ai*3+2]+=dz/dist*f;
     vel[bi*3]-=dx/dist*f; vel[bi*3+1]-=dy/dist*f; vel[bi*3+2]-=dz/dist*f;
   }
@@ -187,7 +187,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x06090f);
 
 const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 100000);
-camera.position.set(0, 0, 20);
+camera.position.set(0, 0, 35);
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: false });
 renderer.setSize(container.clientWidth, container.clientHeight);
@@ -249,7 +249,7 @@ scene.add(nodeGroup);
 
 // --- Sprite labels ---
 const labelGroup = new THREE.Group();
-const labelScaleY = 0.6;
+const labelScaleY = 0.3;
 
 function makeLabelTexture(text, color) {
   const canvas = document.createElement('canvas');
@@ -454,7 +454,7 @@ function fitView() {
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
   const maxDim = Math.max(size.x, size.y, size.z);
-  const dist = maxDim * 1.6;
+  const dist = maxDim * 1.8;
   const startPos = camera.position.clone();
   const startTarget = controls.target.clone();
   const endTarget = center;
