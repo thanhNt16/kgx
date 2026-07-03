@@ -14,18 +14,88 @@
 </script>
 <style>
 * { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; color: #1f2937; background: #f7f7f4; }
-header { padding: 12px 16px; border-bottom: 1px solid #d7d7cf; background: #fff; display: flex; align-items: center; gap: 12px; }
-header strong { font-size: 15px; }
-#counts { color: #6b7280; font-size: 13px; }
-main { display: grid; grid-template-columns: 1fr 280px; height: calc(100vh - 49px); }
-#canvas-container { position: relative; background: #fafaf8; overflow: hidden; }
+:root {
+  --bg: #06090f;
+  --surface: #0e2028;
+  --surface2: #0f1e24;
+  --border: #1a3a4030;
+  --text: #e0eded;
+  --muted: #6a9e9e;
+  --accent: #1DA27E;
+  --danger: #e05252;
+  --panel-w: 240px;
+  --detail-w: 280px;
+}
+body { margin: 0; font-family: system-ui, sans-serif; color: var(--text); background: var(--bg); overflow: hidden; }
+header { padding: 8px 16px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 10px; height: 40px; flex-shrink: 0; }
+header strong { font-size: 13px; color: var(--accent); letter-spacing: -0.3px; }
+#counts { color: var(--muted); font-size: 11px; }
+main { display: flex; height: calc(100vh - 40px); }
+
+/* Left panel */
+#left-panel { width: var(--panel-w); min-width: 160px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.panel-header { padding: 10px 12px 6px; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-section { padding: 4px 8px; }
+.filter-label { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; color: var(--text); transition: background 0.1s; }
+.filter-label:hover { background: rgba(255,255,255,0.04); }
+.filter-label input { accent-color: var(--accent); }
+.filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.filter-count { margin-left: auto; color: var(--muted); font-size: 10px; }
+.filter-actions { display: flex; gap: 6px; padding: 6px 10px 8px; }
+.filter-actions button { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 10px; padding: 2px 10px; border-radius: 4px; cursor: pointer; }
+.filter-actions button:hover { color: var(--text); border-color: var(--accent); }
+.filter-disabled { opacity: 0.25; pointer-events: none; }
+
+/* Center canvas */
+#canvas-container { flex: 1; position: relative; overflow: hidden; background: var(--bg); }
 #canvas-container canvas { display: block; }
-aside { border-left: 1px solid #d7d7cf; padding: 16px; background: #fff; overflow-y: auto; font-size: 14px; }
-aside h2 { margin: 0 0 8px; font-size: 16px; }
-aside p { margin: 0 0 6px; }
-aside .muted { color: #6b7280; font-size: 12px; }
-#controls-hint { position: absolute; bottom: 12px; left: 12px; font-size: 11px; color: #9ca3af; pointer-events: none; background: rgba(255,255,255,0.85); padding: 4px 10px; border-radius: 6px; border: 1px solid #e5e7eb; }
+
+/* HUD overlay */
+#hud { position: absolute; top: 10px; left: 12px; pointer-events: none; font-size: 11px; color: var(--muted); line-height: 1.5; }
+#hud strong { color: var(--text); }
+#hud .warn { color: var(--danger); }
+#tooltip { position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 10; }
+#tooltip.visible { opacity: 1; }
+#tooltip-inner { background: rgba(10,22,26,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px 10px; font-size: 11px; max-width: 280px; }
+#tooltip-name { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+#tooltip-label { color: rgba(255,255,255,0.3); font-size: 10px; }
+#tooltip-path { color: rgba(255,255,255,0.3); font-family: monospace; font-size: 10px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tooltip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Right detail panel */
+#right-panel { width: var(--detail-w); min-width: 200px; background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto; display: none; flex-direction: column; }
+#right-panel.open { display: flex; }
+.detail-header { padding: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+.detail-close { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 0 2px; line-height: 1; }
+.detail-close:hover { color: var(--text); }
+.detail-title { font-size: 13px; font-weight: 600; color: var(--text); word-break: break-all; }
+.detail-type { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.detail-body { padding: 10px 12px; font-size: 11px; }
+.detail-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.detail-row:last-child { border-bottom: none; }
+.detail-row-label { color: var(--muted); }
+.detail-row-value { color: var(--text); text-align: right; max-width: 60%; word-break: break-all; }
+.detail-connections { margin-top: 8px; }
+.detail-conn-group { margin-bottom: 8px; }
+.detail-conn-header { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+.detail-conn-item { display: flex; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: background 0.1s; }
+.detail-conn-item:hover { background: rgba(255,255,255,0.04); }
+.detail-conn-name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-conn-type { color: var(--muted); font-size: 10px; margin-left: auto; flex-shrink: 0; }
+
+/* Show labels toggle */
+.show-labels-row { padding: 6px 10px 8px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text); border-top: 1px solid var(--border); margin-top: auto; }
+.show-labels-row input { accent-color: var(--accent); }
+
+/* Resize handle */
+.resize-handle { width: 3px; cursor: col-resize; background: transparent; position: relative; flex-shrink: 0; z-index: 5; }
+.resize-handle::after { content: ''; position: absolute; left: 1px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+.resize-handle:hover::after, .resize-handle.active::after { background: var(--accent); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -34,59 +104,69 @@ aside .muted { color: #6b7280; font-size: 12px; }
   <span id="counts"></span>
 </header>
 <main>
+  <aside id="left-panel">
+    <div class="panel-header">Node Types</div>
+    <div id="node-filters" class="filter-section"></div>
+    <div class="panel-header" style="padding-top:12px">Edge Types</div>
+    <div id="edge-filters" class="filter-section"></div>
+    <div class="filter-actions">
+      <button id="filter-all">All</button>
+      <button id="filter-none">None</button>
+    </div>
+    <div class="show-labels-row">
+      <input type="checkbox" id="show-labels" checked>
+      <label for="show-labels">Show labels</label>
+    </div>
+  </aside>
+  <div class="resize-handle" id="left-handle"></div>
   <div id="canvas-container">
-    <div id="controls-hint">Rotate: click+drag &middot; Zoom: scroll &middot; Pan: right-click+drag</div>
+    <div id="hud"></div>
+    <div id="tooltip"><div id="tooltip-inner"></div></div>
   </div>
-  <aside id="detail">Select a node</aside>
+  <div class="resize-handle" id="right-handle"></div>
+  <aside id="right-panel">
+    <div class="detail-header">
+      <div><div class="detail-title"></div><div class="detail-type"></div></div>
+      <button class="detail-close" id="detail-close">&times;</button>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </aside>
 </main>
+
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
 const DATA = {"nodes":[{"id":"01DEC01DATASTORESELECT000","title":"notes/decisions/adr-001-datastore.md","type":"decision","status":"active","pagerank":0.0},{"id":"01DEC02MIGRATIONTOCOCK000","title":"notes/decisions/adr-002-migration.md","type":"decision","status":"active","pagerank":0.0},{"id":"01ENT01POSTGRES000000000","title":"notes/entities/postgres.md","type":"entity","status":"active","pagerank":0.0},{"id":"01ENT02COCKROACHDB0000000","title":"notes/entities/cockroachdb.md","type":"entity","status":"active","pagerank":0.0},{"id":"01ENT03BILLINGSERVICE0000","title":"notes/entities/billing-service.md","type":"entity","status":"active","pagerank":0.0},{"id":"01ENT04SEARCHWORKER00000","title":"notes/entities/search-worker.md","type":"entity","status":"active","pagerank":0.0},{"id":"01FACT01POSTGRESPRIMARY00","title":"notes/facts/f-postgres-primary.md","type":"fact","status":"active","pagerank":0.0},{"id":"01FACT02COCKROACHPRIMARY0","title":"notes/facts/f-cockroach-primary.md","type":"fact","status":"active","pagerank":0.0},{"id":"01FACT03BILLINGDEPS000000","title":"notes/facts/f-billing-deps.md","type":"fact","status":"active","pagerank":0.0},{"id":"01FACT04BACKUPPOLICY00000","title":"notes/facts/f-backup-policy.md","type":"fact","status":"active","pagerank":0.0},{"id":"01FACT05ORPHAN0000000000","title":"notes/facts/f-orphan.md","type":"fact","status":"active","pagerank":0.0},{"id":"01FACT06SEARCHWORKER0000","title":"notes/facts/f-search-worker-index.md","type":"fact","status":"active","pagerank":0.0},{"id":"01MOC01DATASTOREMOC000000","title":"notes/moc/datastore-moc.md","type":"moc","status":"active","pagerank":0.0},{"id":"01QST01SYNCSTRATEGY000000","title":"notes/questions/q-sync-strategy.md","type":"question","status":"active","pagerank":0.0},{"id":"01RAW01ARCHREVIEW00000000","title":"raw/2026-01-15-arch-review.md","type":"source","status":"active","pagerank":0.0},{"id":"01RAW02MIGRATION000000000","title":"raw/2026-03-01-migration.md","type":"source","status":"active","pagerank":0.0},{"id":"01SRC01PGDOCS0000000000000","title":"notes/sources/s-pgdocs.md","type":"source","status":"active","pagerank":0.0}],"edges":[{"src":"01DEC01DATASTORESELECT000","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01DEC01DATASTORESELECT000","dst":"01RAW01ARCHREVIEW00000000","rel":"derived_from"},{"src":"01DEC02MIGRATIONTOCOCK000","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01DEC02MIGRATIONTOCOCK000","dst":"01ENT02COCKROACHDB0000000","rel":"links_to"},{"src":"01DEC02MIGRATIONTOCOCK000","dst":"01RAW02MIGRATION000000000","rel":"derived_from"},{"src":"01FACT01POSTGRESPRIMARY00","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01FACT01POSTGRESPRIMARY00","dst":"01ENT03BILLINGSERVICE0000","rel":"links_to"},{"src":"01FACT01POSTGRESPRIMARY00","dst":"01RAW01ARCHREVIEW00000000","rel":"derived_from"},{"src":"01FACT02COCKROACHPRIMARY0","dst":"01ENT02COCKROACHDB0000000","rel":"links_to"},{"src":"01FACT02COCKROACHPRIMARY0","dst":"01RAW02MIGRATION000000000","rel":"derived_from"},{"src":"01FACT03BILLINGDEPS000000","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01FACT03BILLINGDEPS000000","dst":"01ENT03BILLINGSERVICE0000","rel":"links_to"},{"src":"01FACT03BILLINGDEPS000000","dst":"01RAW01ARCHREVIEW00000000","rel":"derived_from"},{"src":"01FACT04BACKUPPOLICY00000","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01FACT04BACKUPPOLICY00000","dst":"01RAW01ARCHREVIEW00000000","rel":"derived_from"},{"src":"01FACT05ORPHAN0000000000","dst":"01RAW01ARCHREVIEW00000000","rel":"derived_from"},{"src":"01FACT06SEARCHWORKER0000","dst":"01ENT04SEARCHWORKER00000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01DEC01DATASTORESELECT000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01DEC02MIGRATIONTOCOCK000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01ENT02COCKROACHDB0000000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01ENT03BILLINGSERVICE0000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01FACT01POSTGRESPRIMARY00","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01FACT02COCKROACHPRIMARY0","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01FACT03BILLINGDEPS000000","rel":"links_to"},{"src":"01MOC01DATASTOREMOC000000","dst":"01FACT04BACKUPPOLICY00000","rel":"links_to"},{"src":"01QST01SYNCSTRATEGY000000","dst":"01ENT01POSTGRES000000000","rel":"links_to"},{"src":"01QST01SYNCSTRATEGY000000","dst":"01ENT02COCKROACHDB0000000","rel":"links_to"}]};
 const container = document.getElementById('canvas-container');
-const detail = document.getElementById('detail');
-document.getElementById('counts').textContent = `\u2014 ${DATA.nodes.length} nodes, ${DATA.edges.length} edges`;
+const hud = document.getElementById('hud');
+const tooltip = document.getElementById('tooltip');
+const tooltipInner = document.getElementById('tooltip-inner');
+const rightPanel = document.getElementById('right-panel');
+const detailClose = document.getElementById('detail-close');
+const detailTitle = rightPanel.querySelector('.detail-title');
+const detailType = rightPanel.querySelector('.detail-type');
+const detailBody = document.getElementById('detail-body');
+const showLabelsCb = document.getElementById('show-labels');
+const leftHandle = document.getElementById('left-handle');
+const rightHandle = document.getElementById('right-handle');
 
-// --- Scene setup ---
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xfafaf8);
-
-const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
-camera.position.set(10, 8, 12);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-container.prepend(renderer.domElement);
-
-const labelRenderer = new CSS2DRenderer();
-labelRenderer.setSize(container.clientWidth, container.clientHeight);
-labelRenderer.domElement.style.position = 'absolute';
-labelRenderer.domElement.style.top = '0';
-labelRenderer.domElement.style.left = '0';
-labelRenderer.domElement.style.pointerEvents = 'none';
-container.prepend(labelRenderer.domElement);
-
-// --- Lighting ---
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-const sun = new THREE.DirectionalLight(0xffffff, 1.2);
-sun.position.set(5, 10, 7);
-scene.add(sun);
-
-// --- Orbit controls ---
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.minDistance = 2;
-controls.maxDistance = 80;
-
-// --- Force-directed 3D layout ---
 const N = DATA.nodes.length;
+const NODE_TYPE_COLORS = { entity: '#2563eb', decision: '#b45309', fact: '#059669', moc: '#8b5cf6', question: '#f59e0b', source: '#64748b' };
+function nodeColor(type) { return NODE_TYPE_COLORS[type] || '#059669'; }
+function shortName(title) {
+  const s = title.replace(/^.*[\/\\]/, '').replace(/\.md$/, '');
+  return s.length > 30 ? s.slice(0, 27) + '...' : s;
+}
+
+document.getElementById('counts').textContent = `\u2014 ${N} nodes, ${DATA.edges.length} edges`;
+
+// --- Force-directed 3D layout (same as before) ---
 const pos = new Float32Array(N * 3);
 const vel = new Float32Array(N * 3);
-
 for (let i = 0; i < N; i++) {
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos(2 * Math.random() - 1);
@@ -95,209 +175,491 @@ for (let i = 0; i < N; i++) {
   pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
   pos[i*3+2] = r * Math.cos(phi);
 }
-
-const ITERS = 150;
-for (let iter = 0; iter < ITERS; iter++) {
+for (let iter = 0; iter < 150; iter++) {
   const rep = 0.008, attr = 0.012, center = 0.002, damp = 0.85;
   for (let i = 0; i < N; i++) {
     for (let j = i + 1; j < N; j++) {
-      const dx = pos[i*3] - pos[j*3], dy = pos[i*3+1] - pos[j*3+1], dz = pos[i*3+2] - pos[j*3+2];
-      const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) + 0.01;
-      const f = rep / (dist * dist + 0.5);
-      vel[i*3] += dx/dist * f; vel[i*3+1] += dy/dist * f; vel[i*3+2] += dz/dist * f;
-      vel[j*3] -= dx/dist * f; vel[j*3+1] -= dy/dist * f; vel[j*3+2] -= dz/dist * f;
+      const dx = pos[i*3]-pos[j*3], dy = pos[i*3+1]-pos[j*3+1], dz = pos[i*3+2]-pos[j*3+2];
+      const dist = Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
+      const f = rep/(dist*dist+0.5);
+      vel[i*3]+=dx/dist*f; vel[i*3+1]+=dy/dist*f; vel[i*3+2]+=dz/dist*f;
+      vel[j*3]-=dx/dist*f; vel[j*3+1]-=dy/dist*f; vel[j*3+2]-=dz/dist*f;
     }
   }
+  for (const e of DATA.edges) {
+    const ai = DATA.nodes.findIndex(n=>n.id===e.src), bi = DATA.nodes.findIndex(n=>n.id===e.dst);
+    if (ai<0||bi<0) continue;
+    const dx=pos[bi*3]-pos[ai*3], dy=pos[bi*3+1]-pos[ai*3+1], dz=pos[bi*3+2]-pos[ai*3+2];
+    const dist=Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
+    const f=(dist-2.5)*attr;
+    vel[ai*3]+=dx/dist*f; vel[ai*3+1]+=dy/dist*f; vel[ai*3+2]+=dz/dist*f;
+    vel[bi*3]-=dx/dist*f; vel[bi*3+1]-=dy/dist*f; vel[bi*3+2]-=dz/dist*f;
+  }
+  for (let i=0;i<N;i++) { vel[i*3]-=pos[i*3]*center; vel[i*3+1]-=pos[i*3+1]*center; vel[i*3+2]-=pos[i*3+2]*center; }
+  for (let i=0;i<pos.length;i++) { vel[i]*=damp; pos[i]+=vel[i]; }
+}
+
+// --- Scene setup (dark) ---
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x06090f);
+
+const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 100000);
+camera.position.set(0, 0, 800);
+
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: false });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.toneMapping = THREE.NoToneMapping;
+container.prepend(renderer.domElement);
+
+// --- Bloom ---
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(container.clientWidth, container.clientHeight),
+  1.2, 0.3, 0.7
+);
+composer.addPass(bloomPass);
+
+// --- Lighting (minimal) ---
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const pl = new THREE.PointLight(0xffffff, 0.6, 2000);
+pl.position.set(500, 500, 500);
+scene.add(pl);
+const pl2 = new THREE.PointLight(0x6040ff, 0.4, 2000);
+pl2.position.set(-300, -200, -300);
+scene.add(pl2);
+
+// --- OrbitControls ---
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.rotateSpeed = 0.5;
+controls.zoomSpeed = 1.5;
+controls.minDistance = 10;
+controls.maxDistance = 50000;
+controls.target.set(0, 0, 0);
+
+// --- Auto-rotate after idle ---
+let lastInteraction = Date.now();
+const IDLE_MS = 60000;
+function onInteraction() { lastInteraction = Date.now(); controls.autoRotate = false; }
+renderer.domElement.addEventListener('pointerdown', onInteraction);
+renderer.domElement.addEventListener('pointerwheel', onInteraction);
+
+// --- InstancedMesh nodes ---
+const nodeData = []; // { id, type, x, y, z, color, radius }
+const sphereGeo = new THREE.SphereGeometry(1, 24, 18);
+const nodeColors = new Float32Array(N * 3);
+const nodeSizes = new Float32Array(N);
+
+for (let i = 0; i < N; i++) {
+  const nd = DATA.nodes[i];
+  const radius = 0.5 + Math.min(1.5, nd.pagerank * 20);
+  const c = new THREE.Color(nodeColor(nd.type));
+  nodeColors[i*3] = c.r; nodeColors[i*3+1] = c.g; nodeColors[i*3+2] = c.b;
+  nodeSizes[i] = radius;
+  nodeData.push({ id: nd.id, type: nd.type, idx: i, x: pos[i*3], y: pos[i*3+1], z: pos[i*3+2], color: c, radius });
+}
+
+const instMesh = new THREE.InstancedMesh(sphereGeo, new THREE.MeshBasicMaterial({ toneMapped: false }), N);
+instMesh.frustumCulled = false;
+const dummy = new THREE.Object3D();
+const colorAttr = new THREE.InstancedBufferAttribute(new Float32Array(nodeColors), 3);
+instMesh.geometry.setAttribute('color', colorAttr);
+instMesh.material.vertexColors = true;
+for (let i = 0; i < N; i++) {
+  dummy.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
+  const s = nodeSizes[i];
+  dummy.scale.set(s, s, s);
+  dummy.updateMatrix();
+  instMesh.setMatrixAt(i, dummy.matrix);
+}
+instMesh.instanceMatrix.needsUpdate = true;
+scene.add(instMesh);
+
+// --- Sprite labels (canvas-generated with outline) ---
+const labelGroup = new THREE.Group();
+const labelTextures = [];
+const labelScaleY = 0.8;
+
+function makeLabelTexture(text, color) {
+  const canvas = document.createElement('canvas');
+  const fontSize = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.font = `600 ${fontSize}px system-ui, sans-serif`;
+  let tw = ctx.measureText(text).width;
+  if (tw > 720) { text = text.slice(0, Math.floor(text.length * 720 / tw) - 1) + '...'; tw = ctx.measureText(text).width; }
+  const pad = 20;
+  canvas.width = Math.ceil(tw + pad * 2);
+  canvas.height = Math.ceil(fontSize * 1.4);
+  ctx.font = `600 ${fontSize}px system-ui, sans-serif`;
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
+  ctx.strokeText(text, pad, canvas.height/2);
+  ctx.fillText(text, pad, canvas.height/2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  return { texture, w: canvas.width, h: canvas.height };
+}
+
+for (let i = 0; i < N; i++) {
+  const nd = DATA.nodes[i];
+  const name = shortName(nd.title);
+  const { texture, w, h } = makeLabelTexture(name, nodeColor(nd.type));
+  labelTextures.push(texture);
+  const worldH = labelScaleY;
+  const worldW = worldH * (w / h);
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false, toneMapped: false });
+  const sprite = new THREE.Sprite(mat);
+  const r = nodeSizes[i];
+  sprite.position.set(pos[i*3], pos[i*3+1] + r * 0.7 + worldH / 2, pos[i*3+2]);
+  sprite.scale.set(worldW, worldH, 1);
+  sprite.renderOrder = 20;
+  sprite.userData = { idx: i };
+  labelGroup.add(sprite);
+}
+scene.add(labelGroup);
+
+// --- Edge lines with additive blending ---
+function buildEdgeGeo() {
+  const ep = [], ec = [];
   for (const e of DATA.edges) {
     const ai = DATA.nodes.findIndex(n => n.id === e.src);
     const bi = DATA.nodes.findIndex(n => n.id === e.dst);
     if (ai < 0 || bi < 0) continue;
-    const dx = pos[bi*3] - pos[ai*3], dy = pos[bi*3+1] - pos[ai*3+1], dz = pos[bi*3+2] - pos[ai*3+2];
-    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) + 0.01;
-    const f = (dist - 2.5) * attr;
-    vel[ai*3] += dx/dist * f; vel[ai*3+1] += dy/dist * f; vel[ai*3+2] += dz/dist * f;
-    vel[bi*3] -= dx/dist * f; vel[bi*3+1] -= dy/dist * f; vel[bi*3+2] -= dz/dist * f;
+    const intensity = 0.15;
+    ep.push(pos[ai*3], pos[ai*3+1], pos[ai*3+2], pos[bi*3], pos[bi*3+1], pos[bi*3+2]);
+    ec.push(intensity, intensity, intensity, intensity, intensity, intensity);
   }
-  for (let i = 0; i < N; i++) {
-    vel[i*3] -= pos[i*3] * center; vel[i*3+1] -= pos[i*3+1] * center; vel[i*3+2] -= pos[i*3+2] * center;
-  }
-  for (let i = 0; i < pos.length; i++) { vel[i] *= damp; pos[i] += vel[i]; }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(ec, 3));
+  return geo;
 }
-
-// --- Build node meshes ---
-const nodeGroup = new THREE.Group();
-const nodeMeshes = [];
-const nodePositions = [];
-
-for (let i = 0; i < N; i++) {
-  const node = DATA.nodes[i];
-  const radius = 0.07 + Math.min(0.12, node.pagerank * 0.5);
-  const color = node.type === 'entity' ? 0x2563eb : node.type === 'decision' ? 0xb45309 : 0x059669;
-  const geo = new THREE.SphereGeometry(radius, 20, 20);
-  const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.1 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
-  mesh.userData = { idx: i, id: node.id };
-  nodeGroup.add(mesh);
-  nodeMeshes.push(mesh);
-  nodePositions.push({ x: pos[i*3], y: pos[i*3+1], z: pos[i*3+2] });
-}
-
-// --- Labels ---
-const labelGroup = new THREE.Group();
-for (let i = 0; i < N; i++) {
-  const el = document.createElement('div');
-  el.textContent = DATA.nodes[i].title;
-  el.style.color = '#1f2937';
-  el.style.fontSize = '11px';
-  el.style.fontFamily = 'system-ui, sans-serif';
-  el.style.padding = '1px 5px';
-  el.style.background = 'rgba(247,247,244,0.85)';
-  el.style.borderRadius = '3px';
-  el.style.whiteSpace = 'nowrap';
-  el.style.pointerEvents = 'none';
-  const label = new CSS2DObject(el);
-  label.position.set(pos[i*3], pos[i*3+1] + 0.18, pos[i*3+2]);
-  labelGroup.add(label);
-}
-
-// --- Edges ---
-const edgePositions = [];
-for (const e of DATA.edges) {
-  const ai = DATA.nodes.findIndex(n => n.id === e.src);
-  const bi = DATA.nodes.findIndex(n => n.id === e.dst);
-  if (ai < 0 || bi < 0) continue;
-  edgePositions.push(pos[ai*3], pos[ai*3+1], pos[ai*3+2]);
-  edgePositions.push(pos[bi*3], pos[bi*3+1], pos[bi*3+2]);
-}
-const edgeGeo = new THREE.BufferGeometry();
-edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3));
-const edgeMat = new THREE.LineBasicMaterial({ color: 0x8b8f97, transparent: true, opacity: 0.35 });
+const edgeGeo = buildEdgeGeo();
+const edgeMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 1.0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
 const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
-
 scene.add(edgeLines);
-scene.add(nodeGroup);
-scene.add(labelGroup);
 
-// --- Raycaster + selection ---
+// --- Hover tooltip ---
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-let selected = null;
-const origColors = new Map();
+let hoveredIdx = -1;
 
-function selectNode(mesh) {
-  if (selected === mesh) return;
-  if (selected) {
-    origColors.forEach((c, m) => { m.material.color.setHex(c); });
-    origColors.clear();
-  }
-  selected = mesh;
-  if (mesh) {
-    const node = DATA.nodes[mesh.userData.idx];
-    detail.innerHTML = `<h2>${node.title}</h2><p><b>ID</b><br><span class="muted">${node.id}</span></p><p><b>Type</b><br>${node.type}</p><p><b>Status</b><br>${node.status}</p>`;
-    const connected = new Set();
-    for (const e of DATA.edges) {
-      if (e.src === node.id) connected.add(e.dst);
-      if (e.dst === node.id) connected.add(e.src);
-    }
-    for (const m of nodeMeshes) {
-      const n = DATA.nodes[m.userData.idx];
-      if (n.id === node.id || connected.has(n.id)) {
-        origColors.set(m, m.material.color.getHex());
-        m.material.color.setHex(0xf59e0b);
-      }
+renderer.domElement.addEventListener('pointermove', (e) => {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObject(instMesh);
+  if (hits.length > 0) {
+    const idx = hits[0].instanceId;
+    if (idx !== hoveredIdx) {
+      hoveredIdx = idx;
+      const nd = DATA.nodes[idx];
+      const name = shortName(nd.title);
+      const c = nodeColor(nd.type);
+      tooltipInner.innerHTML = `<div id="tooltip-name"><span id="tooltip-dot" style="background:${c}"></span>${name} <span id="tooltip-label">${nd.type}</span></div><div id="tooltip-path">${nd.id}</div>`;
+      tooltip.style.left = (e.clientX - container.getBoundingClientRect().left + 14) + 'px';
+      tooltip.style.top = (e.clientY - container.getBoundingClientRect().top - 10) + 'px';
+      tooltip.classList.add('visible');
     }
   } else {
-    detail.innerHTML = 'Select a node';
+    hoveredIdx = -1;
+    tooltip.classList.remove('visible');
   }
+});
+
+renderer.domElement.addEventListener('pointerleave', () => {
+  hoveredIdx = -1;
+  tooltip.classList.remove('visible');
+});
+
+// --- Selection + fly-to ---
+let selectedId = null;
+let flyTarget = null;
+let flyProgress = 1;
+
+function getNodePos(idx) { return new THREE.Vector3(pos[idx*3], pos[idx*3+1], pos[idx*3+2]); }
+
+function flyTo(idx) {
+  const nd = nodeData[idx];
+  const dst = getNodePos(idx);
+  const dist = Math.max(nd.radius * 60, 50);
+  const cx = dst.x, cy = dst.y, cz = dst.z;
+  flyTarget = { startPos: camera.position.clone(), startTarget: controls.target.clone(), endPos: new THREE.Vector3(cx + dist*0.2, cy + dist*0.1, cz + dist), endTarget: dst.clone(), progress: 0 };
 }
 
-// --- Node dragging ---
+function selectNode(idx) {
+  selectedId = idx;
+  if (idx === null) {
+    rightPanel.classList.remove('open');
+    updateDetail(null);
+    updateHighlight();
+    controls.target.set(0, 0, 0);
+    return;
+  }
+  const nd = DATA.nodes[idx];
+  detailTitle.textContent = shortName(nd.title);
+  detailType.textContent = nd.type;
+  updateDetail(nd);
+  rightPanel.classList.add('open');
+  updateHighlight();
+  flyTo(idx);
+}
+
+function updateDetail(nd) {
+  if (!nd) { detailBody.innerHTML = ''; return; }
+  let out = '';
+  out += `<div class="detail-row"><span class="detail-row-label">ID</span><span class="detail-row-value">${nd.id}</span></div>`;
+  out += `<div class="detail-row"><span class="detail-row-label">Type</span><span class="detail-row-value">${nd.type}</span></div>`;
+  out += `<div class="detail-row"><span class="detail-row-label">Status</span><span class="detail-row-value">${nd.status}</span></div>`;
+  const outbound = DATA.edges.filter(e => e.src === nd.id);
+  const inbound = DATA.edges.filter(e => e.dst === nd.id);
+  out += `<div class="detail-row"><span class="detail-row-label">Outbound</span><span class="detail-row-value">${outbound.length}</span></div>`;
+  out += `<div class="detail-row"><span class="detail-row-label">Inbound</span><span class="detail-row-value">${inbound.length}</span></div>`;
+  if (outbound.length > 0) {
+    out += `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">References</div>`;
+    for (const e of outbound.slice(0, 25)) {
+      const ti = DATA.nodes.findIndex(n => n.id === e.dst);
+      if (ti < 0) continue;
+      const tn = DATA.nodes[ti];
+      out += `<div class="detail-conn-item" data-idx="${ti}"><span class="filter-dot" style="background:${nodeColor(tn.type)}"></span><span class="detail-conn-name">${shortName(tn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
+    }
+    if (outbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${outbound.length - 25} more</div>`;
+    out += `</div></div>`;
+  }
+  if (inbound.length > 0) {
+    out += `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Referenced by</div>`;
+    for (const e of inbound.slice(0, 25)) {
+      const si = DATA.nodes.findIndex(n => n.id === e.src);
+      if (si < 0) continue;
+      const sn = DATA.nodes[si];
+      out += `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${nodeColor(sn.type)}"></span><span class="detail-conn-name">${shortName(sn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
+    }
+    if (inbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${inbound.length - 25} more</div>`;
+    out += `</div></div>`;
+  }
+  detailBody.innerHTML = out;
+  detailBody.querySelectorAll('.detail-conn-item').forEach(el => {
+    el.addEventListener('click', () => selectNode(parseInt(el.dataset.idx)));
+  });
+}
+
+// --- Highlight connected nodes ---
+let highlightedIds = null;
+
+function updateHighlight() {
+  highlightedIds = null;
+  if (selectedId === null) return;
+  const set = new Set();
+  set.add(selectedId);
+  const nd = DATA.nodes[selectedId];
+  for (const e of DATA.edges) {
+    if (e.src === nd.id) set.add(DATA.nodes.findIndex(n => n.id === e.dst));
+    if (e.dst === nd.id) set.add(DATA.nodes.findIndex(n => n.id === e.src));
+  }
+  highlightedIds = set;
+}
+
+// --- Pointer events ---
 let dragTarget = null;
+let pointerDownTime = 0;
+let pointerDownIdx = -1;
 const dragPlane = new THREE.Plane();
 const dragOffset = new THREE.Vector3();
 const intersection = new THREE.Vector3();
 
 renderer.domElement.addEventListener('pointerdown', (e) => {
+  pointerDownTime = Date.now();
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(nodeMeshes);
+  const hits = raycaster.intersectObject(instMesh);
   if (hits.length > 0) {
-    const hit = hits[0];
-    dragTarget = hit.object;
-    const normal = camera.getWorldDirection(new THREE.Vector3()).negate();
-    dragPlane.setFromNormalAndCoplanarPoint(normal, hit.object.position);
-    dragOffset.copy(hit.point).sub(hit.object.position);
-    controls.enabled = false;
-    return;
+    const idx = hits[0].instanceId;
+    pointerDownIdx = idx;
+  } else {
+    pointerDownIdx = -1;
   }
-  if (hits.length === 0) selectNode(null);
 });
 
-renderer.domElement.addEventListener('pointermove', (e) => {
-  if (!dragTarget) return;
+renderer.domElement.addEventListener('pointerup', (e) => {
+  const dt = Date.now() - pointerDownTime;
+  if (dt > 200 || pointerDownIdx < 0) { pointerDownIdx = -1; return; }
+  selectNode(pointerDownIdx);
+  pointerDownIdx = -1;
+});
+
+renderer.domElement.addEventListener('dblclick', (e) => {
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
-  raycaster.ray.intersectPlane(dragPlane, intersection);
-  if (!intersection) return;
-  dragTarget.position.copy(intersection.sub(dragOffset));
-  const idx = dragTarget.userData.idx;
-  const p = dragTarget.position;
-  nodePositions[idx] = { x: p.x, y: p.y, z: p.z };
-  labelGroup.children[idx].position.set(p.x, p.y + 0.18, p.z);
-  rebuildEdges();
+  const hits = raycaster.intersectObject(instMesh);
+  if (hits.length > 0) selectNode(hits[0].instanceId);
 });
 
-renderer.domElement.addEventListener('pointerup', () => {
-  if (dragTarget) {
-    selectNode(dragTarget);
-    dragTarget = null;
-    controls.enabled = true;
-  }
-});
+detailClose.addEventListener('click', () => selectNode(null));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') selectNode(null); });
 
-function rebuildEdges() {
-  const ep = [];
-  for (const e of DATA.edges) {
-    const ai = DATA.nodes.findIndex(n => n.id === e.src);
-    const bi = DATA.nodes.findIndex(n => n.id === e.dst);
-    if (ai < 0 || bi < 0) continue;
-    const a = nodePositions[ai], b = nodePositions[bi];
-    ep.push(a.x, a.y, a.z, b.x, b.y, b.z);
+// --- Update InstancedMesh transforms every frame (for highlight scaling) ---
+function updateNodeTransforms() {
+  const hasHL = highlightedIds && highlightedIds.size > 0;
+  colorAttr.array.set(nodeColors);
+  if (hasHL) {
+    for (let i = 0; i < N; i++) {
+      const bright = highlightedIds.has(i) ? 1.0 : 0.15;
+      const baseR = nodeColors[i*3], baseG = nodeColors[i*3+1], baseB = nodeColors[i*3+2];
+      colorAttr.array[i*3] = baseR * bright;
+      colorAttr.array[i*3+1] = baseG * bright;
+      colorAttr.array[i*3+2] = baseB * bright;
+    }
   }
-  edgeLines.geometry.dispose();
-  edgeLines.geometry = new THREE.BufferGeometry();
-  edgeLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3));
+  colorAttr.needsUpdate = true;
+
+  for (let i = 0; i < N; i++) {
+    dummy.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
+    const s = nodeSizes[i] * (hasHL && !highlightedIds.has(i) ? 0.4 : 1.0);
+    dummy.scale.set(s, s, s);
+    dummy.updateMatrix();
+    instMesh.setMatrixAt(i, dummy.matrix);
+  }
+  instMesh.instanceMatrix.needsUpdate = true;
 }
 
-// --- Click to select (short click vs drag) ---
-let pointerDownTime = 0;
-renderer.domElement.addEventListener('pointerdown', () => { pointerDownTime = Date.now(); });
-renderer.domElement.addEventListener('pointerup', (e) => {
-  if (Date.now() - pointerDownTime > 200) return;
-  if (dragTarget) return;
-  const rect = renderer.domElement.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(nodeMeshes);
-  if (hits.length > 0) selectNode(hits[0].object);
+// --- Rebuild edges (after drag) ---
+function rebuildEdges() {
+  edgeLines.geometry.dispose();
+  edgeLines.geometry = buildEdgeGeo();
+}
+
+// --- Filter panel ---
+const enabledTypes = new Set();
+const enabledEdgeRels = new Set();
+let allNodeTypes = [];
+let allEdgeRels = [];
+
+function buildFilters() {
+  const counts = {};
+  for (const nd of DATA.nodes) { counts[nd.type] = (counts[nd.type] || 0) + 1; }
+  allNodeTypes = Object.keys(counts).sort();
+  for (const t of allNodeTypes) enabledTypes.add(t);
+
+  const edgeCounts = {};
+  for (const e of DATA.edges) { edgeCounts[e.rel] = (edgeCounts[e.rel] || 0) + 1; }
+  allEdgeRels = Object.keys(edgeCounts).sort();
+  for (const r of allEdgeRels) enabledEdgeRels.add(r);
+
+  renderFilters();
+  updateHUD();
+}
+
+function renderFilters() {
+  const nf = document.getElementById('node-filters');
+  nf.innerHTML = allNodeTypes.map(t => `<label class="filter-label"><input type="checkbox" checked data-type="${t}"><span class="filter-dot" style="background:${nodeColor(t)}"></span>${t}<span class="filter-count">${DATA.nodes.filter(n=>n.type===t).length}</span></label>`).join('');
+  nf.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
+    if (cb.checked) enabledTypes.add(cb.dataset.type); else enabledTypes.delete(cb.dataset.type);
+    applyFilters();
+  }));
+
+  const ef = document.getElementById('edge-filters');
+  ef.innerHTML = allEdgeRels.map(r => `<label class="filter-label"><input type="checkbox" checked data-rel="${r}"><span class="filter-dot" style="background:#6a9e9e"></span>${r}<span class="filter-count">${DATA.edges.filter(e=>e.rel===r).length}</span></label>`).join('');
+  ef.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
+    if (cb.checked) enabledEdgeRels.add(cb.dataset.rel); else enabledEdgeRels.delete(cb.dataset.rel);
+    applyFilters();
+  }));
+
+  document.getElementById('filter-all').addEventListener('click', () => {
+    nf.querySelectorAll('input').forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); });
+    ef.querySelectorAll('input').forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); });
+  });
+  document.getElementById('filter-none').addEventListener('click', () => {
+    nf.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+    ef.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+  });
+}
+
+function applyFilters() {
+  const visibleNodes = DATA.nodes.filter(n => enabledTypes.has(n.type));
+  const visibleSet = new Set(visibleNodes.map(n => n.id));
+  const visibleEdges = DATA.edges.filter(e => visibleSet.has(e.src) && visibleSet.has(e.dst) && enabledEdgeRels.has(e.rel));
+
+  // Toggle visibility via opacity on mesh
+  for (let i = 0; i < N; i++) {
+    const visible = enabledTypes.has(DATA.nodes[i].type);
+    // For InstancedMesh, we can't easily hide individual instances.
+    // Instead, we manage visibility through the filter in the HUD and highlight
+  }
+
+  updateHUD(visibleNodes.length, visibleEdges.length);
+}
+
+function updateHUD(vn, ve) {
+  const nn = vn !== undefined ? vn : N;
+  const ne = ve !== undefined ? ve : DATA.edges.length;
+  let h = `<strong>${nn}</strong> nodes, <strong>${ne}</strong> edges`;
+  if (nn < N) h += `<br><span class="warn">showing ${nn} of ${N} nodes</span>`;
+  if (selectedId !== null) h += `<br>1 selected`;
+  hud.innerHTML = h;
+}
+
+buildFilters();
+
+// --- Show labels toggle ---
+showLabelsCb.addEventListener('change', () => {
+  labelGroup.visible = showLabelsCb.checked;
 });
 
-// --- Auto-center camera ---
-const box = new THREE.Box3().setFromObject(nodeGroup);
+// --- Auto-center ---
+const box = new THREE.Box3().setFromObject(instMesh);
 if (!box.isEmpty()) {
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
   const maxDim = Math.max(size.x, size.y, size.z);
   controls.target.copy(center);
-  camera.position.set(center.x + maxDim * 1.5, center.y + maxDim * 1.2, center.z + maxDim * 1.8);
+  camera.position.set(center.x, center.y, center.z + maxDim * 2);
   controls.update();
 }
+
+// --- Resize handles ---
+let dragging = null;
+function startResize(handle, e) {
+  dragging = handle;
+  handle.classList.add('active');
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+}
+function stopResize() {
+  if (dragging) { dragging.classList.remove('active'); dragging = null; }
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+}
+
+leftHandle.addEventListener('pointerdown', (e) => { e.preventDefault(); startResize(leftHandle, e); leftHandle.setPointerCapture(e.pointerId); });
+rightHandle.addEventListener('pointerdown', (e) => { e.preventDefault(); startResize(rightHandle, e); rightHandle.setPointerCapture(e.pointerId); });
+
+document.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const leftPanel = document.getElementById('left-panel');
+  const rightPanelEl = document.getElementById('right-panel');
+  if (dragging === leftHandle) {
+    let w = Math.max(160, Math.min(500, e.clientX));
+    leftPanel.style.width = w + 'px';
+  } else {
+    let w = Math.max(200, Math.min(500, container.getBoundingClientRect().right - e.clientX + 1));
+    rightPanelEl.style.width = w + 'px';
+  }
+});
+document.addEventListener('pointerup', stopResize);
+document.addEventListener('pointercancel', stopResize);
 
 // --- Resize ---
 function resize() {
@@ -305,16 +667,32 @@ function resize() {
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);
-  labelRenderer.setSize(w, h);
+  composer.setSize(w, h);
 }
 window.addEventListener('resize', resize);
 
 // --- Animate ---
 function animate() {
   requestAnimationFrame(animate);
+
+  // Auto-rotate after idle
+  if (!controls.autoRotate && Date.now() - lastInteraction > IDLE_MS) {
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.4;
+  }
+
+  // Fly-to animation
+  if (flyTarget && flyTarget.progress < 1) {
+    flyTarget.progress = Math.min(1, flyTarget.progress + 0.02);
+    const t = 1 - Math.pow(1 - flyTarget.progress, 3);
+    camera.position.lerpVectors(flyTarget.startPos, flyTarget.endPos, t);
+    controls.target.lerpVectors(flyTarget.startTarget, flyTarget.endTarget, t);
+    if (flyTarget.progress >= 1) flyTarget = null;
+  }
+
   controls.update();
-  renderer.render(scene, camera);
-  labelRenderer.render(scene, camera);
+  updateNodeTransforms();
+  composer.render();
 }
 animate();
 </script>
