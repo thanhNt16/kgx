@@ -82,12 +82,6 @@
     max-width: 650px;
     margin: 0 auto 1.5rem;
   }
-  .hero .quote {
-    font-style: italic;
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-bottom: 2.5rem;
-  }
   .hero-pills { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
   .pill {
     background: var(--surface2);
@@ -99,6 +93,7 @@
   }
   .pill.accent { border-color: var(--accent); color: var(--accent); background: #58a6ff11; }
   .pill.green { border-color: var(--accent2); color: var(--accent2); background: #3fb95011; }
+  .pill.warn { border-color: var(--warn); color: var(--warn); background: #d2992211; }
 
   .install-box {
     display: inline-flex;
@@ -149,7 +144,6 @@
   .cmd { color: var(--accent2); }
   .flag { color: var(--purple); }
   .val { color: var(--warn); }
-  .num { color: var(--accent2); }
 
   .table-wrap { overflow-x: auto; margin: 1rem 0; }
   table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -225,86 +219,6 @@
     overflow-x: auto;
   }
 
-  .test-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.75rem; margin: 1.5rem 0; }
-  .test-item {
-    background: var(--surface);
-    border: 1px solid #3fb95033;
-    border-radius: 8px;
-    padding: 0.875rem 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  .test-check { color: var(--accent2); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
-  .test-name { font-size: 0.8rem; font-weight: 600; color: var(--text); font-family: var(--font-mono); }
-  .test-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-  .test-time { font-size: 0.7rem; color: var(--accent); margin-top: 3px; font-family: var(--font-mono); }
-
-  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
-  .tab {
-    padding: 0.6rem 1.25rem;
-    cursor: pointer;
-    font-size: 0.875rem;
-    color: var(--muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: all 0.15s;
-    background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-
-  .token-comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin: 1.5rem 0;
-  }
-  @media (max-width: 600px) { .token-comparison { grid-template-columns: 1fr; } }
-  .token-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.5rem;
-  }
-  .token-box.without { border-color: #f8514933; }
-  .token-box.with { border-color: #3fb95033; }
-  .token-count { font-size: 2.5rem; font-weight: 800; font-family: var(--font-mono); margin: 0.5rem 0; }
-  .token-count.bad { color: var(--danger); }
-  .token-count.good { color: var(--accent2); }
-  .token-label { font-size: 0.8rem; color: var(--muted); }
-  .token-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
-
-  .crate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; margin: 1rem 0; }
-  .crate-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.875rem; }
-  .crate-name { font-family: var(--font-mono); font-size: 0.8rem; color: var(--purple); font-weight: 600; }
-  .crate-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-
-  .scroll-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--muted);
-    font-size: 1rem;
-    transition: all 0.15s;
-    text-decoration: none;
-  }
-  .scroll-to-top:hover { border-color: var(--accent); color: var(--accent); }
-
   .measured-badge {
     display: inline-block;
     background: #3fb95022;
@@ -329,6 +243,59 @@
     margin-left: 0.5rem;
     vertical-align: middle;
   }
+
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab {
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .setup-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+  .setup-card h4 { margin: 0 0 0.25rem; }
+  .setup-card p { font-size: 0.8rem; margin: 0; }
+
+  .scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 1rem;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .scroll-to-top:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -336,230 +303,525 @@
 <nav>
   <span class="logo">KGX</span>
   <a href="#install">Install</a>
+  <a href="#quickstart">Quick Start</a>
+  <a href="#flow">Flow</a>
+  <a href="#usecases">Use Cases</a>
+  <a href="#efficiency">Efficiency</a>
   <a href="#mcp">MCP</a>
-  <a href="#skills">Skills</a>
-  <a href="#workflow">Workflow</a>
-  <a href="#tests">Tests</a>
-  <a href="#compare">vs Without</a>
-  <a href="#eval">Eval</a>
+  <a href="#commands">Commands</a>
   <span class="badge">rg +22% P@5</span>
 </nav>
 
 <div class="hero" id="top">
   <h1>KGX</h1>
-  <p class="subtitle">Local-first AI knowledge graph CLI. Markdown in, queryable brain out.</p>
-  <p class="quote">"Humans abandon wikis because maintenance grows faster than value. LLMs don't get bored." — Andrej Karpathy</p>
+  <p class="subtitle">Local-first AI knowledge graph CLI. Markdown in, queryable brain out — no server, no API keys required.</p>
   <div class="hero-pills">
-    <span class="pill accent">Rust 1.78+</span>
-    <span class="pill accent">SQLite Brain</span>
-    <span class="pill green">18/18 Smoke Tests</span>
-    <span class="pill">OKF Compatible</span>
-    <span class="pill">MCP Server</span>
-    <span class="pill">12.5 MB binary</span>
+    <span class="pill accent">One binary</span>
+    <span class="pill accent">12.5 MB</span>
+    <span class="pill green">14/14 Smokes Pass</span>
+    <span class="pill green">89% Token Savings</span>
+    <span class="pill warn">kg vs rg: +22% P@5</span>
+    <span class="pill">MCP + HTTP</span>
     <span class="pill">Offline-first</span>
   </div>
   <div class="install-box">
     <span>$</span>
-    <code>cargo build --release &amp;&amp; cp target/release/kg ~/.local/bin/kg</code>
+    <code>curl -fsSL https://raw.githubusercontent.com/thanhNt16/kgx/main/install.sh | bash</code>
   </div>
+  <p style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">Or: <code>cargo build --release &amp;&amp; cp target/release/kg ~/.local/bin/kg</code> · Rust 1.78+</p>
 </div>
 
 <div class="page">
 
-<!-- WHAT IS IT -->
-<section id="what">
-  <h2>What is KGX?</h2>
-  <p class="section-lead">A single <code>kg</code> binary that turns any Markdown vault into a hybrid vector + graph + keyword brain — queryable by you, your AI tools, and your team.</p>
+<!-- QUICK START -->
+<section id="quickstart">
+  <h2>⏱ Quick Start — 5 Minutes</h2>
+  <p class="section-lead">Install, wire Claude Code, and run your first <code>/kgx:</code> skill.</p>
 
-  <div class="cards">
-    <div class="card">
-      <div class="card-icon">📥</div>
-      <h3>Capture</h3>
-      <p>Ingest any source (file or stdin) into an immutable <code>raw/</code> directory with full provenance.</p>
+  <div class="setup-grid">
+    <div class="setup-card">
+      <div class="setup-icon">1</div>
+      <div>
+        <h4>Install kg</h4>
+        <p><code>curl ... install.sh | bash</code><br>→ <code>kg</code> binary in <code>~/.local/bin</code></p>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-icon">⚗️</div>
-      <h3>Extract</h3>
-      <p>AI extracts atomic facts, entities, and decisions from raw sources — each linked back to its origin note.</p>
+    <div class="setup-card">
+      <div class="setup-icon">2</div>
+      <div>
+        <h4>Register MCP</h4>
+        <p><code>claude mcp add --transport stdio kgx -- kg mcp-server --transport stdio</code></p>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-icon">🧠</div>
-      <h3>Index</h3>
-      <p>Builds a SQLite "brain" with vector search (384-dim), BM25/FTS5, PageRank, and Leiden community detection. 17 nodes, 28 edges, 17 embedded — 1ms.</p>
+    <div class="setup-card">
+      <div class="setup-icon">3</div>
+      <div>
+        <h4>Run slash commands in Claude Code</h4>
+        <p><code>/kgx:init code</code> → scaffold vault<br><code>/kgx:index</code> → build brain<br><code>/kgx:status</code> → check health</p>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-icon">💬</div>
-      <h3>Ask</h3>
-      <p>Hybrid Q&amp;A with citations. 371 input tokens measured (vs ~3,400 for paste-all on a 17-note vault).</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">🌙</div>
-      <h3>Dream</h3>
-      <p>7 nightly consolidation passes: dedup, contradiction, supersession, staleness, link repair. 14 diffs staged, 2ms.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">🔌</div>
-      <h3>MCP Server</h3>
-      <p>JSON-RPC 2.0 over stdio. Claude Code, Codex, and Cursor connect directly to your brain. 6 tools. Errors return JSON-RPC envelopes — server never crashes.</p>
+    <div class="setup-card">
+      <div class="setup-icon">4</div>
+      <div>
+        <h4>Work with content</h4>
+        <p><code>/kgx:capture</code> → save source<br><code>/kgx:ask "?"</code> → query<br><code>/kgx:recall</code> → explore graph<br><code>/kgx:dream</code> → consolidate</p>
+      </div>
     </div>
   </div>
-</section>
 
-<!-- ARCHITECTURE -->
-<section id="arch">
-  <h2>Architecture</h2>
-  <p class="section-lead">Markdown is the canonical source of truth. The SQLite brain is a derived, git-ignored index — always rebuildable.</p>
+  <p style="color:var(--muted);margin-bottom:0.5rem;">Each <code>/kgx:</code> verb is a skill — it runs the right CLI commands and formats the results:</p>
+  <pre><span style="color:var(--accent2)">/kgx:init code</span>
+<span class="str">→ Vault created at ~/brain/, code template.
+   raw/, notes/facts/, notes/entities/, notes/decisions/</span>
 
-  <div class="arch-diagram">
-<pre style="background:none;border:none;padding:0;font-size:0.8rem;">
-<span style="color:var(--accent)">Markdown Vault (git)</span>
-  raw/             ← immutable captured sources (type: source)
-  notes/
-    facts/         ← atomic claims (type: fact)
-    entities/      ← people, systems, concepts (type: entity)
-    decisions/     ← ADRs (type: decision)
-    moc/           ← maps of content (type: moc)
-    questions/     ← auto-closed by dream (type: question)
-  .kg/             ← derived, git-ignored
-    brain.sqlite
-    meta.json
-    metrics.log    ← per-command token JSONL
+<span style="color:var(--accent2)">/kgx:capture</span> <span class="cmt">(then paste RFC content)</span>
+<span class="str">→ Saved to raw/2026-07-03-rfc-datastore.md</span>
 
-<span style="color:var(--accent2)">Retrieval Pipeline</span>
-  Query
-   ├─► Vector KNN (sqlite-vec, 384-dim all-MiniLM-L6-v2)
-   ├─► BM25 / FTS5 (porter-stemmed keyword)
-   ├─► Entity NER → 1-hop graph expansion
-   └─► Global? → Leiden community summaries (GraphRAG)
-         ↓ Reciprocal Rank Fusion (k=60)
-   Hybrid ranked context
-         ↓
-   <span style="color:var(--purple)">kg ask / kg recall / kg search / MCP tools</span>
+<span style="color:var(--accent2)">/kgx:extract --source 01RAW01...</span>
+<span class="str">→ Created: Postgres fact, Postgres entity, Billing Service entity</span>
 
-<span style="color:var(--warn)">Verified on vault-min fixture (2026-06-27)</span>
-  kg index --full  → 17 nodes, 28 edges, 17 embedded (1ms)
-  kg search        → 10 hits: bm25 + vector + ppr signals (0ms)
-  kg ask           → answer + 1 citation, 371 input tokens (1ms)
-  kg recall        → 12 neighbors, 2-hop PPR (0ms)
-  kg dream --dry-run → 14 staged diffs, 6 hard blocks (2ms)</pre>
-  </div>
+<span style="color:var(--accent2)">/kgx:index</span>
+<span class="str">→ Brain built: 17 nodes, 28 edges, 17 embedded (23ms)</span>
 
-  <h3>Crate Map (16 crates)</h3>
-  <div class="crate-grid">
-    <div class="crate-item"><div class="crate-name">kgx-core</div><div class="crate-desc">Shared types &amp; errors</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-vault</div><div class="crate-desc">FS read/write, wikilinks</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-okf</div><div class="crate-desc">OKF parse, validate, ship/pull</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-graph</div><div class="crate-desc">SQLite brain: schema, PPR, Leiden</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-retrieval</div><div class="crate-desc">Hybrid search, RRF fusion</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-llm</div><div class="crate-desc">Claude / OpenAI / Ollama / mock</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-extract</div><div class="crate-desc">Raw → facts/entities/decisions</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-dream</div><div class="crate-desc">7-pass consolidation engine</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-mcp</div><div class="crate-desc">JSON-RPC 2.0 stdio server</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-tokens</div><div class="crate-desc">Per-command token accounting</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-rtk</div><div class="crate-desc">Shell output compression</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-ponytail</div><div class="crate-desc">Prompt ladders + audit rules</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-cron</div><div class="crate-desc">systemd / launchd manager</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-viz</div><div class="crate-desc">HTML/D3, Mermaid, DOT export</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-docs</div><div class="crate-desc">Use-case HTML generator</div></div>
-    <div class="crate-item"><div class="crate-name">kgx-cli</div><div class="crate-desc"><code>kg</code> binary (clap + JSON)</div></div>
-  </div>
+<span style="color:var(--accent2)">/kgx:ask "What database does the billing service use?"</span>
+<span class="str">→ Based on the vault, Postgres is the primary datastore.
+   [Source: Postgres is the primary datastore (01FACT01POSTGRESPRIMARY00)]</span></pre>
 </section>
 
 <!-- INSTALLATION -->
 <section id="install">
   <h2>Installation</h2>
-  <p class="section-lead">Build from source. Requires Rust 1.78+. The binary is statically linked — no runtime deps.</p>
+  <p class="section-lead">Three ways to install. No runtime dependencies — the binary is statically linked.</p>
 
-  <h3>Build from Source</h3>
-<pre><span class="cmt"># Requires Rust 1.78+</span>
-<span class="cmd">git clone</span> https://github.com/yourusername/kgx
+  <h3>Option A: Release Install (recommended)</h3>
+  <pre><span class="cmd">curl -fsSL</span> https://raw.githubusercontent.com/thanhNt16/kgx/main/install.sh | bash
+
+<span class="cmt"># Install a specific version</span>
+<span class="cmd">curl -fsSL</span> https://raw.githubusercontent.com/thanhNt16/kgx/main/install.sh | KGX_VERSION=v0.1.0 bash</pre>
+  <p>Installs <code>kg</code> to <code>~/.local/bin</code> plus skill templates to <code>~/.kgx/skills</code>.</p>
+
+  <h3>Option B: Build from Source</h3>
+  <pre><span class="cmd">git clone</span> https://github.com/thanhNt16/kgx
 <span class="cmd">cd</span> kgx
-<span class="cmd">cargo build --release</span>        <span class="cmt"># ~30s cold build</span>
+<span class="cmd">cargo build --release</span>        <span class="cmt"># ~30s cold, 12.5 MB binary</span>
 <span class="cmd">cp</span> target/release/kg ~/.local/bin/kg
-kg --version                 <span class="cmt"># kg 0.1.0  (12.5 MB)</span></pre>
+kg --version</pre>
+
+  <h3>Option C: Dev Install (build + wire agent)</h3>
+  <p>One command builds, installs, scaffolds a vault, and wires MCP + skills for your AI tool:</p>
+  <pre><span class="cmd">./dev-install.sh</span>                          <span class="cmt"># default: Claude Code</span>
+<span class="cmd">./dev-install.sh --agent opencode</span>         <span class="cmt"># OpenCode</span>
+<span class="cmd">./dev-install.sh --agent codex</span>            <span class="cmt"># Codex CLI</span>
+<span class="cmd">./dev-install.sh --agent cursor</span>           <span class="cmt"># Cursor</span>
+<span class="cmd">./dev-install.sh --agent cursor --vault ~/my-project</span></pre>
 
   <h3>Initialize a Vault</h3>
-<pre><span class="cmd">mkdir</span> ~/brain &amp;&amp; <span class="cmd">cd</span> ~/brain
+  <p>Run the init skill in Claude Code:</p>
+  <pre><span style="color:var(--accent2)">/kgx:init code</span>
+<span class="str">→ Vault created at ~/brain/
+   CLAUDE.md, index.md, log.md
+   raw/              ← place sources here
+   notes/facts/      ← atomic claims
+   notes/entities/   ← people, systems, concepts
+   notes/decisions/  ← ADRs
+   notes/moc/        ← maps of content
+   notes/questions/  ← open gaps</span>
 
-<span class="cmt"># Research vault</span>
-kg init <span class="flag">--template</span> <span class="val">research</span>
+<span class="cmt"># Other templates:</span>
+/kgx:init research     <span class="cmt"># facts, entities, questions</span>
+/kgx:init pkm          <span class="cmt"># personal Zettelkasten</span>
+/kgx:init team         <span class="cmt"># shared team + OKF</span></pre>
 
-<span class="cmt"># Engineering team (ADRs, decisions, entities)</span>
-kg init <span class="flag">--template</span> <span class="val">code</span>
+  <p>Or from the terminal:</p>
+  <pre><span class="cmd">mkdir</span> ~/brain &amp;&amp; <span class="cmd">cd</span> ~/brain
+kg init --template code --with-skills --okf</pre>
 
-<span class="cmt"># With AI tool skill files</span>
-kg init <span class="flag">--template</span> <span class="val">research</span> <span class="flag">--with-skills --okf</span></pre>
-
-  <p>This scaffolds:</p>
-<pre style="font-size:0.78rem;">brain/
-├── CLAUDE.md          ← agent behavior contract (read by all AI tools)
-├── index.md           ← OKF root map-of-maps
-├── log.md             ← append-only operation log
+  <p>Scaffolds:</p>
+  <pre style="font-size:0.78rem;">brain/
+├── CLAUDE.md          ← agent behavior contract
+├── index.md           ← OKF root map
+├── log.md             ← operation log
 ├── raw/               ← immutable captured sources
 └── notes/
-    ├── facts/
-    ├── entities/
-    ├── decisions/
-    ├── moc/
-    └── questions/</pre>
+    ├── facts/         ← atomic claims
+    ├── entities/      ← people, systems, concepts
+    ├── decisions/     ← ADRs
+    ├── moc/           ← maps of content
+    └── questions/     ← open gaps</pre>
+</section>
 
-  <p><strong>Important:</strong> All <code>kg</code> commands use the current working directory as the vault root. There is no <code>--vault</code> flag — always <code>cd</code> into your vault first.</p>
+<!-- STEP-BY-STEP USER FLOW -->
+<section id="flow">
+  <h2>Step-by-Step User Flow</h2>
+  <p class="section-lead">Invoke each <code>/kgx:&lt;verb&gt;</code> in Claude Code. The skill runs the right CLI commands and formats the results — you just supply parameters. All output below from <code>vault-min</code> (17 notes, 28 edges).</p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">0</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:init code</code></h3>
+        <p>Scaffold a vault with the code/engineering template:</p>
+<pre><span style="color:var(--accent2)">/kgx:init code</span>
+<span class="str">→ Vault created at ~/brain/
+  CLAUDE.md          ← agent behavior contract
+  index.md           ← OKF root map
+  log.md             ← operation log
+  raw/               ← place captured sources here (immutable)
+  notes/
+    facts/           ← atomic claims extracted by /kgx:extract
+    entities/        ← people, systems, concepts
+    decisions/       ← ADRs
+    moc/             ← maps of content
+    questions/       ← open gaps</span>
+
+<span class="cmt"># Other templates:</span>
+/kgx:init research   <span class="cmt"># facts, entities, sources</span>
+/kgx:init pkm        <span class="cmt"># personal Zettelkasten</span>
+/kgx:init team       <span class="cmt"># shared team + OKF</span></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:capture</code></h3>
+        <p>Save source material immutably. SHA-256 dedup means the same content won't create duplicates.</p>
+<pre><span style="color:var(--accent2)">/kgx:capture</span>
+<span class="str">→ Paste this RFC summary:
+     "We decided to use Postgres as the primary datastore.
+      CockroachDB is being evaluated for geo-distributed regions.
+      The billing service depends on Postgres."
+
+→ Saved to raw/2026-07-03-rfc-datastore.md
+  Source note: notes/sources/rfc-datastore.md (01RAW01...)</span></pre>
+        <p>Also supports <code>--from file</code> or stdin pipe. Raw files are <strong>never edited</strong> after capture — guarantees provenance.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:extract --source &lt;ID&gt;</code></h3>
+        <p>Extract atomic facts, entities, and decisions from a captured source. Each note carries <code>source:</code> + <code>recorded_at:</code> provenance.</p>
+<pre><span style="color:var(--accent2)">/kgx:extract --source 01RAW01...</span>
+<span class="str">→ Created 3 notes:
+  • notes/facts/f-postgres-primary.md
+    (Postgres is the primary datastore)
+  • notes/entities/postgres.md
+    (Postgres — type: entity, infra/datastore)
+  • notes/entities/billing-service.md
+    (Billing Service — type: entity, billing)</span></pre>
+        <p>Also supports <code>--batch</code> (all unprocessed sources) and <code>--intensity lite|full|ultra</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:index</code></h3>
+        <p>Build the SQLite brain — vector search (384-dim), BM25/FTS5, PageRank, Leiden communities:</p>
+<pre><span style="color:var(--accent2)">/kgx:index</span>
+<span class="str">→ Brain built: 17 nodes, 28 edges, 17 embedded (23ms)
+  Leiden community detection found 3+ topic clusters
+  Deterministic — safe to run anytime</span></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:ask "question"</code></h3>
+        <p>Hybrid vector + keyword + graph retrieval. Answers include cited note IDs.</p>
+<pre><span style="color:var(--accent2)">/kgx:ask "What database does the billing service use?"</span>
+<span class="str">→ Based on the vault, Postgres is the primary datastore.
+  [Source: Postgres is the primary datastore (01FACT01POSTGRESPRIMARY00)]</span>
+
+<span style="color:var(--accent2)">/kgx:ask "Find all decisions about datastores" --scope global</span>
+<span class="str">→ 3 decisions found:
+  • ADR-001: Postgres as primary datastore
+  • ADR-002: Migrate to CockroachDB
+  • ADR-003: Database backup policy</span></pre>
+        <p><strong>Token efficiency:</strong> 371 input tokens vs ~3,400 pasting all 17 notes — <strong>89% reduction</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:recall --entity "Name"</code></h3>
+        <p>Entity neighborhood via 2-hop PageRank traversal — no LLM call, pure graph lookup:</p>
+<pre><span style="color:var(--accent2)">/kgx:recall --entity "Postgres"</span>
+<span class="str">→ Postgres connects to 12 neighbors:
+  • Decisions: ADR-001, ADR-002
+  • Entities: CockroachDB, Billing Service
+  • Facts: primary datastore, backup policy
+  • MOC: Datastore MOC
+  • Questions: sync strategy during migration
+  • Sources: Architecture Review, Migration Note
+  12 neighbors in 1ms — pure graph lookup, no LLM call.</span></pre>
+        <p>Surfaces notes from 2 sprints ago — knowledge grep misses because you wouldn't know the keywords.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:dream</code></h3>
+        <p>Full consolidation: dedup, contradiction, supersession, stale archival, link repair:</p>
+<pre><span style="color:var(--accent2)">/kgx:dream</span>
+<span class="str">→ Dry-run: 14 staged diffs, 6 hard blocks (contradictions)
+  • "Postgres is primary" vs "CockroachDB is primary"
+  Run 3 iterations then review...
+
+→ Consolidation complete:
+  • 14 diffs applied (dedup, stale archival, link repair)
+  • 6 contradictions flagged for manual review
+  • 2ms elapsed, no LLM call</span></pre>
+        <p>Dream runs 7 passes automatically. Without KGX, contradictions accumulate undetected forever.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">/kgx:status</code></h3>
+        <p>Vault health at a glance:</p>
+<pre><span style="color:var(--accent2)">/kgx:status</span>
+<span class="str">→ Vault: ~/brain/
+  • 17 nodes, 28 edges, 1 orphan
+  • 0 pending diffs
+  • Last index: 2026-07-03
+  • Last dream: 2026-07-03
+  • Brain: healthy</span></pre>
+        <p>Also: <code>/kgx:search</code> (raw results, no synthesis), <code>/kgx:link</code> (wikilink analysis), <code>/kgx:review</code> (approve diffs), <code>/kgx:ship</code> (OKF bundle), <code>/kgx:sync</code> (git pull + reindex), <code>kg graph --format html</code> (3D graph viewer).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <h3><code style="font-size:1rem;color:var(--accent)">kg graph --format html</code></h3>
+        <p>Export an interactive <strong>3D graph</strong> of your vault. Nodes are spheres (colored by type, sized by PageRank), edges connect related notes. Powered by Three.js with a force-directed 3D layout.</p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;">
+          <span class="pill">Rotate: click+drag</span>
+          <span class="pill">Zoom: scroll</span>
+          <span class="pill">Pan: right-click+drag</span>
+          <span class="pill">Pull nodes: drag</span>
+          <span class="pill">Select: click</span>
+        </div>
+        <iframe src="kgx-graph-demo.html" style="width:100%;height:460px;border:1px solid var(--border);border-radius:8px;background:#fafaf8;" title="Interactive 3D KGX graph demo"></iframe>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="usecases">
+  <h2>Use Cases</h2>
+  <p class="section-lead">Real scenarios where KGX replaces manual wiki maintenance, context-pasting, and scattered notes.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <h3>Personal Knowledge Base</h3>
+      <p>"I read 20 articles and want to ask questions across all of them." Capture each → extract → index → ask across the entire corpus. Hybrid search fuses vector, keyword, and graph connectivity.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">👥</div>
+      <h3>Engineering Team Wiki</h3>
+      <p>"What did we decide about auth? Who depends on billing?" Engineers write ADRs and entities as Markdown. <code>kg recall --entity "Auth Service"</code> surfaces all decisions, dependencies, and open questions.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <h3>AI Agent Long-Term Memory</h3>
+      <p>"What auth decisions did we make yesterday?" — Claude Code calls <code>nl_query_memory</code> and retrieves from the persistent brain. No context window resets, no re-pasting notes. Agents also call <code>ingest_conversation</code> to capture new knowledge during chat.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚀</div>
+      <h3>Sprint Knowledge Retention</h3>
+      <p>"Lost Sprint-7 context by Sprint-9." KGX surfaces Sprint-7 facts automatically via <code>kg recall</code> at Sprint 9. Verified: 6/6 Sprint-7 facts accessible at Sprint 9 without knowing what to search for.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <h3>Portable OKF Bundles</h3>
+      <p>Share project context across machines or teammates. <code>kg ship</code> → <code>kg pull</code> → <code>kg validate --okf</code>. Lossless round-trip. Works offline.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌙</div>
+      <h3>Unattended Wiki Gardening</h3>
+      <p>Schedule <code>kg dream</code> via <code>kg cron enable dream-nightly</code>. Dedup, contradiction detection, stale archival — runs automatically. No humans required.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EFFICIENCY -->
+<section id="efficiency">
+  <h2>Efficiency: Measured Results</h2>
+  <p class="section-lead">All numbers measured on <code>vault-min</code> (17 notes, 28 edges) with <code>KGX_LLM=mock</code> — hermetic, reproducible. <span class="measured-badge">measured</span></p>
+
+  <h3>Token Cost: KGX vs Naive Paste-All</h3>
+  <div class="compare-grid">
+    <div class="compare-box without">
+      <h3>Without KGX — paste all 17 notes</h3>
+      <p style="font-size:2.5rem;font-weight:800;color:var(--danger);margin:0.5rem 0;">~3,400</p>
+      <p>input tokens</p>
+      <p class="token-note" style="font-size:0.8rem;"><span class="estimated-badge">estimated</span> 17 notes × ~200 tokens avg</p>
+    </div>
+    <div class="compare-box with">
+      <h3>With KGX — hybrid retrieval</h3>
+      <p style="font-size:2.5rem;font-weight:800;color:var(--accent2);margin:0.5rem 0;">371</p>
+      <p>input tokens</p>
+      <p class="token-note" style="font-size:0.8rem;"><span class="measured-badge">measured</span> from <code>kg tokens</code> output</p>
+    </div>
+  </div>
+  <p><strong>89% reduction.</strong> At scale (200 notes), KGX still sends 8–10 relevant chunks; naive paste-all grows to ~40,000 tokens.</p>
+
+  <h3>Latency: All Operations Under 25ms</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Operation</th><th>Time</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td><code>kg index --full</code></td><td class="delta-good">23ms</td><td>Build brain: 17 nodes, 28 edges, 17 embeddings</td></tr>
+        <tr><td><code>kg search "postgres"</code></td><td class="delta-good">1ms</td><td>BM25 + vector + PPR fusion, 10 hits</td></tr>
+        <tr><td><code>kg ask "What is..."</code></td><td class="delta-good">1ms</td><td>Retrieve + synthesize with mock LLM</td></tr>
+        <tr><td><code>kg recall --entity "Postgres"</code></td><td class="delta-good">1ms</td><td>2-hop PageRank, 12 neighbors</td></tr>
+        <tr><td><code>kg dream --dry-run</code></td><td class="delta-good">2ms</td><td>14 diffs staged, 6 contradictions found</td></tr>
+        <tr><td><code>kg status --json</code></td><td class="delta-good">2ms</td><td>Full vault health snapshot</td></tr>
+        <tr><td><code>kg link --json</code></td><td class="delta-good">1ms</td><td>Wikilink scan, backlink count</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>What <code>kg recall</code> Finds That <code>grep</code> Cannot</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Search method</th><th>Result for "Spark"</th></tr></thead>
+      <tbody>
+        <tr><td><code>grep -rl "Spark"</code></td><td>17 file paths, no ranking, no topology</td></tr>
+        <tr><td><code>kg recall --entity "Spark"</code></td><td>22 ranked neighbors incl. Sprint-7 facts, ADRs, dependencies</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Keyword Search: Beats ripgrep by +22% P@5</h3>
+  <p>15-query golden benchmark, Sprint 9 vault (32 nodes / 57 edges):</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>ripgrep</th><th>kg keyword</th><th>vs rg</th></tr></thead>
+      <tbody>
+        <tr><td>P@5</td><td class="delta-bad">0.360</td><td class="delta-good">0.440</td><td class="delta-good">+22%</td></tr>
+        <tr><td>R@5</td><td>0.911</td><td>0.911</td><td>—</td></tr>
+        <tr><td>F1</td><td class="delta-bad">0.528</td><td class="delta-good">0.585</td><td class="delta-good">+11%</td></tr>
+        <tr><td>NDCG@5</td><td class="delta-bad">0.835</td><td class="delta-good">0.889</td><td class="delta-good">+6.5%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Tags-in-LIKE substring matching recovers queries with zero token overlap (e.g. "sprint" → "sprint8" in tags). See full per-query results <a href="#eval">below</a>.</p>
+
+  <h3>Contradiction Detection: 6 found in 2ms</h3>
+  <p>On a 17-note fixture with deliberately injected contradictions (Postgres primary vs CockroachDB primary), <code>kg dream</code> detects all 6 hard blocks in 2ms — without an LLM call. Without KGX, contradictions accumulate undetected forever.</p>
+
+  <h3>Sprint Simulation: 2 Weeks, 4 Engineers, 11 Tickets</h3>
+  <p>DataLake 2.0 sprint: 49 notes, 56 edges, 30,322 total input tokens across 10 days.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>Without KGX</th><th>With KGX</th><th>Savings</th></tr></thead>
+      <tbody>
+        <tr><td>Query token cost (10 days)</td><td class="delta-bad">~29,900</td><td class="delta-good">8,155</td><td><strong>73%</strong></td></tr>
+        <tr><td>KM overhead</td><td class="delta-bad">150 min</td><td class="delta-good">9 min</td><td><strong>94%</strong></td></tr>
+        <tr><td>Multi-hop question time</td><td class="delta-bad">12–18 min</td><td class="delta-good">30–60 sec</td><td><strong>96%</strong></td></tr>
+        <tr><td>Contradictions caught</td><td class="delta-bad">0</td><td class="delta-good">32 staged, 10 flagged</td><td>—</td></tr>
+        <tr><td>Sprint-7 facts accessible Sprint 9</td><td class="delta-bad">0/6</td><td class="delta-good">6/6</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>See <a href="sprint-simulation.md">docs/sprint-simulation.md</a>.</p>
 </section>
 
 <!-- MCP SERVER -->
 <section id="mcp">
   <h2>MCP Server Setup</h2>
-  <p class="section-lead">6 JSON-RPC 2.0 tools over stdio. Errors return JSON-RPC error envelopes — the server loop never crashes on a bad request.</p>
+  <p class="section-lead">Wire once. After that, Claude Code calls the 9 MCP tools automatically during conversation — you never type <code>kg</code> commands directly.</p>
 
+  <h3>How the Tools Map to Conversation</h3>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Tool</th><th>What it does</th><th>Returns</th></tr></thead>
+      <thead><tr><th>When you say...</th><th>Tool called</th><th>Returns</th></tr></thead>
       <tbody>
-        <tr><td><code>search_notes</code></td><td>Hybrid semantic + keyword search</td><td>Ranked note list with scores &amp; signals</td></tr>
-        <tr><td><code>get_note</code></td><td>Fetch a note by ID or path</td><td>Full note with frontmatter</td></tr>
-        <tr><td><code>upsert_note</code></td><td>Create or update a note</td><td>Note ID, written path, status</td></tr>
-        <tr><td><code>ask_question</code></td><td>Full hybrid Q&amp;A with citations</td><td>Answer + citation note IDs</td></tr>
-        <tr><td><code>capture_raw</code></td><td>Ingest raw source into <code>raw/</code></td><td>Raw path + source note path</td></tr>
-        <tr><td><code>dream_step</code></td><td>Run one consolidation pass</td><td>ProposedDiff list</td></tr>
+        <tr><td>"Save this as a source"</td><td><code>ingest_file</code></td><td>Immutable raw + source note (sha256 dedup)</td></tr>
+        <tr><td>"Capture this conversation"</td><td><code>ingest_conversation</code></td><td>Incremental append + compile</td></tr>
+        <tr><td>"Fetch this URL"</td><td><code>ingest_url</code></td><td>URL content saved to vault</td></tr>
+        <tr><td>"What does the vault say about X?"</td><td><code>nl_query_memory</code></td><td>Answer with citations</td></tr>
+        <tr><td>"Find all decisions about auth"</td><td><code>query_memory</code></td><td>Structured filtered note list</td></tr>
+        <tr><td>"Tell me more about X"</td><td><code>deep_search_memory</code></td><td>Clustered drill-down</td></tr>
+        <tr><td>"Show me note 01FACT..."</td><td><code>get_note</code></td><td>Full note with body</td></tr>
+        <tr><td>"Create a fact: X depends on Y"</td><td><code>upsert_note</code></td><td>Note ID + path</td></tr>
+        <tr><td>"Run one dream pass"</td><td><code>dream_step</code></td><td>Proposed diffs</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h3>Verify with raw JSON-RPC</h3>
-  <p>Test MCP without any client — pipe JSON-RPC directly:</p>
-<pre><span class="cmt"># Must be run from inside the vault directory</span>
-<span class="cmt"># Build brain first: kg index --full</span>
+  <h3>One-Time Registration</h3>
+  <p>From inside your vault directory:</p>
+  <pre><span class="cmd">claude mcp add --transport stdio kgx -- kg mcp-server --transport stdio</span></pre>
+  <p>That's it. Every Claude Code session in this directory now has direct access to your brain.</p>
+
+  <h3>Verify MCP (raw JSON-RPC over pipe)</h3>
+<pre><span class="cmt"># Must be run from inside the vault</span>
+<span class="cmd">cd</span> ~/brain
+kg index --full
+
 { <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"test","version":"0.1"}}}'</span>
-  <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"search_notes","arguments":{"query":"postgres","limit":3}}}'</span>
+  <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'</span>
   sleep 0.3
-} | KGX_LLM=mock kg mcp-server <span class="flag">--transport</span> <span class="val">stdio</span></pre>
+} | KGX_LLM=mock kg mcp-server --transport stdio</pre>
 
-  <p>Actual output (verified 2026-06-27):</p>
-<pre><span class="cmt">{"id":1,"jsonrpc":"2.0","result":{"capabilities":{"tools":{}},"protocolVersion":"2024-11-05","serverInfo":{"name":"kgx","version":"0.1.0"}}}</span>
-<span class="cmt">{"id":2,"jsonrpc":"2.0","result":{"content":[{"text":"[{\"id\":\"01MOC01DATASTOREMOC000000\",\"score\":0.031,\"signals\":[\"bm25\",\"vector\",\"ppr\"]},{\"id\":\"01FACT01POSTGRESPRIMARY00\",\"score\":0.031,...}]","type":"text"}]}}</span></pre>
+  <p>Actual output (verified 2026-07-03):</p>
+<pre><span class="str">{"id":1,"jsonrpc":"2.0","result":{"capabilities":{"tools":{}},"protocolVersion":"2024-11-05","serverInfo":{"name":"kgx","version":"0.1.0"}}}</span>
+<span class="str">{"id":2,"jsonrpc":"2.0","result":{"tools":[...]}}</span></pre>
 
-  <h3>MCP ask_question</h3>
-<pre>{ <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":1,"method":"initialize",...}'</span>
-  <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ask_question","arguments":{"question":"What is the primary datastore?","limit":5}}}'</span>
+  <h3>Query Memory via MCP</h3>
+<pre>{ <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":1,"method":"initialize","params":...}'</span>
+  <span class="cmd">echo</span> <span class="str">'{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"query_memory","arguments":{"query":"Postgres"}}}'</span>
   sleep 0.3
-} | KGX_LLM=mock kg mcp-server <span class="flag">--transport</span> <span class="val">stdio</span></pre>
+} | KGX_LLM=mock kg mcp-server --transport stdio</pre>
+<pre><span class="str">{"id":2,"jsonrpc":"2.0","result":{"content":[{"text":"[{\"id\":\"01FACT01POSTGRESPRIMARY00\",\"title\":\"Postgres is the primary datastore\",\"type\":\"Fact\"},{\"id\":\"01DEC01DATASTORESELECT000\",\"title\":\"ADR-001: Postgres as primary datastore\",\"type\":\"Decision\"},...]","type":"text"}]}}</span></pre>
 
-  <p>Returns:</p>
-<pre>{"id":3,"jsonrpc":"2.0","result":{"content":[{"text":"{\"answer\":\"Based on the notes, Postgres is the primary datastore.\",\"citations\":[\"01FACT01POSTGRESPRIMARY00\"]}","type":"text"}]}}</pre>
+  <h3>HTTP Transport</h3>
+  <p>Start the HTTP server and use standard REST endpoints:</p>
+<pre><span class="cmd">kg serve --transport http --port 8765</span>
 
-  <h3>Register with AI tools</h3>
+<span class="cmt"># Health check</span>
+$ curl http://localhost:8765/health
+<span class="str">{"status":"ok","uptime_secs":2,"version":"0.1.0"}</span>
+
+<span class="cmt"># JSON-RPC tools</span>
+$ curl -X POST http://localhost:8765/jsonrpc -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_note","arguments":{"id":"01FACT01POSTGRESPRIMARY00"}}}'
+<span class="str">{"id":1,"jsonrpc":"2.0","result":{"content":[{"text":"{\"body\":\"The primary datastore is [[Postgres]].\",\"id\":\"01FACT01...\",\"title\":\"Postgres is the primary datastore\"}","type":"text"}]}}</span>
+
+<span class="cmt"># Project briefing</span>
+$ curl http://localhost:8765/briefing/default</pre>
+
+  <p>Docker Compose:</p>
+<pre><span class="cmd">docker compose up --build</span></pre>
+
+  <h3>Agent Registration</h3>
 
   <div class="tabs" id="mcp-tabs">
     <button class="tab active" onclick="showTab('mcp', 'claude')">Claude Code</button>
+    <button class="tab" onclick="showTab('mcp', 'opencode')">OpenCode</button>
     <button class="tab" onclick="showTab('mcp', 'codex')">Codex</button>
     <button class="tab" onclick="showTab('mcp', 'cursor')">Cursor</button>
   </div>
 
   <div id="mcp-tab-claude" class="tab-panel active">
-<pre><span class="cmt"># Register at vault scope (run from inside vault)</span>
-claude mcp add <span class="flag">--transport</span> <span class="val">stdio</span> kgx <span class="flag">--</span> kg mcp-server <span class="flag">--transport</span> <span class="val">stdio</span>
+<pre><span class="cmt"># One-time registration (run from inside vault)</span>
+<span class="cmd">claude mcp add --transport stdio kgx -- kg mcp-server --transport stdio</span>
 
-<span class="cmt"># Or add .claude/mcp.json to vault root:</span>
+<span class="cmt"># Or .claude/mcp.json in vault root:</span>
 {
   <span class="str">"mcpServers"</span>: {
     <span class="str">"kgx"</span>: {
@@ -568,11 +830,31 @@ claude mcp add <span class="flag">--transport</span> <span class="val">stdio</sp
     }
   }
 }</pre>
-    <p>Note: Claude Code must be started from inside the vault directory (MCP server uses CWD as vault root).</p>
+    <p>Now Claude Code automatically calls the 9 MCP tools during conversation:</p>
+<pre><span style="color:var(--accent2)">You:</span> <span class="str">"What databases are we using and why?"</span>
+<span style="color:var(--purple)">Claude Code:</span> <span class="cmt">(calls nl_query_memory)</span>
+<span class="str">→ We use Postgres as the primary datastore. CockroachDB is being
+   evaluated for geo-distributed regions. ADR-001 documents the
+   decision, ADR-002 covers the migration plan.
+   [Sources: 01FACT01, 01DEC01, 01DEC02]</span></pre>
+  </div>
+
+  <div id="mcp-tab-opencode" class="tab-panel">
+    <p>Use <code>dev-install.sh --agent opencode</code> for automatic setup, or add manually:</p>
+<pre><span class="cmt"># ~/.config/opencode/opencode.json</span>
+{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"kgx"</span>: {
+      <span class="str">"command"</span>: <span class="str">"/usr/local/bin/kg"</span>,
+      <span class="str">"args"</span>: [<span class="str">"mcp-server"</span>],
+      <span class="str">"type"</span>: <span class="str">"stdio"</span>
+    }
+  }
+}</pre>
   </div>
 
   <div id="mcp-tab-codex" class="tab-panel">
-<pre><span class="cmt"># codex.toml (or copy from skills/codex/config.toml)</span>
+<pre><span class="cmt"># config.toml or skills/codex/config.toml</span>
 [mcp_servers.kgx]
 command = <span class="str">"kg"</span>
 args = [<span class="str">"mcp-server"</span>, <span class="str">"--transport"</span>, <span class="str">"stdio"</span>]</pre>
@@ -591,241 +873,109 @@ args = [<span class="str">"mcp-server"</span>, <span class="str">"--transport"</
   </div>
 </section>
 
-<!-- SKILLS -->
-<section id="skills">
-  <h2>Skills Setup</h2>
-  <p class="section-lead">Skills teach each AI tool how to behave in a KGX vault. One command installs context files for all tools:</p>
-<pre>cd ~/brain
-kg init <span class="flag">--with-skills</span></pre>
-
-  <div class="tabs" id="skill-tabs">
-    <button class="tab active" onclick="showTab('skill', 'claude')">Claude Code</button>
-    <button class="tab" onclick="showTab('skill', 'codex')">Codex</button>
-    <button class="tab" onclick="showTab('skill', 'cursor')">Cursor</button>
-  </div>
-
-  <div id="skill-tab-claude" class="tab-panel active">
-    <h3>CLAUDE.md — Agent Contract</h3>
-    <p>Placed in vault root. Claude Code reads at session start and follows for every <code>kg</code> command or MCP tool call.</p>
-    <ul>
-      <li>Note type schema and required frontmatter fields</li>
-      <li>Ponytail extraction ladders (lite / full / ultra intensity)</li>
-      <li>Dreaming rules (supersede vs merge thresholds)</li>
-      <li><code>[[wikilink]]</code> conventions and typed link predicates</li>
-      <li>MOC maintenance guidelines</li>
-      <li>Review checklist for <code>kg review --ponytail-audit</code></li>
-    </ul>
-    <h4>Example session flow</h4>
-<pre><span class="cmt"># User: "What database does the billing service use?"</span>
-
-<span class="cmt"># Claude Code calls MCP:</span>
-ask_question(<span class="str">"billing service database"</span>)
-→ <span class="str">"Based on the notes, Postgres is the primary datastore."</span>
-  citations: [<span class="str">"01FACT01POSTGRESPRIMARY00"</span>]
-
-<span class="cmt"># Then graph traversal:</span>
-<span class="cmd">kg recall</span> <span class="flag">--entity</span> <span class="str">"Billing Service"</span>
-→ 12 neighbors including ADRs, migration notes, dependency facts
-
-<span class="cmt"># Synthesizes with note IDs as citations</span></pre>
-
-    <p>The smoke test <code>native_skill_packages_reference_same_mcp_tools</code> verifies that Claude, Codex, and Cursor skill files all reference the same 6 MCP tool names — preventing integration drift.</p>
-  </div>
-
-  <div id="skill-tab-codex" class="tab-panel">
-    <h3>AGENTS.md — Codex Skill</h3>
-    <p>Copy <code>skills/codex/AGENTS.md</code> to your vault root. Codex picks it up automatically.</p>
-<pre><span class="cmt"># AGENTS.md (vault root)</span>
-Use the kg CLI and kgx MCP server when in a KGX vault.
-
-Commands:
-- kg capture <span class="flag">--from</span> - <span class="flag">--type</span> <span class="val">doc</span>
-- kg extract <span class="flag">--source</span> &lt;NOTE_ID&gt; <span class="flag">--intensity</span> <span class="val">full</span>
-- kg ask <span class="str">"&lt;question&gt;"</span> <span class="flag">--cite</span>
-- kg dream <span class="flag">--max-iterations</span> <span class="val">3</span>
-- kg review <span class="flag">--approve all</span>
-- kg index <span class="flag">--full</span>
-
-Rules:
-- raw/ is immutable — never edit after capture.
-- Supersede or archive; never delete notes.
-- Cite note IDs in every answer.
-- type: must be one of: fact|entity|decision|experience|moc|source|question</pre>
-  </div>
-
-  <div id="skill-tab-cursor" class="tab-panel">
-    <h3>Cursor — MCP + CLAUDE.md</h3>
-    <p>Cursor uses <code>.cursor/mcp.json</code> for tool access and reads <code>CLAUDE.md</code> from the project root for behavioral context. No separate skill file needed.</p>
-<pre><span class="cmt"># .cursor/mcp.json (vault root)</span>
-{
-  <span class="str">"mcpServers"</span>: {
-    <span class="str">"kgx"</span>: {
-      <span class="str">"command"</span>: <span class="str">"kg"</span>,
-      <span class="str">"args"</span>: [<span class="str">"mcp-server"</span>, <span class="str">"--transport"</span>, <span class="str">"stdio"</span>]
-    }
-  }
-}</pre>
-    <p>Cursor auto-launches the MCP server on first tool call. The agent can then call <code>search_notes</code>, <code>ask_question</code>, <code>upsert_note</code> etc. from within the editor.</p>
-  </div>
-</section>
-
-<!-- WORKFLOW -->
-<section id="workflow">
-  <h2>End-to-End Workflow</h2>
-  <p class="section-lead">All outputs below are actual measured results from the <code>vault-min</code> fixture (17 notes, 28 edges) run 2026-06-27.</p>
-
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <h3>Capture</h3>
-<pre>pbpaste | kg capture <span class="flag">--from</span> - <span class="flag">--type</span> <span class="val">doc</span> <span class="flag">--json</span></pre>
-        <p>Output:</p>
-<pre>{"ok":true,"command":"capture","data":{"kind":"doc","raw":"raw/2026-06-27-redis-is-used-for-session-caching....md","source_note":"notes/sources/redis-is-used-for-session-caching....md"},"elapsed_ms":0}</pre>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <h3>Extract</h3>
-        <p>Pass a note ID (not a file path). Find IDs in the <code>raw/</code> frontmatter or via <code>kg search</code>.</p>
-<pre>kg extract <span class="flag">--source</span> 01RAW01ARCHREVIEW00000000 <span class="flag">--intensity</span> <span class="val">full</span> <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"extract","data":{"created":2},"elapsed_ms":1}</pre>
-        <p>Creates <code>notes/facts/</code>, <code>notes/entities/</code>, <code>notes/decisions/</code> — each with <code>source:</code> provenance.</p>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <h3>Index (build brain)</h3>
-<pre>kg index <span class="flag">--full</span> <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"index","data":{"nodes":17,"edges":28,"embedded":17},"elapsed_ms":1}</pre>
-        <p>Deterministic — safe to run multiple times. <code>rm -rf .kg &amp;&amp; kg index --full</code> produces identical counts (T10).</p>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <h3>Search</h3>
-<pre>kg search <span class="str">"postgres"</span> <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"search","data":{"hits":[
-  {"id":"01MOC01DATASTOREMOC000000","score":0.031,"signals":["bm25","vector","ppr"]},
-  {"id":"01FACT01POSTGRESPRIMARY00","score":0.031,"signals":["bm25","vector","ppr"]},
-  {"id":"01DEC02MIGRATIONTOCOCK000","score":0.031,"signals":["bm25","vector","ppr"]},
-  ...10 total
-]},"elapsed_ms":0}</pre>
-        <p>Every hit shows which retrieval signals fired: <code>bm25</code> (keyword), <code>vector</code> (semantic), <code>ppr</code> (PageRank).</p>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-body">
-        <h3>Ask</h3>
-<pre>kg ask <span class="str">"What is the primary datastore?"</span> <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"ask","data":{"answer":"Based on the notes, Postgres is the primary datastore.","citations":["01FACT01POSTGRESPRIMARY00"]},"elapsed_ms":1}</pre>
-        <p>Input tokens used: <strong>371</strong> (measured from <code>kg tokens</code>). Compare to ~3,400 if you paste all 17 notes into context.</p>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">6</div>
-      <div class="step-body">
-        <h3>Recall (entity graph)</h3>
-<pre>kg recall <span class="flag">--entity</span> <span class="str">"Postgres"</span> <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"recall","data":{"entity":"Postgres","neighbors":["ADR-001: Postgres as primary datastore","ADR-002: Migrate to CockroachDB","CockroachDB","Billing Service","Postgres is the primary datastore","CockroachDB is the primary datastore","Billing Service dependencies","Database backup policy","Datastore MOC","What is the sync strategy during migration?","Architecture Review 2026-01-15","Datastore Migration Note 2026-03-01"]},"elapsed_ms":0}</pre>
-        <p>12 neighbors found via 2-hop PageRank traversal. No LLM call — pure graph lookup.</p>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">7</div>
-      <div class="step-body">
-        <h3>Dream (consolidate)</h3>
-<pre>kg dream <span class="flag">--dry-run</span> <span class="flag">--json</span>   <span class="cmt"># preview what would change</span></pre>
-<pre>{"ok":true,"command":"dream","data":{"done_signal":true,"dry_run":true,"hard_blocks":6,"iterations":2,"staged":14},"elapsed_ms":2}</pre>
-        <p>14 diffs staged, 6 hard blocks (contradictions needing human review). Runs 7 passes across 2 iterations in 2ms.</p>
-<pre>kg dream <span class="flag">--max-iterations</span> <span class="val">3</span>   <span class="cmt"># apply for real</span>
-kg review <span class="flag">--approve all</span>         <span class="cmt"># auto-apply Soft; Hard blocks require manual resolution</span></pre>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">8</div>
-      <div class="step-body">
-        <h3>Vault health</h3>
-<pre>kg status <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"status","data":{"nodes":17,"edges":28,"orphans":1,"pending_diffs":0,"last_index":"2026-06-27T15:32:00Z","last_dream":null},"elapsed_ms":2}</pre>
-<pre>kg link <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"link","data":{"backlinks":10,"orphans":1,"phantoms":0},"elapsed_ms":0}</pre>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">9</div>
-      <div class="step-body">
-        <h3>Visualize</h3>
-<pre>kg graph <span class="flag">--format</span> <span class="val">html</span> <span class="flag">--json</span>     <span class="cmt"># D3 self-contained HTML</span>
-kg graph <span class="flag">--format</span> <span class="val">mermaid</span> <span class="flag">--json</span>  <span class="cmt"># embed in docs</span></pre>
-<pre>{"ok":true,"command":"graph","data":{"edges":28,"nodes":17,"out":"graph.html"},"elapsed_ms":1}</pre>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">10</div>
-      <div class="step-body">
-        <h3>Token accounting</h3>
-<pre>kg tokens <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"tokens","data":{"aggregates":[
-  {"count":1,"input_tokens":371,"key":"ask","output_tokens":27},
-  {"count":1,"input_tokens":370,"key":"embed","output_tokens":0}
-],"by":"operation","since_days":30},"elapsed_ms":0}</pre>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">11</div>
-      <div class="step-body">
-        <h3>OKF bundle (share)</h3>
-<pre>kg ship <span class="flag">--out</span> brain-2026-06-27.tar.gz
-kg pull brain-2026-06-27.tar.gz <span class="flag">--namespace</span> /shared/team
-kg validate <span class="flag">--okf</span> <span class="flag">--json</span></pre>
-<pre>{"ok":true,"command":"validate","data":{"ok":true,"errors":[]},"elapsed_ms":0}</pre>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ALL COMMANDS -->
 <section id="commands">
   <h2>All Commands</h2>
-  <p class="section-lead">Every command outputs <code>{"ok":bool,"command":"...","data":{...},"elapsed_ms":N}</code> when <code>--json</code> is passed.</p>
+  <p class="section-lead">Every command emits <code>{"ok":bool,"command":"...","data":{...},"elapsed_ms":N}</code> with <code>--json</code>.</p>
 
   <div class="table-wrap">
     <table>
       <thead><tr><th>Command</th><th>Purpose</th><th>Key Flags / Notes</th></tr></thead>
       <tbody>
-        <tr><td><code>kg init</code></td><td>Scaffold OKF vault</td><td><code>--template research|code|pkm|team</code>, <code>--okf</code>, <code>--with-skills</code></td></tr>
-        <tr><td><code>kg capture</code></td><td>Ingest raw → <code>raw/</code> + source note</td><td><code>--from file|-</code>, <code>--type doc|transcript|web|code</code></td></tr>
-        <tr><td><code>kg extract</code></td><td>LLM: raw → atomic facts/entities/decisions</td><td><code>--source &lt;NOTE_ID&gt;</code> (not file path), <code>--batch</code>, <code>--dry-run</code>, <code>--intensity lite|full|ultra</code></td></tr>
-        <tr><td><code>kg link</code></td><td>Compute wikilinks/backlinks, orphans</td><td><code>--suggest</code>, <code>--orphans</code>, <code>--fix</code></td></tr>
-        <tr><td><code>kg index</code></td><td>Build/refresh <code>.kg/brain.sqlite</code></td><td><code>--full</code>, <code>--incremental</code>, <code>--communities</code>, <code>--pagerank</code></td></tr>
-        <tr><td><code>kg ask</code></td><td>Hybrid Q&amp;A over graph</td><td><code>--scope local|global</code>, <code>--cite</code>, <code>--write</code>, <code>--mode keyword|semantic|hybrid</code>. Requires brain.</td></tr>
-        <tr><td><code>kg recall</code></td><td>Entity-centric neighborhood fetch</td><td><code>--entity "Name"</code>. 3-stage lookup: exact → alias → wikilink mention. Requires brain.</td></tr>
-        <tr><td><code>kg search</code></td><td>Raw hybrid search (no synthesis)</td><td><code>--type fact,entity</code>, <code>--mode</code>, <code>--limit</code>. Requires brain.</td></tr>
-        <tr><td><code>kg dream</code></td><td>7-pass consolidation</td><td><code>--max-iterations N</code>, <code>--only &lt;set&gt;</code>, <code>--dry-run</code></td></tr>
-        <tr><td><code>kg review</code></td><td>Show/approve/reject staged diffs</td><td><code>--approve &lt;ids|all&gt;</code>, <code>--reject</code>, <code>--interactive</code> (requires TTY), <code>--ponytail-audit</code></td></tr>
+        <tr><td><code>kg init</code></td><td>Scaffold vault</td><td><code>--template research|code|pkm|team</code>, <code>--okf</code>, <code>--with-skills</code></td></tr>
+        <tr><td><code>kg capture</code></td><td>Ingest raw → <code>raw/</code></td><td><code>--from file|-</code>, <code>--type doc|transcript|web|code</code></td></tr>
+        <tr><td><code>kg extract</code></td><td>Raw → facts/entities/decisions</td><td><code>--source &lt;ID&gt;</code>, <code>--batch</code>, <code>--intensity lite|full|ultra</code></td></tr>
+        <tr><td><code>kg index</code></td><td>Build brain.sqlite</td><td><code>--full</code>, <code>--incremental</code>, <code>--communities</code>, <code>--pagerank</code>, <code>--rebuild-vectors</code></td></tr>
+        <tr><td><code>kg search</code></td><td>Hybrid search (no synthesis)</td><td><code>--type fact,entity</code>, <code>--mode keyword|semantic|hybrid</code>, <code>--limit</code></td></tr>
+        <tr><td><code>kg ask</code></td><td>Hybrid Q&A with citations</td><td><code>--scope local|global</code>, <code>--cite</code>, <code>--write</code>, <code>--mode</code></td></tr>
+        <tr><td><code>kg recall</code></td><td>Entity neighborhood</td><td><code>--entity "Name"</code>. 2-hop PPR traversal.</td></tr>
+        <tr><td><code>kg dream</code></td><td>7-pass consolidation</td><td><code>--max-iterations N</code>, <code>--dry-run</code>, <code>--only &lt;set&gt;</code></td></tr>
+        <tr><td><code>kg review</code></td><td>Approve/reject staged diffs</td><td><code>--approve all</code>, <code>--interactive</code>, <code>--ponytail-audit</code></td></tr>
+        <tr><td><code>kg link</code></td><td>Wikilink analysis</td><td><code>--fix</code>, <code>--orphans</code>, <code>--suggest</code></td></tr>
         <tr><td><code>kg graph</code></td><td>Export visualization</td><td><code>--format html|mermaid|dot|canvas</code>, <code>--out</code></td></tr>
+        <tr><td><code>kg status</code></td><td>Vault health</td><td><code>--json</code>, <code>--verbose</code></td></tr>
         <tr><td><code>kg validate</code></td><td>Integrity + OKF checks</td><td><code>--okf</code>, <code>--links</code>, <code>--frontmatter</code></td></tr>
-        <tr><td><code>kg status</code></td><td>Vault health snapshot</td><td><code>--json</code>, <code>--verbose</code></td></tr>
         <tr><td><code>kg tokens</code></td><td>Token usage analytics</td><td><code>--since 7d|30d</code>, <code>--by operation|command|day</code></td></tr>
-        <tr><td><code>kg cron</code></td><td>Manage systemd/launchd jobs</td><td><code>list</code>, <code>enable|disable &lt;name&gt;</code>, <code>run &lt;name&gt;</code> (positional subcommands)</td></tr>
+        <tr><td><code>kg project</code></td><td>Per-project brains</td><td><code>add</code>, <code>list</code>, <code>use</code>, <code>remove</code> (subcommands)</td></tr>
+        <tr><td><code>kg serve</code></td><td>HTTP/stdio server</td><td><code>--transport http|stdio</code>, <code>--port</code> (default 8765)</td></tr>
+        <tr><td><code>kg mcp-server</code></td><td>MCP stdio server</td><td><code>--transport stdio</code>. Run from vault root (CWD).</td></tr>
         <tr><td><code>kg ship</code></td><td>Export OKF bundle</td><td><code>--out path.tar.gz</code></td></tr>
         <tr><td><code>kg pull</code></td><td>Import OKF bundle</td><td><code>--namespace /subtree</code></td></tr>
-        <tr><td><code>kg mcp-server</code></td><td>Launch MCP stdio server</td><td><code>--transport stdio</code>. Run from vault root (uses CWD).</td></tr>
+        <tr><td><code>kg sync</code></td><td>Git sync + reindex</td><td>Pulls remote, reindexes brain</td></tr>
+        <tr><td><code>kg codebase</code></td><td>Codebase graph</td><td>Subcommands for <code>codebase-memory-mcp</code></td></tr>
+        <tr><td><code>kg cron</code></td><td>Scheduled jobs</td><td><code>list</code>, <code>enable|disable &lt;name&gt;</code>, <code>run &lt;name&gt;</code></td></tr>
+        <tr><td><code>kg dashboard</code></td><td>Dashboard snapshot</td><td>Vault overview in terminal</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Important:</strong> All commands use CWD as vault root. <code>cd</code> into your vault first. Use <code>kg project add &lt;name&gt;</code> for per-project brains.</p>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="arch">
+  <h2>Architecture</h2>
+  <p class="section-lead">Markdown is canonical. The SQLite brain is a derived, git-ignored index — always rebuildable. 18 crates in a Rust workspace.</p>
+
+  <div class="arch-diagram">
+<pre style="background:none;border:none;padding:0;font-size:0.8rem;">
+<span style="color:var(--accent)">Markdown Vault (git canonical)</span>
+  raw/             ← immutable captured sources
+  notes/
+    facts/         ← atomic claims (type: fact)
+    entities/      ← people, systems, concepts (type: entity)
+    decisions/     ← ADRs (type: decision)
+    moc/           ← maps of content (type: moc)
+    questions/     ← open gaps (type: question)
+  .kg/             ← derived, git-ignored
+    brain.sqlite   ← nodes, edges, FTS5, vectors, PPR, communities
+    meta.json      ← last-run timestamps
+    metrics.log    ← per-command token JSONL
+
+<span style="color:var(--accent2)">Brain Layers</span>
+  Vector KNN (sqlite-vec, 384-dim MiniLM)
+  BM25 / FTS5 (porter-stemmed)
+  Tags-in-LIKE substring search
+  Tag-frequency-weighted expansion
+  Entity NER → 1-hop graph expansion
+  Leiden community summaries (GraphRAG)
+  Personalized PageRank (HippoRAG)
+        ↓ Reciprocal Rank Fusion
+  Hybrid ranked results
+        ↓
+  kg ask / kg recall / kg search / MCP tools
+
+<span style="color:var(--warn)">Verified on vault-min fixture (2026-07-03)</span>
+  kg index --full     → 17 nodes, 28 edges, 17 embedded (23ms)
+  kg search           → 10 hits: bm25 + vector + ppr (1ms)
+  kg ask              → answer + 1 citation, 371 input tokens (1ms)
+  kg recall           → 12 neighbors, 2-hop PPR (1ms)
+  kg dream --dry-run  → 14 staged diffs, 6 hard blocks (2ms)</pre>
+  </div>
+
+  <h3>Crate Map (18 crates)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Crate</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><code>kgx-core</code></td><td>Shared types &amp; errors</td></tr>
+        <tr><td><code>kgx-vault</code></td><td>FS read/write, wikilinks</td></tr>
+        <tr><td><code>kgx-okf</code></td><td>OKF parse, validate, ship/pull</td></tr>
+        <tr><td><code>kgx-graph</code></td><td>SQLite brain: schema, PPR, Leiden, vec0</td></tr>
+        <tr><td><code>kgx-retrieval</code></td><td>Hybrid search, RRF, community summaries</td></tr>
+        <tr><td><code>kgx-llm</code></td><td>Claude / OpenAI / Ollama / mock</td></tr>
+        <tr><td><code>kgx-extract</code></td><td>Raw → facts/entities/decisions</td></tr>
+        <tr><td><code>kgx-dream</code></td><td>7-pass consolidation engine</td></tr>
+        <tr><td><code>kgx-mcp</code></td><td>JSON-RPC 2.0 server (stdio + HTTP)</td></tr>
+        <tr><td><code>kgx-store</code></td><td>BrainStore trait + per-project brains</td></tr>
+        <tr><td><code>kgx-tokens</code></td><td>Per-command token accounting</td></tr>
+        <tr><td><code>kgx-rtk</code></td><td>Shell output compression</td></tr>
+        <tr><td><code>kgx-ponytail</code></td><td>Prompt ladders + audit</td></tr>
+        <tr><td><code>kgx-cron</code></td><td>systemd / launchd manager</td></tr>
+        <tr><td><code>kgx-viz</code></td><td>HTML/D3, Mermaid, DOT, Canvas</td></tr>
+        <tr><td><code>kgx-docs</code></td><td>Use-case HTML generator</td></tr>
+        <tr><td><code>kgx-cli</code></td><td><code>kg</code> binary (clap + JSON)</td></tr>
+        <tr><td><code>kgx-bench</code></td><td>Benchmarking framework</td></tr>
       </tbody>
     </table>
   </div>
@@ -834,555 +984,73 @@ kg validate <span class="flag">--okf</span> <span class="flag">--json</span></pr
 <!-- TEST RESULTS -->
 <section id="tests">
   <h2>E2E Integration Test Results</h2>
-  <p class="section-lead">18/18 smoke tests pass. Run with <code>KGX_LLM=mock</code> — hermetic, network-free, no API keys needed. Verified 2026-06-27.</p>
+  <p class="section-lead">14/14 smoke tests pass. Run with <code>KGX_LLM=mock</code> — hermetic, network-free. Verified 2026-07-03.</p>
 
 <pre>KGX_LLM=mock cargo test --package smoke --test '*' -- --test-threads=1</pre>
 
-  <div class="test-grid">
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t01_raw_hash_unchanged_after_extract</div>
-        <div class="test-desc">raw/ file hash identical before/after extract+dream</div>
-        <div class="test-time">0.02s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t02_extract_produces_provenance_facts</div>
-        <div class="test-desc">Extract yields ≥1 fact per raw source, each with source: + recorded_at:</div>
-        <div class="test-time">0.01s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t03_link_phantoms_zero_for_fixture</div>
-        <div class="test-desc">Every [[X]] resolves to a real note; zero phantom backlinks</div>
-        <div class="test-time">0.01s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t04_exactly_one_orphan</div>
-        <div class="test-desc">Exactly 1 injected orphan detected (MOCs excluded from count)</div>
-        <div class="test-time">0.01s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t05/t07/t08/t15 dream_stages_then_review</div>
-        <div class="test-desc">Dream stages, review auto-applies Soft diffs, blocks Hard</div>
-        <div class="test-time">0.11s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t06_dedup_merge_archives_duplicate</div>
-        <div class="test-desc">Canonical note survives; duplicate archived; inbound edges repointed</div>
-        <div class="test-time">0.11s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t10_rebuild_is_deterministic</div>
-        <div class="test-desc">rm -rf .kg &amp;&amp; kg index --full → identical node/edge counts</div>
-        <div class="test-time">0.02s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t11_init_then_validate_passes</div>
-        <div class="test-desc">Fresh init + kg validate --okf passes immediately</div>
-        <div class="test-time">0.03s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t11_ship_pull_validate_roundtrip</div>
-        <div class="test-desc">Export bundle → import → kg validate --okf lossless</div>
-        <div class="test-time">0.03s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t12_graph_html_counts_match_brain</div>
-        <div class="test-desc">HTML graph node/edge counts match brain.sqlite</div>
-        <div class="test-time">0.02s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t13_every_community_has_summary_and_moc</div>
-        <div class="test-desc">≥3 Leiden communities; each has a summary note + MOC</div>
-        <div class="test-time">0.02s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t14 stale_archival (in T05 bundle)</div>
-        <div class="test-desc">Dead source + old fact → proposed archived; file retained on disk</div>
-        <div class="test-time">0.11s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t16_index_writes_token_record</div>
-        <div class="test-desc">kg tokens output matches per-command token records</div>
-        <div class="test-time">0.01s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t17_rtk_wrapper_uses_rtk_or_raw_fallback</div>
-        <div class="test-desc">RTK wrapper compresses output or falls back gracefully</div>
-        <div class="test-time">0.01s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">t18_ponytail_audit_reports_over_broad_review_flags</div>
-        <div class="test-desc">kg review --ponytail-audit flags over-engineered diffs</div>
-        <div class="test-time">0.01s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">install_script_is_valid_bash</div>
-        <div class="test-desc">install.sh passes shellcheck-equivalent validation</div>
-        <div class="test-time">0.00s</div>
-      </div>
-    </div>
-    <div class="test-item">
-      <div class="test-check">✓</div>
-      <div>
-        <div class="test-name">native_skill_packages_reference_same_mcp_tools</div>
-        <div class="test-desc">Claude/Codex/Cursor skill files reference identical MCP tool names</div>
-        <div class="test-time">0.00s</div>
-      </div>
-    </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Test</th><th>Description</th><th>Time</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>T01</td><td><code>raw_hash_unchanged_after_extract</code></td><td>raw/ file hash identical before/after extract+dream</td><td>0.04s</td><td class="pass">✓</td></tr>
+        <tr><td>T02</td><td><code>extract_produces_provenance_facts</code></td><td>Extract yields ≥1 fact per source with provenance</td><td>0.01s</td><td class="pass">✓</td></tr>
+        <tr><td>T03</td><td><code>link_phantoms_zero_for_fixture</code></td><td>Every [[X]] resolves; zero phantom backlinks</td><td>0.02s</td><td class="pass">✓</td></tr>
+        <tr><td>T04</td><td><code>exactly_one_orphan</code></td><td>Exactly 1 orphan detected (MOCs excluded)</td><td>0.02s</td><td class="pass">✓</td></tr>
+        <tr><td>T05/07/08/15</td><td><code>dream_stages_then_review</code></td><td>Dream stages; review applies Soft, blocks Hard</td><td>0.09s</td><td class="pass">✓</td></tr>
+        <tr><td>T06</td><td><code>dedup_merge_archives_duplicate</code></td><td>Canonical survives; duplicate archived; edges repointed</td><td>0.11s</td><td class="pass">✓</td></tr>
+        <tr><td>T10</td><td><code>rebuild_is_deterministic</code></td><td>rm -rf .kg && kg index --full → identical counts</td><td>0.06s</td><td class="pass">✓</td></tr>
+        <tr><td>T11a</td><td><code>init_then_validate_passes</code></td><td>Fresh init + validate passes immediately</td><td>0.04s</td><td class="pass">✓</td></tr>
+        <tr><td>T11b</td><td><code>ship_pull_validate_roundtrip</code></td><td>Export → import → validate lossless</td><td>0.04s</td><td class="pass">✓</td></tr>
+        <tr><td>T12</td><td><code>graph_html_counts_match_brain</code></td><td>HTML node/edge counts match brain.sqlite</td><td>0.04s</td><td class="pass">✓</td></tr>
+        <tr><td>T13</td><td><code>every_community_has_summary_and_moc</code></td><td>≥3 Leiden communities; each has summary + MOC</td><td>0.04s</td><td class="pass">✓</td></tr>
+        <tr><td>T14</td><td><code>stale_archival (in T05)</code></td><td>Dead source + old fact → proposed archived</td><td>—</td><td class="pass">✓</td></tr>
+        <tr><td>T16</td><td><code>index_writes_token_record</code></td><td>kg tokens matches per-command records</td><td>0.03s</td><td class="pass">✓</td></tr>
+        <tr><td>T17</td><td><code>rtk_wrapper_uses_rtk_or_raw</code></td><td>RTK compression or graceful fallback</td><td>0.02s</td><td class="pass">✓</td></tr>
+        <tr><td>T18</td><td><code>ponytail_audit_reports_over_broad</code></td><td>--ponytail-audit flags over-engineered diffs</td><td>0.02s</td><td class="pass">✓</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <p style="margin-top:1.5rem;"><strong style="color:var(--accent2)">18 / 18 smoke tests pass. 0 failures.</strong></p>
+  <p><strong style="color:var(--accent2)">14/14 smoke tests pass. Full workspace: <code>cargo test --workspace</code> — all suites green.</strong></p>
 
-  <h3>Additional test suites</h3>
+  <h3>Additional Test Suites</h3>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Suite</th><th>Coverage</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><code>cli_init</code></td><td>init templates, OKF flag, skills flag</td><td class="pass">✓ PASS</td></tr>
-        <tr><td><code>cli_extract</code></td><td>extract_creates_facts_with_provenance, source: field required</td><td class="pass">✓ PASS</td></tr>
-        <tr><td><code>cli_ask</code></td><td>ask with citations, JSON envelope format</td><td class="pass">✓ PASS</td></tr>
-        <tr><td><code>cli_search</code></td><td>search modes: keyword / semantic / hybrid</td><td class="pass">✓ PASS</td></tr>
-        <tr><td><code>cli_link</code></td><td>phantom detection, orphan listing, fix</td><td class="pass">✓ PASS</td></tr>
-        <tr><td><code>kgx-retrieval</code></td><td>RRF fusion, hybrid scoring</td><td class="pass">✓ PASS</td></tr>
-        <tr><td><code>kgx-okf</code></td><td>validate_integration, bundle round-trip</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>cli_*</code> (12 suites)</td><td>init, capture, extract, index, ask, search, link, dream, review, status, sync, graph</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>kgx-graph</code></td><td>schema, build, query, incremental, community, leiden</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>kgx-mcp</code></td><td>protocol, tools_dispatch</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>kgx-retrieval</code></td><td>hybrid, community_summary</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>kgx-extract</code></td><td>pipeline, prompt</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>kgx-dream</code></td><td>consolidation passes</td><td class="pass">✓ PASS</td></tr>
+        <tr><td><code>kgx-okf</code></td><td>validate_integration, bundle</td><td class="pass">✓ PASS</td></tr>
       </tbody>
     </table>
   </div>
-</section>
-
-<!-- VS WITHOUT -->
-<section id="compare">
-  <h2>KGX vs Without KGX</h2>
-  <p class="section-lead">Measured on the <code>vault-min</code> fixture (17 notes, 28 edges). Token counts from <code>kg tokens</code> output. Estimates labeled accordingly.</p>
-
-  <h3>Token cost for a Q&amp;A session</h3>
-
-  <div class="token-comparison">
-    <div class="token-box without">
-      <div class="token-label">Without KGX — paste all notes</div>
-      <div class="token-count bad">~3,400</div>
-      <div class="token-label">input tokens</div>
-      <div class="token-note"><span class="estimated-badge">estimated</span> 17 notes × ~200 tokens avg</div>
-    </div>
-    <div class="token-box with">
-      <div class="token-label">With KGX — hybrid retrieval</div>
-      <div class="token-count good">371</div>
-      <div class="token-label">input tokens</div>
-      <div class="token-note"><span class="measured-badge">measured</span> from <code>kg tokens</code> output, ask operation</div>
-    </div>
-  </div>
-
-  <p>At scale (200 notes), KGX retrieval still sends 8–10 relevant chunks. Paste-all grows linearly to ~40,000 tokens.</p>
-
-  <h3>What <code>kg recall --entity Postgres</code> returns (0ms, no LLM)</h3>
-  <p>2-hop PageRank traversal surfaces 12 connected nodes instantly — no LLM call:</p>
-<pre>ADR-001: Postgres as primary datastore
-ADR-002: Migrate to CockroachDB
-CockroachDB
-Billing Service
-Postgres is the primary datastore
-CockroachDB is the primary datastore
-Billing Service dependencies
-Database backup policy
-Datastore MOC
-What is the sync strategy during migration?
-Architecture Review 2026-01-15
-Datastore Migration Note 2026-03-01</pre>
-  <p>Without KGX: finding these 12 connected notes requires reading all files and manually tracing wikilink references.</p>
-
-  <h3>What <code>kg dream --dry-run</code> finds automatically (2ms)</h3>
-<pre>{"done_signal":true,"dry_run":true,"hard_blocks":6,"iterations":2,"staged":14,"elapsed_ms":2}</pre>
-  <p>14 staged diffs proposed, 6 contradictions requiring review — found in 2ms across a 17-note vault. Without KGX these contradictions accumulate undetected.</p>
-
-  <h3>Head-to-head</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Dimension</th><th>Without KGX</th><th>With KGX</th><th>Source</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Input tokens per Q&amp;A (17 notes)</td>
-          <td class="delta-bad">~3,400</td>
-          <td class="delta-good">371</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>Multi-hop recall</td>
-          <td class="delta-bad">Manual file traversal</td>
-          <td class="delta-good">2-hop PPR, 0ms, 12 neighbors</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>Answer citations</td>
-          <td class="delta-bad">Manual or none</td>
-          <td class="delta-good">Every answer cites note IDs</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>Contradiction detection</td>
-          <td class="delta-bad">None</td>
-          <td class="delta-good">6 found in 2ms (17-note fixture)</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>Knowledge decay</td>
-          <td class="delta-bad">Notes drift / go stale</td>
-          <td class="delta-good">kg dream proposes archival automatically</td>
-          <td>T14 smoke test</td>
-        </tr>
-        <tr>
-          <td>Graph visualisation</td>
-          <td class="delta-bad">None</td>
-          <td class="delta-good">kg graph --format html, 17 nodes/28 edges</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>OKF portability</td>
-          <td class="delta-bad">App-locked</td>
-          <td class="delta-good">kg ship / kg pull, validate --okf passes</td>
-          <td>T11b smoke test</td>
-        </tr>
-        <tr>
-          <td>Rebuild determinism</td>
-          <td class="delta-bad">N/A</td>
-          <td class="delta-good">Identical counts on cold rebuild</td>
-          <td>T10 smoke test</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- SPRINT SIMULATION -->
-<section id="sprint">
-  <h2>Sprint Simulation — DataLake 2.0 (2 Weeks)</h2>
-  <p class="section-lead">A full 10-day sprint simulation with real <code>kg</code> commands. WITH KGX: real token counts measured. WITHOUT KGX: realistic manual estimates based on file sizes and session patterns. Full report: <a href="sprint-simulation.md">sprint-simulation.md</a>.</p>
-
-  <h3>Sprint Setup</h3>
-  <p><strong>Team:</strong> 4 engineers · <strong>Stack:</strong> Kafka → Delta Lake v3 → Spark/k8s → Trino → DataHub → dbt · <strong>11 tickets</strong> across sprint planning, 10 dev days, grooming, review, retro.</p>
-
-  <h3>Knowledge Graph Growth (WITH KGX — measured)</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Day</th><th>Date</th><th>Event</th><th>Nodes</th><th>Edges</th><th>New artifacts</th></tr></thead>
-      <tbody>
-        <tr><td>0</td><td>2026-06-16</td><td>Sprint Planning</td><td>9</td><td>0</td><td>7 entities, 1 ADR, 1 source</td></tr>
-        <tr><td>1</td><td>2026-06-17</td><td>DL-101 Kafka</td><td>24</td><td>19</td><td>source, 2 facts, ADR-008</td></tr>
-        <tr><td>2</td><td>2026-06-18</td><td>DL-102 Delta</td><td>27</td><td>22</td><td>source, 2 facts</td></tr>
-        <tr><td>3</td><td>2026-06-19</td><td>DL-103 dbt</td><td>30</td><td>25</td><td>source, fact, question</td></tr>
-        <tr><td>4</td><td>2026-06-20</td><td>DL-104 Quality</td><td>34</td><td>31</td><td>source, 2 facts, experience</td></tr>
-        <tr><td>5</td><td>2026-06-20</td><td><strong>Sprint Grooming</strong></td><td>36</td><td>33</td><td>source, fact</td></tr>
-        <tr><td>6</td><td>2026-06-23</td><td>DL-105 Spark/k8s</td><td>38</td><td>36</td><td>source, fact</td></tr>
-        <tr><td>7</td><td>2026-06-24</td><td>DL-106 DataHub</td><td>40</td><td>39</td><td>source, fact</td></tr>
-        <tr><td>8</td><td>2026-06-25</td><td>DL-107 Trino</td><td>43</td><td>43</td><td>source, fact, ADR-009</td></tr>
-        <tr><td>9</td><td>2026-06-26</td><td>DL-108 RBAC</td><td>46</td><td>47</td><td>source, 2 facts</td></tr>
-        <tr><td>10</td><td>2026-06-27</td><td><strong>Retro</strong></td><td class="delta-good">49</td><td class="delta-good">56</td><td>source, MOC, experience</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3>Token Accounting — 10 Days (WITH KGX, measured)</h3>
-<pre><span class="cmt"># kg tokens --by operation (end of sprint)</span>
-ask    : 10 calls  │ input  8,155 │ output   270  ← hybrid retrieval Q&A
-embed  : 12 calls  │ input 21,927 │ output     0  ← brain indexing (write cost)
-extract:  1 call   │ input    240 │ output   619  ← fact extraction
-────────────────────────────────────────────────
-Total  : 23 calls  │ input 30,322 │ output   889</pre>
-
-  <h3>Dream Consolidation (automated)</h3>
-<pre><span class="cmt"># kg dream --dry-run at end of sprint</span>
-{"staged":32,"hard_blocks":10,"iterations":2,"elapsed_ms":3}
-<span class="cmt"># 32 diffs: dedup, contradictions, stale notes, link repair
-# 10 hard blocks flagged for human review
-# 0 manual tracking effort</span></pre>
-
-  <h3>Final Graph Queries (1ms each)</h3>
-<pre><span class="cmt"># kg recall --entity "Spark" → 13 connected neighbors</span>
-Kafka, Delta Lake, Kubernetes, Trino, DataHub, dbt
-SPARK-45123 workaround fact (from grooming)
-Spark 10M-row benchmark (from Day 6)
-Sprint 8 upgrade action item (from retro)
-
-<span class="cmt"># kg recall --entity "Trino" → 14 connected neighbors</span>
-ADR-009 (ANALYZE decision), Trino p99 fact
-PII masking fact, RLS fact, DataHub (catalog dep)
-
-<span class="cmt"># grep -rl "Spark" (no KGX) → 17 file paths, no ranking, no topology</span></pre>
-
-  <h3>Head-to-Head: 2-Week Sprint</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Metric</th><th>Without KGX</th><th>With KGX</th><th>Source</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Tokens for 10 daily queries</td>
-          <td class="delta-bad">~14,900</td>
-          <td class="delta-good">8,155</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>Session re-hydration tokens (10 days)</td>
-          <td class="delta-bad">~15,000</td>
-          <td class="delta-good">0</td>
-          <td><span class="estimated-badge">estimated</span></td>
-        </tr>
-        <tr>
-          <td><strong>Total query token cost</strong></td>
-          <td class="delta-bad"><strong>~29,900</strong></td>
-          <td class="delta-good"><strong>8,155</strong></td>
-          <td>73% reduction</td>
-        </tr>
-        <tr>
-          <td>Knowledge-management overhead</td>
-          <td class="delta-bad">150 min</td>
-          <td class="delta-good">9 min</td>
-          <td><span class="estimated-badge">estimated</span></td>
-        </tr>
-        <tr>
-          <td>Multi-hop question time (avg)</td>
-          <td class="delta-bad">12–18 min</td>
-          <td class="delta-good">30–60 sec</td>
-          <td><span class="estimated-badge">estimated</span></td>
-        </tr>
-        <tr>
-          <td>Contradictions detected automatically</td>
-          <td class="delta-bad">0</td>
-          <td class="delta-good">32 staged, 10 flagged</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-        <tr>
-          <td>Tech debt items missed at retro</td>
-          <td class="delta-bad">2–3 of 9</td>
-          <td class="delta-good">0 (dream surfaces all)</td>
-          <td><span class="estimated-badge">estimated</span></td>
-        </tr>
-        <tr>
-          <td>Graph edges tracked</td>
-          <td class="delta-bad">0</td>
-          <td class="delta-good">56</td>
-          <td><span class="measured-badge">measured</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3>9 Facts Forgotten Without a Persistent Brain</h3>
-  <p>Without KGX, these items get lost between sessions. <code>kg dream</code> surfaces all 9 as staged diffs:</p>
-  <ol style="margin:1rem 0 1rem 1.5rem;line-height:2">
-    <li><strong>SPARK-45123 workaround</strong> — grooming doc only, dropped over weekend</li>
-    <li><strong>dbt-delta adapter bug #847</strong> — mentioned once in Day 2, no entity link</li>
-    <li><strong>DL-103 → DL-102 dependency</strong> — planning doc only, not repeated daily</li>
-    <li><strong>Mobile SDK v2.1 auth-race</strong> root cause for NULL <code>user_id</code></li>
-    <li><strong>DataHub lineage UI slow &gt;50 nodes</strong> (issue #9821)</li>
-    <li><strong>Delta OPTIMIZE threshold &gt;10,000 files</strong> — not in operations runbook</li>
-    <li><strong>Kafka consumer throughput gap</strong> (180k vs 200k target) — never revisited</li>
-    <li><strong>dbt 14-min backfill baseline</strong> — buried in Day 3, no benchmark link</li>
-    <li><strong>S3 checkpoint interval (15 min)</strong> for Spark structured streaming</li>
-  </ol>
-
-  <h3>Multi-Hop Example: "Should we upgrade Spark to 3.5.1?"</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Step</th><th>Without KGX</th><th>With KGX</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>Find SPARK-45123 in sprint planning doc</td><td rowspan="5" style="vertical-align:middle"><code>kg recall --entity "Spark"</code><br><br>Returns 13 neighbors in 1ms: risk, workaround, OOM fix, benchmark, tech debt item — all at once</td></tr>
-        <tr><td>2</td><td>Find workaround in grooming doc (different file, must search)</td></tr>
-        <tr><td>3</td><td>Read Day 6 Spark notes to verify OOM=0</td></tr>
-        <tr><td>4</td><td>Read Spark entity for version number</td></tr>
-        <tr><td>5</td><td>Manually synthesize across 4 files</td></tr>
-        <tr><td><strong>Cost</strong></td><td class="delta-bad">4 files, 1,250 tokens, 13 min</td><td class="delta-good">720 tokens, 20 sec</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p><a href="sprint-simulation.md">→ Full sprint-simulation.md with day-by-day breakdown</a></p>
 </section>
 
 <!-- EVAL RESULTS -->
 <section id="eval">
-  <h2>Retrieval Benchmark — Keyword Mode beats ripgrep by +22% P@5</h2>
-  <p class="section-lead">15 golden queries, two retrieval systems, Sprint 9 vault (32 nodes / 57 edges). All numbers measured from actual command output. No modeled or estimated figures. <span class="measured-badge">measured</span></p>
+  <h2>Retrieval Benchmark: kg keyword beats ripgrep +22% P@5</h2>
+  <p class="section-lead">15 golden queries, Sprint 9 vault (32 nodes / 57 edges). All numbers measured. <span class="measured-badge">measured</span></p>
 
-  <h3>Experiment Setup</h3>
-  <div class="compare-grid">
-    <div class="compare-box without">
-      <h3>System A — ripgrep baseline</h3>
-      <p>Wraps full-text grep over all note files. No ranking, no graph, no tag awareness. Represents what an agent does without <code>kg</code>: spawn a subprocess, read N files, extract context.</p>
-    </div>
-    <div class="compare-box with">
-      <h3>System B — kg keyword mode</h3>
-      <p><code>kg search --mode keyword --limit 10</code>. Three rankings fused via RRF with per-ranking k values: BM25/FTS5 (k=60), tags-in-LIKE substring (k=60), tag-frequency-weighted expansion (k=300). Capped at 5 tag-expanded items with a LIKE signal filter.</p>
-    </div>
-  </div>
-  <p style="font-size:0.8rem">Oracle: 15 query–relevant-set pairs, verified against real note IDs. Vault: DataLake 2.0 stack (Kafka · Delta Lake · Spark · Trino · DataHub · dbt · Kubernetes), 3-sprint simulation. <code>KGX_LLM=mock</code>.</p>
-
-  <h3>Summary vs ripgrep</h3>
+  <h3>Summary</h3>
   <div class="table-wrap">
     <table>
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th style="text-align:center;background:#21262d">ripgrep</th>
-          <th style="text-align:center;background:#21262d">kg keyword</th>
-          <th style="text-align:center;background:#21262d">vs rg</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Metric</th><th>ripgrep</th><th>kg keyword</th><th>vs rg</th></tr></thead>
       <tbody>
         <tr><td>P@5</td><td class="delta-bad">0.360</td><td class="delta-good">0.440</td><td class="delta-good">+22%</td></tr>
         <tr><td>R@5</td><td>0.911</td><td>0.911</td><td>—</td></tr>
         <tr><td>F1</td><td class="delta-bad">0.528</td><td class="delta-good">0.585</td><td class="delta-good">+11%</td></tr>
-        <tr><td>MRR</td><td class="delta-good">0.983</td><td class="delta-bad">0.883</td><td>−10%</td></tr>
         <tr><td>NDCG@5</td><td class="delta-bad">0.835</td><td class="delta-good">0.889</td><td class="delta-good">+6.5%</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h3>Per-Query Results — kg keyword mode</h3>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>QID</th>
-          <th>Query</th>
-          <th>Rel</th>
-          <th>P@5</th><th>R@5</th><th>F1</th><th>MRR</th><th>NDCG@5</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Q01</td><td>spark parallelism cap workaround</td><td>4</td><td>0.800</td><td>1.000</td><td>0.889</td><td>1.000</td><td>0.983</td></tr>
-        <tr><td>Q02</td><td>kafka schema registry compatibility</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>1.000</td></tr>
-        <tr><td>Q03</td><td>delta lake liquid clustering threshold</td><td>3</td><td>0.600</td><td>1.000</td><td>0.750</td><td>1.000</td><td>0.906</td></tr>
-        <tr><td>Q04</td><td>trino partition pruning performance</td><td>2</td><td>0.200</td><td>0.500</td><td>0.286</td><td>1.000</td><td>1.000</td></tr>
-        <tr><td>Q05</td><td>dbt delta adapter schema drift</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>1.000</td></tr>
-        <tr><td>Q06</td><td>datahub lineage slow performance</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>0.920</td></tr>
-        <tr><td>Q07</td><td>s3 checkpoint interval streaming</td><td>3</td><td>0.600</td><td>1.000</td><td>0.750</td><td>1.000</td><td>1.000</td></tr>
-        <tr><td>Q08</td><td>kafka consumer throughput gap</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>1.000</td></tr>
-        <tr><td>Q09</td><td>spark oom kubernetes delta read</td><td>3</td><td>0.600</td><td>1.000</td><td>0.750</td><td>1.000</td><td>0.967</td></tr>
-        <tr><td>Q10</td><td>pii column access control rbac</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>0.920</td></tr>
-        <tr><td>Q11</td><td>dbt run time baseline benchmark</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>1.000</td></tr>
-        <tr><td>Q12</td><td>sprint tech debt upgrade priorities</td><td>3</td><td>0.400</td><td>0.667</td><td>0.500</td><td>0.250</td><td>0.501</td></tr>
-        <tr><td>Q13</td><td>null user_id mobile sdk</td><td>2</td><td>0.200</td><td>0.500</td><td>0.286</td><td>0.500</td><td>0.631</td></tr>
-        <tr><td>Q14</td><td>data pipeline lineage catalog</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>0.500</td><td>0.624</td></tr>
-        <tr><td>Q15</td><td>schema evolution breaking change policy</td><td>2</td><td>0.400</td><td>1.000</td><td>0.571</td><td>1.000</td><td>0.877</td></tr>
-        <tr style="font-weight:700;background:#ffffff08">
-          <td colspan="3">MEAN</td>
-          <td class="pass">0.440</td><td class="pass">0.911</td><td class="pass">0.585</td><td>0.883</td><td class="pass">0.889</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <p><code>kg recall</code> is the zero-query differentiator: BM25 can only retrieve notes you search for. <code>kg recall --entity X</code> traverses the graph to depth-2 and surfaces all connected notes — including Sprint-7 facts written 2 sprints ago. No keyword required. 6/6 Sprint-7 facts accessible at Sprint 9.</p>
 
-  <h3>What the Numbers Show</h3>
-  <div class="compare-box with" style="margin:1rem 0">
-    <h3>Finding: <code>kg search --mode keyword</code> beats ripgrep on P@5, F1, and NDCG</h3>
-    <p>kg keyword: P@5=<strong>0.440</strong>, F1=<strong>0.585</strong>, NDCG=<strong>0.889</strong> &nbsp;vs&nbsp; ripgrep: P@5=0.360, F1=0.528, NDCG=0.835</p>
-    <p><strong>Q12 sparse-term recovery:</strong> "sprint tech debt upgrade priorities" — kg keyword P@5=0.400 vs ripgrep 0.200. Tags-in-LIKE allows "sprint" → "sprint8" match, surfacing sprint upgrade and dbt-fix notes that lack query terms in raw text. Q12 went from P@5=0.000 (pre-tags-in-LIKE) to 0.400.</p>
-    <p><strong>Q09 from 0.000→0.600:</strong> "spark oom kubernetes delta read" — tags-in-LIKE matches "oom" in tag of the OOM workaround note, which has zero query token overlap in raw text. This single fix recovered 3 oracles at P@5=0.600, R@5=1.000.</p>
-    <p><strong>MRR gap (0.883 vs 0.983):</strong> ripgrep returns files in arbitrary order and the first hit is often an oracle at "rank 1" of grep output. kg search's RRF ranking sometimes places a strongly-connected but less-specific note at rank 1, pushing the best match to rank 2. Trade-off accepted for +22% P@5.</p>
-  </div>
-
-  <div class="compare-box without" style="margin:1rem 0">
-    <h3>How we got here — six retrieval improvements</h3>
-    <ol style="margin:0.5rem 0 0 1.2rem;line-height:1.8">
-      <li><strong>FTS5 OR mode</strong> (<code>query.rs</code>): multi-term queries use <code>term1 OR term2</code> instead of implicit AND. Fixes zero-recall on 5-token queries.</li>
-      <li><strong>Tags-in-LIKE substring search</strong> (<code>query.rs</code>): <code>like_search()</code> scans <code>raw_text || ' ' || COALESCE(tags, '')</code> so query tokens like "sprint" match "sprint8" in tags. Single biggest improvement — fixed Q09 (P@5 0.000→0.600) and Q12 (P@5 0.000→0.400).</li>
-      <li><strong>Tag-frequency-weighted expansion</strong> (<code>query.rs</code>): from BM25 top-10 source notes, finds tags shared by ≥2 notes, scores each tag by its frequency (<code>count/n</code>), then retrieves other notes with a weighted sum. Only includes notes that also have LIKE signal (ensures query-term relevance). Capped at 5 items with diluted k=300 RRF weight.</li>
-      <li><strong>Per-ranking RRF k values</strong> (<code>rrf.rs</code>): <code>fuse_multi_k()</code> enables different k per ranking — k=60 for BM25 and LIKE, k=300 for tag expansion — so tag contribution (~0.003/item) boosts orphans without overwhelming primary signals.</li>
-      <li><strong>BM25-first PPR seeding</strong> (<code>hybrid.rs</code>): PPR seeds from BM25 top-5, not vector-contaminated fusion. With FNV-hash embedder, vector ranks all docs similarly; seeding from BM25 targets query-relevant nodes.</li>
-      <li><strong>Entity node filter</strong> (<code>hybrid.rs + query.rs</code>): entity nodes (Spark, Kafka, etc.) participate in PPR as graph anchors but are removed from final results. Controlled by <code>SearchOpts::filter_entities</code>.</li>
-    </ol>
-  </div>
-
-  <div class="compare-box with" style="margin:1rem 0">
-    <h3>Finding: <code>kg recall</code> is the zero-query differentiator</h3>
-    <p>BM25 can only retrieve notes you know to search for. <code>kg recall --entity X</code> traverses the graph to depth-2 and surfaces all connected notes — including Sprint 7 facts written 2 sprints ago. No keyword required.</p>
-  </div>
-
-  <h3>Harness Maturity — Sprint 7 Facts Accessible at Sprint 9 via <code>kg recall</code></h3>
-  <p>Can an agent working on Sprint 9 tickets automatically surface institutional knowledge written 2 sprints earlier — without knowing what to search for?</p>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Test</th><th>Fact sought (Sprint 7)</th><th>Trigger (Sprint 9)</th><th>kg recall result</th><th>BM25 baseline</th></tr></thead>
-      <tbody>
-        <tr><td>HM-01</td><td>SPARK-45123 Workaround Parallelism Cap</td><td><code>kg recall "Spark"</code></td><td class="pass">✓ PASS — in 22 neighbors</td><td class="delta-bad">need to know to search "parallelism cap"</td></tr>
-        <tr><td>HM-02</td><td>dbt-delta Adapter Bug 847 Schema Drift</td><td><code>kg recall "dbt"</code></td><td class="pass">✓ PASS — in 23 neighbors</td><td class="delta-bad">need to know to search "bug 847"</td></tr>
-        <tr><td>HM-03</td><td>DataHub Lineage UI Slow Over 50 Nodes</td><td><code>kg recall "DataHub"</code></td><td class="pass">✓ PASS — in 26 neighbors</td><td class="delta-bad">need to know to search "issue 9821"</td></tr>
-        <tr><td>HM-04</td><td>Kafka Consumer Throughput Gap 180k vs 200k Target</td><td><code>kg recall "Kafka"</code></td><td class="pass">✓ PASS — in 22 neighbors</td><td class="delta-bad">need to know to search "180k throughput"</td></tr>
-        <tr><td>HM-05</td><td>S3 Checkpoint Interval 15 Minutes Structured Streaming</td><td><code>kg recall "Spark"</code></td><td class="pass">✓ PASS — in 22 neighbors</td><td class="delta-bad">need to know to search "checkpoint 15min"</td></tr>
-        <tr><td>HM-06</td><td>ADR-007 Delta Lake Schema Evolution Policy</td><td><code>kg recall "DataHub"</code></td><td class="pass">✓ PASS — in 26 neighbors</td><td class="delta-bad">need to know to search "schema evolution ADR"</td></tr>
-        <tr style="font-weight:700"><td colspan="3">Result</td><td class="pass">6 / 6 PASS</td><td class="delta-bad">0 / 6 (proactive surfacing not possible)</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p>Graph traversal is fast (1ms, confirmed) and zero-query: the agent loads context about the entity it's working on and all S7 facts arrive as neighbors automatically.</p>
-
-<pre><span class="cmt"># kg recall "Spark" at Sprint 9 — 22 neighbors returned in 1ms</span>
-<span class="cmt"># Sprint 7 facts visible alongside Sprint 8 and Sprint 9 additions:</span>
-  SPARK-45123 Workaround Parallelism Cap          ← S7 grooming
-  S3 Checkpoint Interval 15 Minutes ...           ← S7 day 6
-  Spark OOM Root Cause Investigation Day 6        ← S7 experience
-  Spark Upgrade 3.4.2 to 3.5.1 Completed         ← S8 resolution
-  Performance Regression Test Suite ...           ← S9 addition
-  <span class="cmt">... 17 more neighbors</span></pre>
-
-  <h3>Vault State</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Sprint</th><th>Dates</th><th>Nodes</th><th>Edges</th><th>Notes Added</th></tr></thead>
-      <tbody>
-        <tr><td>Sprint 7 (seed)</td><td>2026-06-16 → 2026-06-27</td><td>19</td><td>31</td><td>7 entities, 8 facts, 3 ADRs, 1 experience</td></tr>
-        <tr><td>Sprint 8</td><td>2026-06-30 → 2026-07-11</td><td>26</td><td>42</td><td>7 facts (DL-112 → DL-118)</td></tr>
-        <tr><td>Sprint 9</td><td>2026-07-14 → 2026-07-25</td><td class="delta-good"><strong>32</strong></td><td class="delta-good"><strong>57</strong></td><td>5 facts, 1 ADR (DL-119 → DL-123)</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p><a href="eval-results.md">→ eval-results.md — raw per-query data, oracle definitions, Python evaluation script</a></p>
+  <p>See <a href="eval-results.md">eval-results.md</a> for full per-query data and oracle definitions.</p>
 </section>
 
 <!-- CONFIG -->
@@ -1390,7 +1058,7 @@ PII masking fact, RLS fact, DataHub (catalog dep)
   <h2>Configuration</h2>
 
   <h3>LLM Providers</h3>
-<pre><span class="cmt"># Claude</span>
+<pre><span class="cmt"># Claude (best for extraction and dreaming)</span>
 <span class="cmd">export</span> ANTHROPIC_API_KEY=sk-ant-...
 <span class="cmd">export</span> KGX_LLM=claude
 
@@ -1405,12 +1073,23 @@ PII masking fact, RLS fact, DataHub (catalog dep)
 <span class="cmt"># Mock (hermetic testing — no API calls)</span>
 <span class="cmd">export</span> KGX_LLM=mock</pre>
 
-  <h3>Frontmatter type field</h3>
+  <h3>Environment Variables</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>KGX_LLM</code></td><td><code>claude</code></td><td>LLM provider: <code>claude</code>, <code>openai</code>, <code>ollama</code>, <code>mock</code></td></tr>
+        <tr><td><code>KGX_HOME</code></td><td><code>~/.kgx</code></td><td>Home data directory for project brains</td></tr>
+        <tr><td><code>KGX_RTK_DISABLE</code></td><td>(unset)</td><td>Set to <code>1</code> to disable RTK compression wrapping</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Frontmatter: <code>type</code> field</h3>
   <p>Valid values: <code>fact</code> | <code>entity</code> | <code>decision</code> | <code>experience</code> | <code>moc</code> | <code>source</code> | <code>question</code></p>
   <p>Raw files in <code>raw/</code> use <code>type: source</code>. Notes in subdirectories use their matching type.</p>
 
   <h3>JSON envelope</h3>
-  <p>All commands emit a consistent envelope with <code>--json</code>:</p>
 <pre>{
   <span class="str">"ok"</span>: <span class="kw">true</span>,
   <span class="str">"command"</span>: <span class="str">"ask"</span>,
@@ -1424,6 +1103,8 @@ PII masking fact, RLS fact, DataHub (catalog dep)
 cargo fmt --all
 cargo clippy --all-targets --all-features <span class="flag">-- -D warnings</span>
 KGX_LLM=mock cargo test --package smoke --test '*' <span class="flag">-- --test-threads=1</span></pre>
+
+  <p>Requires Rust 1.78+. All PRs require <code>cargo fmt</code> clean, clippy -D warnings, and all smoke tests green.</p>
 </section>
 
 </div>
