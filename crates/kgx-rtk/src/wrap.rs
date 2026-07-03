@@ -14,7 +14,8 @@ pub fn run_with_rtk(cmd: &mut Command) -> Result<RtkOutput> {
         .map_err(|e| KgError::Other(format!("spawn failed: {e}")))?;
     let raw = String::from_utf8_lossy(&output.stdout).to_string();
     let raw_bytes = raw.len();
-    let rtk_off = std::env::var("KGX_RTK").as_deref() == Ok("off");
+    let rtk_off = std::env::var("KGX_RTK").as_deref() == Ok("off")
+        || std::env::var("KGX_RTK_DISABLE").is_ok();
     if rtk_off || !rtk_available() {
         return Ok(RtkOutput {
             raw_bytes,

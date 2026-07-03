@@ -9,6 +9,8 @@ pub enum NoteType {
     Moc,
     Source,
     Question,
+    Preference,
+    Friction,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]

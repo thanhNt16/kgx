@@ -42,6 +42,8 @@ pub enum Commands {
         #[arg(long)]
         incremental: bool,
         #[arg(long)]
+        rebuild_vectors: bool,
+        #[arg(long)]
         pagerank: bool,
         #[arg(long)]
         communities: bool,
@@ -152,6 +154,11 @@ pub enum Commands {
         #[command(subcommand)]
         command: DocsCommand,
     },
+    /// Manage KGX projects (per-project brains)
+    Project {
+        #[command(subcommand)]
+        command: ProjectCommand,
+    },
     /// Print vault and brain status
     Status {
         #[arg(long)]
@@ -176,6 +183,13 @@ pub enum Commands {
         file: std::path::PathBuf,
         #[arg(long)]
         namespace: Option<String>,
+    },
+    /// Start the HTTP/stdio server
+    Serve {
+        #[arg(long, default_value = "stdio")]
+        transport: String,
+        #[arg(long, default_value_t = 8765)]
+        port: u16,
     },
     /// Sync vault changes through git
     Sync { action: String },
@@ -213,6 +227,18 @@ pub enum CodebaseCommand {
     Status,
     /// Update codebase-memory-mcp binary
     Update,
+}
+
+#[derive(Subcommand)]
+pub enum ProjectCommand {
+    /// Add a project (create its brain)
+    Add { name: String },
+    /// List registered projects
+    List,
+    /// Switch active project
+    Use { name: String },
+    /// Remove a project
+    Remove { name: String },
 }
 
 #[derive(Subcommand)]

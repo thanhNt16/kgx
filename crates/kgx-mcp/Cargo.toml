@@ -14,7 +14,12 @@ kgx-dream = { path = "../kgx-dream" }
 kgx-llm = { path = "../kgx-llm" }
 serde.workspace = true
 serde_json.workspace = true
+rusqlite = { version = "0.31", features = ["bundled"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "io-std", "io-util"] }
+axum = "0.7"
+tower = "0.4"
+uuid = { version = "1", features = ["v4"] }
 
 [dev-dependencies]
 tempfile.workspace = true

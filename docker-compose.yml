@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  kgd:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "8765:8765"
+    command: ["kg", "serve", "--transport", "http", "--port", "8765"]
+    volumes:
+      - ~/brains:/root/.kgx
+    environment:
+      - KGX_HOME=/root/.kgx

@@ -15,7 +15,12 @@ pub fn parse_markdown(body: &str) -> ParsedMarkdown {
 
     for event in parser {
         match event {
-            Event::Start(Tag::Heading { level: _, id: _, classes: _, attrs: _ }) => {
+            Event::Start(Tag::Heading {
+                level: _,
+                id: _,
+                classes: _,
+                attrs: _,
+            }) => {
                 in_heading = true;
                 heading_text.clear();
             }
@@ -64,10 +69,7 @@ mod tests {
     fn extracts_wikilinks() {
         let md = "See [[Postgres]] and [[Redis|Redis cache]]. Also [[../raw/note]].";
         let result = parse_markdown(md);
-        assert_eq!(
-            result.wikilinks,
-            vec!["Postgres", "Redis", "../raw/note"]
-        );
+        assert_eq!(result.wikilinks, vec!["Postgres", "Redis", "../raw/note"]);
     }
 
     #[test]

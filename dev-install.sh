@@ -119,9 +119,23 @@ case "$AGENT" in
   opencode)
     mkdir -p "$VAULT_DIR/.opencode/skills"
     mkdir -p "$VAULT_DIR/.opencode/plugins"
+    mkdir -p "${HOME}/.config/opencode"
 
     cp "$REPO_DIR/skills/opencode/opencode.json" "$VAULT_DIR/opencode.json"
     ok "copied opencode.json -> $VAULT_DIR/opencode.json"
+
+    cat > "${HOME}/.config/opencode/opencode.json" << 'OPENCODE_EOF'
+{
+  "mcpServers": {
+    "kgx": {
+      "command": "/usr/local/bin/kg",
+      "args": ["mcp-server"],
+      "type": "stdio"
+    }
+  }
+}
+OPENCODE_EOF
+    ok "registered kgx MCP server in ~/.config/opencode/opencode.json"
 
     SKILLBASE="$VAULT_DIR/.opencode/skills"
     cp "$REPO_DIR/skills/opencode/.opencode/skills/kgx/SKILL.md" \

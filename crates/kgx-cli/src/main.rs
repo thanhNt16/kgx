@@ -15,10 +15,12 @@ mod commands {
     pub mod init;
     pub mod link;
     pub mod mcp_server;
+    pub mod project;
     pub mod pull;
     pub mod recall;
     pub mod review;
     pub mod search;
+    pub mod serve;
     pub mod ship;
     pub mod status;
     pub mod sync;
@@ -27,7 +29,7 @@ mod commands {
 }
 
 use clap::Parser;
-use cli::{Cli, Commands, DocsCommand};
+use cli::{Cli, Commands, DocsCommand, ProjectCommand};
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
@@ -48,9 +50,17 @@ fn main() -> anyhow::Result<()> {
         Commands::Index {
             full,
             incremental,
+            rebuild_vectors,
             pagerank,
             communities,
-        } => commands::index::run(cli.json, full, incremental, pagerank, communities),
+        } => commands::index::run(
+            cli.json,
+            full,
+            incremental,
+            rebuild_vectors,
+            pagerank,
+            communities,
+        ),
         Commands::Capture { from, kind } => commands::capture::run(cli.json, &from, &kind),
         Commands::Extract {
             source,
@@ -90,6 +100,7 @@ fn main() -> anyhow::Result<()> {
             ponytail_audit,
         } => commands::review::run(cli.json, approve, reject, interactive, ponytail_audit),
         Commands::McpServer { transport } => commands::mcp_server::run(cli.json, &transport),
+        Commands::Serve { transport, port } => commands::serve::run(&transport, port),
         Commands::Cron {
             action,
             name,
@@ -103,6 +114,12 @@ fn main() -> anyhow::Result<()> {
         } => commands::graph::run(cli.json, &format, out, filter),
         Commands::Docs { command } => match command {
             DocsCommand::Usecase { name, out } => commands::docs::run_usecase(cli.json, &name, out),
+        },
+        Commands::Project { command } => match command {
+            ProjectCommand::Add { name } => commands::project::add(&name),
+            ProjectCommand::List => commands::project::list(),
+            ProjectCommand::Use { name } => commands::project::use_project(&name),
+            ProjectCommand::Remove { name } => commands::project::remove(&name),
         },
         Commands::Status { verbose } => commands::status::run(cli.json, verbose),
         Commands::Tokens { since, by } => commands::tokens::run(cli.json, &since, &by),

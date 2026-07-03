@@ -28,7 +28,9 @@ kgx-cron = { path = "../kgx-cron" }
 kgx-mcp = { path = "../kgx-mcp" }
 kgx-rtk = { path = "../kgx-rtk" }
 kgx-viz = { path = "../kgx-viz" }
+kgx-store = { path = "../kgx-store" }
 kgx-docs = { path = "../kgx-docs" }
+rusqlite = { version = "0.31", features = ["bundled"] }
 clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true

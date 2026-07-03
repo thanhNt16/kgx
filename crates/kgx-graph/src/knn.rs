@@ -1,4 +1,4 @@
-use crate::{embed::blob_to_f32, Brain};
+use crate::{embed::blob_to_f32, vec, Brain};
 use kgx_core::{KgError, Result};
 
 fn cosine(a: &[f32], b: &[f32]) -> f32 {
@@ -12,7 +12,11 @@ fn cosine(a: &[f32], b: &[f32]) -> f32 {
     }
 }
 
-pub fn vector_search(brain: &Brain, query_emb: &[f32], limit: usize) -> Result<Vec<(String, f32)>> {
+fn brute_force_search(
+    brain: &Brain,
+    query_emb: &[f32],
+    limit: usize,
+) -> Result<Vec<(String, f32)>> {
     let mut stmt = brain
         .conn()
         .prepare("SELECT id, embedding FROM notes WHERE embedding IS NOT NULL")
@@ -36,4 +40,11 @@ pub fn vector_search(brain: &Brain, query_emb: &[f32], limit: usize) -> Result<V
     });
     scored.truncate(limit);
     Ok(scored)
+}
+
+pub fn vector_search(brain: &Brain, query_emb: &[f32], limit: usize) -> Result<Vec<(String, f32)>> {
+    if vec::vec0_exists(brain.conn()) {
+        return vec::knn_search(brain.conn(), query_emb, limit);
+    }
+    brute_force_search(brain, query_emb, limit)
 }

@@ -2,13 +2,14 @@ use std::time::Instant;
 
 use crate::output::emit;
 use kgx_core::Note;
-use kgx_graph::{build::build_full, build::build_incremental, embed::MockEmbedder, pagerank, Brain};
+use kgx_graph::{build::build_full, build::build_incremental, pagerank, Brain};
 use kgx_tokens::record::{append, TokenRecord};
 
 pub fn run(
     json: bool,
     full: bool,
     incremental: bool,
+    rebuild_vectors: bool,
     do_pagerank: bool,
     communities: bool,
 ) -> anyhow::Result<()> {
@@ -17,20 +18,20 @@ pub fn run(
     let kg_dir = root.join(".kg");
     let notes = kgx_vault::scan::scan_vault(&root)?;
     let mut brain = Brain::open(&kg_dir.join("brain.sqlite"))?;
-    let embedder = MockEmbedder::new();
+    let embedder = kgx_llm::select::embedder_from_env();
 
-    let stats = if incremental && !full {
+    let stats = if rebuild_vectors || (incremental && !full) {
         let changed_ids = find_changed_ids(&brain, &notes)?;
-        build_incremental(&mut brain, &notes, &changed_ids, &embedder)?
+        build_incremental(&mut brain, &notes, &changed_ids, embedder.as_ref())?
     } else {
-        build_full(&mut brain, &notes, &embedder)?
+        build_full(&mut brain, &notes, embedder.as_ref())?
     };
 
     if do_pagerank {
         pagerank::compute(&mut brain, 0.85, 30)?;
     }
     if communities {
-        kgx_graph::community::detect(&mut brain, 42)?;
+        kgx_graph::leiden::detect(&mut brain, 42)?;
         let provider = kgx_llm::select::provider_from_env()?;
         let rt = tokio::runtime::Runtime::new()?;
         let summaries = rt.block_on(kgx_retrieval::community_summary::summarize_all(
@@ -58,7 +59,7 @@ pub fn run(
     append(
         &kg_dir,
         &TokenRecord {
-            model: "mock-embed".into(),
+            model: "kgx-embed".into(),
             operation: "embed".into(),
             command: "index".into(),
             input_tokens: approx_in,
@@ -102,14 +103,9 @@ fn find_changed_ids(brain: &Brain, notes: &[Note]) -> anyhow::Result<Vec<String>
     let removed: Vec<String> = existing.difference(&current).cloned().collect();
 
     let mut changed = Vec::new();
-    // Re-index all notes: added ones, and potentially changed ones (all for simplicity)
     changed.extend(added);
     changed.extend(removed);
-    // For incremental we re-index current notes that exist
-    let remaining: Vec<String> = current
-        .intersection(&existing)
-        .cloned()
-        .collect();
+    let remaining: Vec<String> = current.intersection(&existing).cloned().collect();
     changed.extend(remaining);
 
     changed.sort();

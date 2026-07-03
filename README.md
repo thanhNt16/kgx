@@ -84,7 +84,7 @@ Brain Layers
 | `kgx-llm` | Provider trait (Claude, OpenAI, Ollama, mock) |
 | `kgx-extract` | Raw → atomic facts/entities/decisions pipeline |
 | `kgx-dream` | 7 consolidation passes: dedup, contradict, supersede, stale, resummarize, orphan, questions |
-| `kgx-mcp` | JSON-RPC 2.0 stdio MCP server (6 tools) |
+| `kgx-mcp` | JSON-RPC 2.0 stdio MCP server (9 tools) |
 | `kgx-tokens` | Per-command token accounting, JSONL metrics |
 | `kgx-rtk` | Shell-output compression wrapper + hook installer |
 | `kgx-ponytail` | Prompt ladders with over-engineering audit rules |
@@ -214,16 +214,19 @@ brain/
 
 ## MCP Server Setup
 
-The MCP server exposes 6 tools over JSON-RPC 2.0 via stdio. **Run from inside your vault directory** — it uses the current working directory as the vault root.
+The MCP server exposes 9 tools over JSON-RPC 2.0 via stdio. **Run from inside your vault directory** — it uses the current working directory as the vault root.
 
 | Tool | What it does |
 |---|---|
-| `search_notes` | Hybrid semantic + keyword search |
-| `get_note` | Fetch a note by ID or path |
+| `nl_query_memory` | Natural language hybrid search with Q&A |
+| `query_memory` | Structured query with filters (type, tag, project, status) |
+| `deep_search_memory` | Progressive disclosure search (cluster-then-drill) |
+| `get_note` | Fetch a note by ID |
+| `ingest_conversation` | Incremental conversation capture + finalize compilation |
+| `ingest_file` | Ingest raw content immutably (idempotent by sha256) |
+| `ingest_url` | Fetch URL content and ingest into the vault |
 | `upsert_note` | Create or update a note |
-| `ask_question` | Full hybrid Q&A with citations |
-| `capture_raw` | Ingest a raw source into `raw/` |
-| `dream_step` | Run one dream consolidation pass |
+| `dream_step` | Run one bounded dream consolidation pass |
 
 ### Verify MCP works (raw JSON-RPC over pipe)
 
@@ -318,7 +321,7 @@ Claude Code reads this at session start and follows the ladders when calling `kg
 User: "Summarize what we decided about the auth architecture"
 
 Claude Code:
-1. Calls MCP tool: ask_question("auth architecture decisions") → citations
+1. Calls MCP tool: nl_query_memory("auth architecture decisions") → citations
 2. Calls: kg recall --entity "Auth Service" → neighborhood context
 3. Synthesizes with citations: "Based on [[decisions/adr-003-jwt-auth]] and [[entities/auth-service]]..."
 ```
@@ -348,7 +351,7 @@ Copy `skills/codex/AGENTS.md` to your vault root as `AGENTS.md` for Codex to pic
 
 ### Cursor
 
-Cursor uses `.cursor/mcp.json` for the MCP connection. The MCP connection gives Cursor direct access to all 6 KGX tools. Cursor's agent reads vault `CLAUDE.md` when it's in the project root.
+Cursor uses `.cursor/mcp.json` for the MCP connection. The MCP connection gives Cursor direct access to all 9 KGX tools. Cursor's agent reads vault `CLAUDE.md` when it's in the project root.
 
 ---
 

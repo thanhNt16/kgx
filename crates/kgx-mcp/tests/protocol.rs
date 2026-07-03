@@ -12,11 +12,13 @@ async fn initialize_and_tools_list() {
     let tools = resp["result"]["tools"].as_array().unwrap();
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
     for expected in [
-        "search_notes",
+        "nl_query_memory",
+        "query_memory",
+        "deep_search_memory",
         "get_note",
         "upsert_note",
-        "ask_question",
-        "capture_raw",
+        "ingest_file",
+        "ingest_url",
         "dream_step",
     ] {
         assert!(names.contains(&expected), "missing tool {expected}");

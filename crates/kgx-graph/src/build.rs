@@ -17,7 +17,6 @@ pub fn derive_edges(notes: &[Note]) -> Vec<Edge> {
         .map(|n| (n.fm.title.as_str(), n.fm.id.as_str()))
         .collect();
     let by_id: std::collections::BTreeSet<&str> = notes.iter().map(|n| n.fm.id.as_str()).collect();
-    // Index by path-without-extension (e.g. "raw/2026-01-15-arch-review")
     let by_path: BTreeMap<String, &str> = notes
         .iter()
         .map(|n| {
@@ -27,19 +26,15 @@ pub fn derive_edges(notes: &[Note]) -> Vec<Edge> {
         })
         .collect();
     let resolve = |target: &str| -> Option<String> {
-        // Try exact title match first
         if let Some(id) = by_title.get(target) {
             return Some(id.to_string());
         }
-        // Try exact ID match
         if by_id.contains(target) {
             return Some(target.to_string());
         }
-        // Try path stem match (handles "raw/2026-01-15-arch-review" style links)
         if let Some(id) = by_path.get(target) {
             return Some(id.to_string());
         }
-        // Try title match after stripping "raw/" prefix
         let t = target.trim_start_matches("raw/");
         if let Some(id) = by_title.get(t) {
             return Some(id.to_string());
@@ -106,6 +101,49 @@ pub fn derive_edges(notes: &[Note]) -> Vec<Edge> {
     edges
 }
 
+fn store_embeddings(brain: &Brain, notes: &[Note], embeddings: &[Vec<f32>]) -> Result<()> {
+    for (n, emb) in notes.iter().zip(embeddings) {
+        crate::vec::upsert_embedding(brain.conn(), &n.fm.id, emb)
+            .map_err(|e| KgError::Brain(format!("vec0 insert: {e}")))?;
+    }
+    Ok(())
+}
+
+fn write_meta(brain: &mut Brain, mode: &str, node_count: usize, edge_count: usize) -> Result<()> {
+    let meta_tx = brain
+        .conn_mut()
+        .transaction()
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('last_index', ?1)",
+            rusqlite::params![kgx_core::util::now_iso()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('node_count', ?1)",
+            rusqlite::params![node_count.to_string()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('edge_count', ?1)",
+            rusqlite::params![edge_count.to_string()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .execute(
+            "INSERT OR REPLACE INTO meta (key, value) VALUES ('build_mode', ?1)",
+            rusqlite::params![mode],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    meta_tx
+        .commit()
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    Ok(())
+}
+
 pub fn build_full(
     brain: &mut Brain,
     notes: &[Note],
@@ -116,10 +154,11 @@ pub fn build_full(
         .transaction()
         .map_err(|e| KgError::Brain(e.to_string()))?;
     tx.execute_batch(
-            "DELETE FROM notes; DELETE FROM edges; DELETE FROM notes_fts; \
-             DELETE FROM pagerank; DELETE FROM communities; DELETE FROM community_summaries;",
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
+        "DELETE FROM notes; DELETE FROM edges; DELETE FROM notes_fts; \
+             DELETE FROM pagerank; DELETE FROM communities; DELETE FROM community_summaries; \
+             DELETE FROM notes_vec;",
+    )
+    .map_err(|e| KgError::Brain(e.to_string()))?;
     let texts: Vec<String> = notes
         .iter()
         .map(|n| format!("{}\n{}", n.fm.title, n.body))
@@ -177,35 +216,10 @@ pub fn build_full(
     }
     tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
 
-    let meta_tx = brain
-        .conn_mut()
-        .transaction()
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx
-        .execute(
-            "INSERT OR REPLACE INTO meta (key, value) VALUES ('last_index', ?1)",
-            rusqlite::params![kgx_core::util::now_iso()],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx
-        .execute(
-            "INSERT OR REPLACE INTO meta (key, value) VALUES ('node_count', ?1)",
-            rusqlite::params![notes.len().to_string()],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx
-        .execute(
-            "INSERT OR REPLACE INTO meta (key, value) VALUES ('edge_count', ?1)",
-            rusqlite::params![edges.len().to_string()],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx
-        .execute(
-            "INSERT OR REPLACE INTO meta (key, value) VALUES ('build_mode', 'full')",
-            [],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
+    // vec0 inserts must happen after commit since vec0 is a virtual table
+    // that can't see rows from the same transaction
+    store_embeddings(brain, notes, &embeddings)?;
+    write_meta(brain, "full", notes.len(), edges.len())?;
 
     Ok(BuildStats {
         nodes: notes.len(),
@@ -302,23 +316,13 @@ pub fn build_incremental(
     }
     tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
 
-    let meta_tx = brain
-        .conn_mut()
-        .transaction()
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx
-        .execute(
-            "INSERT OR REPLACE INTO meta (key, value) VALUES ('last_index', ?1)",
-            rusqlite::params![kgx_core::util::now_iso()],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx
-        .execute(
-            "INSERT OR REPLACE INTO meta (key, value) VALUES ('build_mode', 'incremental')",
-            [],
-        )
-        .map_err(|e| KgError::Brain(e.to_string()))?;
-    meta_tx.commit().map_err(|e| KgError::Brain(e.to_string()))?;
+    // vec0 inserts must happen after commit
+    for (n, emb) in subset.iter().zip(&embs) {
+        crate::vec::upsert_embedding(brain.conn(), &n.fm.id, emb)
+            .map_err(|e| KgError::Brain(format!("vec0 insert: {e}")))?;
+    }
+
+    write_meta(brain, "incremental", notes.len(), all_edges.len())?;
 
     let edge_count = all_edges
         .iter()

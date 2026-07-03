@@ -1,0 +1,13 @@
+[package]
+name = "kgx-store"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+kgx-graph = { path = "../kgx-graph" }
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+[dev-dependencies]
+tempfile.workspace = true

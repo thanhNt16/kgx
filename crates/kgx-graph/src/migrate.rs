@@ -23,9 +23,11 @@ pub fn ensure_schema(conn: &Connection) -> Result<i32> {
     }
 
     let current: i32 = conn
-        .query_row("SELECT COALESCE(max(version), 0) FROM schema_version", [], |r| {
-            r.get(0)
-        })
+        .query_row(
+            "SELECT COALESCE(max(version), 0) FROM schema_version",
+            [],
+            |r| r.get(0),
+        )
         .map_err(|e| KgError::Brain(e.to_string()))?;
 
     if current < 1 {
