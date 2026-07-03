@@ -14,11 +14,11 @@ fn model() -> kgx_viz::model::GraphModel {
 }
 
 #[test]
-fn html_is_self_contained_and_counts_match() {
+fn html_renders_with_3d_viewer_and_counts_match() {
     let m = model();
     let h = html::render(&m);
     assert!(h.contains("<html") && h.contains("</html>"));
-    assert!(!h.contains("http://") && !h.contains("https://"));
+    assert!(h.contains("esm.sh/three"), "expected Three.js CDN import");
     assert!(h.contains("\"nodes\":"));
     assert_eq!(m.nodes.len(), 17);
     assert_eq!(h.matches("\"title\":").count(), m.nodes.len());
