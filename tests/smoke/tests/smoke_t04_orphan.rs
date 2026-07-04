@@ -1,5 +1,4 @@
 /// T04: Orphan detection — exactly 1 orphan with id 01FACT05ORPHAN0000000000.
-// TODO T09: criterion benchmark for hybrid vs semantic recall — see tests/fixtures/qa.json
 use assert_cmd::Command;
 use std::path::Path;
 
