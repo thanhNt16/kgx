@@ -267,7 +267,6 @@ const pl1 = new THREE.PointLight(0xffffff, 0.6, 2000); pl1.position.set(500, 500
 const pl2 = new THREE.PointLight(0x6040ff, 0.4, 2000); pl2.position.set(-300, -200, -300); scene.add(pl2);
 
 // OrbitControls
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
