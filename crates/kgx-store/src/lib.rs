@@ -10,6 +10,12 @@ pub struct SqliteBrainStore {
     home_dir: std::path::PathBuf,
 }
 
+impl Default for SqliteBrainStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SqliteBrainStore {
     pub fn new() -> Self {
         let home = dirs_data_home();
@@ -50,6 +56,12 @@ impl BrainStore for SqliteBrainStore {
 pub struct BrainSet {
     store: SqliteBrainStore,
     active_projects: Vec<String>,
+}
+
+impl Default for BrainSet {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl BrainSet {

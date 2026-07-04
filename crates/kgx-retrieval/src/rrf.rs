@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 pub fn fuse(rankings: &[Vec<String>], k: f32) -> Vec<(String, f32)> {
-    let ks: Vec<f32> = std::iter::repeat(k).take(rankings.len()).collect();
+    let ks: Vec<f32> = std::iter::repeat_n(k, rankings.len()).collect();
     fuse_multi_k(rankings, &ks)
 }
 

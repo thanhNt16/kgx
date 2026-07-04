@@ -66,21 +66,18 @@ pub fn run_benchmark(config: &BenchConfig, gold: &[GoldEntry]) -> BenchResult {
             let result = (arm.runner)(&entry.question);
             let elapsed = start.elapsed().as_millis() as u64;
 
-            match result {
-                Ok(answer) => {
-                    total_latency += elapsed;
-                    total_tokens += answer.len() as u32;
-                    let matched = entry
-                        .expected_patterns
-                        .iter()
-                        .any(|p| answer.to_lowercase().contains(&p.to_lowercase()));
-                    if matched {
-                        true_positives += 1;
-                    } else {
-                        false_positives += 1;
-                    }
+            if let Ok(answer) = result {
+                total_latency += elapsed;
+                total_tokens += answer.len() as u32;
+                let matched = entry
+                    .expected_patterns
+                    .iter()
+                    .any(|p| answer.to_lowercase().contains(&p.to_lowercase()));
+                if matched {
+                    true_positives += 1;
+                } else {
+                    false_positives += 1;
                 }
-                Err(_) => {}
             }
         }
 

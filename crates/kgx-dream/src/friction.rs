@@ -32,7 +32,7 @@ pub fn analyze(brain: &Brain) -> Result<FrictionReport> {
             fix_proposal,
         });
     }
-    themes.sort_by(|a, b| b.count.cmp(&a.count));
+    themes.sort_by_key(|b| std::cmp::Reverse(b.count));
     Ok(FrictionReport {
         themes,
         total_events,
@@ -126,7 +126,7 @@ fn derive_title(events: &[FrictionEvent]) -> String {
         }
     }
     let mut pairs: Vec<(String, usize)> = freq.into_iter().collect();
-    pairs.sort_by(|a, b| b.1.cmp(&a.1));
+    pairs.sort_by_key(|b| std::cmp::Reverse(b.1));
     let top: Vec<&str> = pairs.iter().take(3).map(|(w, _)| w.as_str()).collect();
     top.join(" / ")
 }
