@@ -11,3 +11,9 @@ notes/
 log.md
 /.claude/
 .kgx/
+
+# Build/experiment artifacts
+.fastembed_cache/
+.cellockai/
+.codex/
+.cursor/
