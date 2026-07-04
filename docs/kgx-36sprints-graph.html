@@ -4,14 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KGX 36-Sprint Graph</title>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://esm.sh/three@0.170",
-    "three/addons/": "https://esm.sh/three@0.170/examples/jsm/"
-  }
-}
-</script>
 <style>
 * { box-sizing: border-box; }
 :root { --bg: #06090f; --surface: #0e2028; --surface2: #0f1e24; --border: #1a3a4030; --text: #e0eded; --muted: #6a9e9e; --accent: #1DA27E; --danger: #e05252; --panel-w: 240px; --detail-w: 280px; }
@@ -105,7 +97,6 @@ main { display: flex; height: calc(100vh - 40px); }
     <div id="hud"></div>
     <div id="canvas-actions">
       <button id="btn-fit" title="Fit graph to view">&#x26F6; Fit</button>
-      <button id="btn-autorotate" title="Toggle auto-rotate">&#x21BB;</button>
     </div>
     <div id="tooltip"><div id="tooltip-inner"></div></div>
   </div>
@@ -119,14 +110,8 @@ main { display: flex; height: calc(100vh - 40px); }
   </aside>
 </main>
 
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-
-const GRAPH_DATA = {"nodes": [{"id": "01KWNYYSTSKF1PK2G7C1DFBPS5", "type": "source", "kind": "source", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSTSKF1PK2G7C1DFBPS5"}, {"id": "01KWNYYSTYZ0RM3W3GAX78SKNM", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSTYZ0RM3W3GAX78SKNM"}, {"id": "01KWNYYSV46YPXN107XS0PKJMK", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSV46YPXN107XS0PKJMK"}, {"id": "01KWNYYSVBEBXCFJAGKGX94W2N", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVBEBXCFJAGKGX94W2N"}, {"id": "01KWNYYSVJQWDZ3SHJZAVCJ1CB", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVJQWDZ3SHJZAVCJ1CB"}, {"id": "01KWNYYSVR005KH7B7PHAQ7MVG", "type": "source", "kind": "bug", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVR005KH7B7PHAQ7MVG"}, {"id": "01KWNYYSVYPS39BYS9441XGQFV", "type": "source", "kind": "adr", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVYPS39BYS9441XGQFV"}, {"id": "01KWNYYSW5CBPGXF6GNB7FPPDE", "type": "source", "kind": "adr", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSW5CBPGXF6GNB7FPPDE"}, {"id": "01KWNYYSWB82PYX9PJ6BKAHYZR", "type": "source", "kind": "spec", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSWB82PYX9PJ6BKAHYZR"}, {"id": "01KWNYYSWJK25WB3HE8A78JM4E", "type": "source", "kind": "source", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSWJK25WB3HE8A78JM4E"}, {"id": "01KWNYYSWR7KKXXXBW0KS5AN01", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSWR7KKXXXBW0KS5AN01"}, {"id": "01KWNYYSWYV2A9HA6ZHX9FBBPG", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSWYV2A9HA6ZHX9FBBPG"}, {"id": "01KWNYYSX3ADQWAAJV1M6AZ78J", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSX3ADQWAAJV1M6AZ78J"}, {"id": "01KWNYYSX9KKATBCN40ZNE1KGV", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSX9KKATBCN40ZNE1KGV"}, {"id": "01KWNYYSXE799B7FXBR4A9GN4A", "type": "source", "kind": "bug", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYSXE799B7FXBR4A9GN4A"}, {"id": "01KWNYYSXMTXX2FA3DS839Q8CB", "type": "source", "kind": "adr", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYSXMTXX2FA3DS839Q8CB"}, {"id": "01KWNYYSXV1V1NMWD1A040BPKP", "type": "source", "kind": "spec", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYSXV1V1NMWD1A040BPKP"}, {"id": "01KWNYYSY1QA94ET76759NSHSZ", "type": "source", "kind": "source", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSY1QA94ET76759NSHSZ"}, {"id": "01KWNYYSY7NJ3T22RT7YG1VCXN", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYSY7NJ3T22RT7YG1VCXN"}, {"id": "01KWNYYSYCG523XXAJRPZ0NGYD", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYSYCG523XXAJRPZ0NGYD"}, {"id": "01KWNYYSYJ83ANT878ARFGPW7T", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYSYJ83ANT878ARFGPW7T"}, {"id": "01KWNYYSYR7G109XETSRVG9Q7E", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYSYR7G109XETSRVG9Q7E"}, {"id": "01KWNYYSYXXA2KXTVX9ADQT7WE", "type": "source", "kind": "bug", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYSYXXA2KXTVX9ADQT7WE"}, {"id": "01KWNYYSZ2HNVEE2HNZD10DFA7", "type": "source", "kind": "adr", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYSZ2HNVEE2HNZD10DFA7"}, {"id": "01KWNYYSZ763XKME7QD1V37AQV", "type": "source", "kind": "spec", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYSZ763XKME7QD1V37AQV"}, {"id": "01KWNYYSZD9JG1KSHY5G23K0FG", "type": "source", "kind": "source", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSZD9JG1KSHY5G23K0FG"}, {"id": "01KWNYYSZJHJMHB3PVB05SP269", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYSZJHJMHB3PVB05SP269"}, {"id": "01KWNYYSZQDXGX3CS36WDFBTV3", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYSZQDXGX3CS36WDFBTV3"}, {"id": "01KWNYYSZWNXC6BN0Q7D2E5DEB", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYSZWNXC6BN0Q7D2E5DEB"}, {"id": "01KWNYYT01W80ZW4CYTDHER2V8", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT01W80ZW4CYTDHER2V8"}, {"id": "01KWNYYT06V1A93VCWRSS10MAZ", "type": "source", "kind": "bug", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT06V1A93VCWRSS10MAZ"}, {"id": "01KWNYYT0A31H5AK8SNKCJXA6H", "type": "source", "kind": "adr", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT0A31H5AK8SNKCJXA6H"}, {"id": "01KWNYYT0FHGF2RA6MMSR3CSQ6", "type": "source", "kind": "spec", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT0FHGF2RA6MMSR3CSQ6"}, {"id": "01KWNYYT0MQBXN00Z9DB846MQV", "type": "source", "kind": "source", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT0MQBXN00Z9DB846MQV"}, {"id": "01KWNYYT0SSDD8R44QT1VNBSKQ", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT0SSDD8R44QT1VNBSKQ"}, {"id": "01KWNYYT0Y48PZEV71YEDN163T", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT0Y48PZEV71YEDN163T"}, {"id": "01KWNYYT13E85FK5M787NCMSXD", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT13E85FK5M787NCMSXD"}, {"id": "01KWNYYT184KMFMHHRVJME44T9", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT184KMFMHHRVJME44T9"}, {"id": "01KWNYYT1DDQKY1YB6MCAZW2J3", "type": "source", "kind": "bug", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT1DDQKY1YB6MCAZW2J3"}, {"id": "01KWNYYT1JHWWEG0E0AGQYMMFZ", "type": "source", "kind": "adr", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT1JHWWEG0E0AGQYMMFZ"}, {"id": "01KWNYYT1QQK037SZN1HSYCYJA", "type": "source", "kind": "spec", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT1QQK037SZN1HSYCYJA"}, {"id": "01KWNYYT1W1AGG9QN92QS3FCPV", "type": "source", "kind": "source", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT1W1AGG9QN92QS3FCPV"}, {"id": "01KWNYYT20FGEXQZZMVND9TGYR", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT20FGEXQZZMVND9TGYR"}, {"id": "01KWNYYT25VBHQ69BCVH7N1ATB", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT25VBHQ69BCVH7N1ATB"}, {"id": "01KWNYYT2ADQV5090JTNZQ9PFE", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT2ADQV5090JTNZQ9PFE"}, {"id": "01KWNYYT2FQE04XN3DYSMVRH9S", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT2FQE04XN3DYSMVRH9S"}, {"id": "01KWNYYT2KKSX1GS48KS75HXZR", "type": "source", "kind": "bug", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT2KKSX1GS48KS75HXZR"}, {"id": "01KWNYYT2S8T4G4EZMDDJZWS4Q", "type": "source", "kind": "adr", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT2S8T4G4EZMDDJZWS4Q"}, {"id": "01KWNYYT2X7BAB9M7ZH34VYAES", "type": "source", "kind": "spec", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT2X7BAB9M7ZH34VYAES"}, {"id": "01KWNYYT321Z8WNB1A42M9EEMV", "type": "source", "kind": "source", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT321Z8WNB1A42M9EEMV"}, {"id": "01KWNYYT37MC0WHM5T26TRKPQF", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT37MC0WHM5T26TRKPQF"}, {"id": "01KWNYYT3CRRQ7151CBYXFZQ9A", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT3CRRQ7151CBYXFZQ9A"}, {"id": "01KWNYYT3JA0YSEBMRSF3BS56Q", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT3JA0YSEBMRSF3BS56Q"}, {"id": "01KWNYYT3QJZZX8KXGK1D8VBAV", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT3QJZZX8KXGK1D8VBAV"}, {"id": "01KWNYYT3WBRK9BMNH90TPT5PV", "type": "source", "kind": "bug", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT3WBRK9BMNH90TPT5PV"}, {"id": "01KWNYYT40KH9BR2WCC1264BCT", "type": "source", "kind": "adr", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT40KH9BR2WCC1264BCT"}, {"id": "01KWNYYT45APKVE8ZVFVN9T0P9", "type": "source", "kind": "spec", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT45APKVE8ZVFVN9T0P9"}, {"id": "01KWNYYT4AFS04J1R34CHX88TV", "type": "source", "kind": "source", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT4AFS04J1R34CHX88TV"}, {"id": "01KWNYYT4FEZN7G02JBRPT52T0", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT4FEZN7G02JBRPT52T0"}, {"id": "01KWNYYT4K33TT1B3PHPK1JEGK", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT4K33TT1B3PHPK1JEGK"}, {"id": "01KWNYYT4RAEZDQYK598HARMT6", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT4RAEZDQYK598HARMT6"}, {"id": "01KWNYYT4WWAZA4WA4HYFMXJJ9", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT4WWAZA4WA4HYFMXJJ9"}, {"id": "01KWNYYT505YS4W6G40P6K6KZW", "type": "source", "kind": "bug", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYT505YS4W6G40P6K6KZW"}, {"id": "01KWNYYT55E9TSHPMMK3Z2VP4C", "type": "source", "kind": "adr", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYT55E9TSHPMMK3Z2VP4C"}, {"id": "01KWNYYT5AMS67FQC9JYKWB7F1", "type": "source", "kind": "spec", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYT5AMS67FQC9JYKWB7F1"}, {"id": "01KWNYYT5E47G4X64ZPKDNCD38", "type": "source", "kind": "source", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT5E47G4X64ZPKDNCD38"}, {"id": "01KWNYYT5J1G0X7DJND8KHCYKF", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYT5J1G0X7DJND8KHCYKF"}, {"id": "01KWNYYT5QGRJ2G819V2C8JV4E", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYT5QGRJ2G819V2C8JV4E"}, {"id": "01KWNYYT5WVY3X6Y6P7ACTT1P5", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYT5WVY3X6Y6P7ACTT1P5"}, {"id": "01KWNYYT61XM10PKQY61RG40FQ", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT61XM10PKQY61RG40FQ"}, {"id": "01KWNYYT6502T6CT4RPTPNF20X", "type": "source", "kind": "bug", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT6502T6CT4RPTPNF20X"}, {"id": "01KWNYYT6AN4C7ZJYWQSXFD5WK", "type": "source", "kind": "adr", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT6AN4C7ZJYWQSXFD5WK"}, {"id": "01KWNYYT6EQ7J9W2E3X59DX4QW", "type": "source", "kind": "spec", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT6EQ7J9W2E3X59DX4QW"}, {"id": "01KWNYYT6KXAD80CXRYPK865E6", "type": "source", "kind": "source", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT6KXAD80CXRYPK865E6"}, {"id": "01KWNYYT6RVM24XDBQW6A1V4A2", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT6RVM24XDBQW6A1V4A2"}, {"id": "01KWNYYT6WMYYY3B93ZD7CXNYN", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYT6WMYYY3B93ZD7CXNYN"}, {"id": "01KWNYYT72F2GNX4QMHR54YS1G", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT72F2GNX4QMHR54YS1G"}, {"id": "01KWNYYT764DKQ49CGJ2FFHP4E", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT764DKQ49CGJ2FFHP4E"}, {"id": "01KWNYYT7BYX236XHYDPASB7ZE", "type": "source", "kind": "bug", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT7BYX236XHYDPASB7ZE"}, {"id": "01KWNYYT7FF11939B0QE3G3CEY", "type": "source", "kind": "adr", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT7FF11939B0QE3G3CEY"}, {"id": "01KWNYYT7MKRMQCKNFJVEDTFRP", "type": "source", "kind": "spec", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT7MKRMQCKNFJVEDTFRP"}, {"id": "01KWNYYT7S56NBW6XZND4AVWZM", "type": "source", "kind": "source", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT7S56NBW6XZND4AVWZM"}, {"id": "01KWNYYT7XA2EVNVEGX613C89Y", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYT7XA2EVNVEGX613C89Y"}, {"id": "01KWNYYT81XYC6EEGETG8A53TY", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT81XYC6EEGETG8A53TY"}, {"id": "01KWNYYT86T35A47H3BS181XJ5", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT86T35A47H3BS181XJ5"}, {"id": "01KWNYYT8BBE69NRQ81Y1MPJ3X", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT8BBE69NRQ81Y1MPJ3X"}, {"id": "01KWNYYT8F7XR61X9VZEP1HS0A", "type": "source", "kind": "bug", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT8F7XR61X9VZEP1HS0A"}, {"id": "01KWNYYT8MTQKZD8S5YF9T34TB", "type": "source", "kind": "adr", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT8MTQKZD8S5YF9T34TB"}, {"id": "01KWNYYT8R0W84FFTJ23DGE73Y", "type": "source", "kind": "spec", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYT8R0W84FFTJ23DGE73Y"}, {"id": "01KWNYYT8X7KVWYB74YWQ6263K", "type": "source", "kind": "source", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT8X7KVWYB74YWQ6263K"}, {"id": "01KWNYYT92F7VX6S2C83EGV8WY", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT92F7VX6S2C83EGV8WY"}, {"id": "01KWNYYT973F912A9AVV9NSNC8", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT973F912A9AVV9NSNC8"}, {"id": "01KWNYYT9C1ZNKB54CYCBK9S7H", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT9C1ZNKB54CYCBK9S7H"}, {"id": "01KWNYYT9G22B07KCYBDZRBEGX", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT9G22B07KCYBDZRBEGX"}, {"id": "01KWNYYT9N1GSNMT2V4PMTR71V", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT9N1GSNMT2V4PMTR71V"}, {"id": "01KWNYYT9TG2210WK6GXBZ1PK5", "type": "source", "kind": "bug", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYT9TG2210WK6GXBZ1PK5"}, {"id": "01KWNYYT9Z553T9WCD8EWKFMWE", "type": "source", "kind": "adr", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYT9Z553T9WCD8EWKFMWE"}, {"id": "01KWNYYTA3CZSWD1X29C0CKVT0", "type": "source", "kind": "spec", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTA3CZSWD1X29C0CKVT0"}, {"id": "01KWNYYTA848EB7BYNZ0R23BE4", "type": "source", "kind": "source", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTA848EB7BYNZ0R23BE4"}, {"id": "01KWNYYTAC1EH3XTSM9XKF1FR0", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTAC1EH3XTSM9XKF1FR0"}, {"id": "01KWNYYTAH22WRZ0YZ9PBBMP20", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTAH22WRZ0YZ9PBBMP20"}, {"id": "01KWNYYTAP592DD4VCZE4XBPE0", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTAP592DD4VCZE4XBPE0"}, {"id": "01KWNYYTAVJB6RDEFSFPQ80F6N", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTAVJB6RDEFSFPQ80F6N"}, {"id": "01KWNYYTAZKES679WT1S1GWDDZ", "type": "source", "kind": "bug", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTAZKES679WT1S1GWDDZ"}, {"id": "01KWNYYTB5JCQZ8TK6KD7SZQC8", "type": "source", "kind": "adr", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTB5JCQZ8TK6KD7SZQC8"}, {"id": "01KWNYYTB95P08GR78DRRZPF1Z", "type": "source", "kind": "spec", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTB95P08GR78DRRZPF1Z"}, {"id": "01KWNYYTBE846ZE95ZE5WTK398", "type": "source", "kind": "source", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTBE846ZE95ZE5WTK398"}, {"id": "01KWNYYTBKEKG4FVB171K24D8D", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTBKEKG4FVB171K24D8D"}, {"id": "01KWNYYTBR5J8CWZD7JWZZEGMR", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTBR5J8CWZD7JWZZEGMR"}, {"id": "01KWNYYTBXZH03CFKTEJJ0HSTB", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTBXZH03CFKTEJJ0HSTB"}, {"id": "01KWNYYTC2A7AXB0NSBQGVNYX4", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTC2A7AXB0NSBQGVNYX4"}, {"id": "01KWNYYTC79DYKZ71X1SMMQ4ZS", "type": "source", "kind": "bug", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTC79DYKZ71X1SMMQ4ZS"}, {"id": "01KWNYYTCC7KSA823BEP57VXGS", "type": "source", "kind": "adr", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTCC7KSA823BEP57VXGS"}, {"id": "01KWNYYTCJG9S2EQ9GNX9E3FC5", "type": "source", "kind": "spec", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTCJG9S2EQ9GNX9E3FC5"}, {"id": "01KWNYYTCQK9HMEN5TFKSEJRE0", "type": "source", "kind": "source", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTCQK9HMEN5TFKSEJRE0"}, {"id": "01KWNYYTCVEMWX2EE6GWJRDRKE", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTCVEMWX2EE6GWJRDRKE"}, {"id": "01KWNYYTD166R27W2ZXAFR1WCG", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTD166R27W2ZXAFR1WCG"}, {"id": "01KWNYYTD66GZV2NRD5TZP12N0", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTD66GZV2NRD5TZP12N0"}, {"id": "01KWNYYTDB9PRR9NSHEEMY39HY", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTDB9PRR9NSHEEMY39HY"}, {"id": "01KWNYYTDG4Y9H5XQ11RMT5KVT", "type": "source", "kind": "bug", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTDG4Y9H5XQ11RMT5KVT"}, {"id": "01KWNYYTDPF0HAPHPG0WJEE0MJ", "type": "source", "kind": "adr", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTDPF0HAPHPG0WJEE0MJ"}, {"id": "01KWNYYTE0BKPH0YEJ0YRS84G3", "type": "source", "kind": "spec", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTE0BKPH0YEJ0YRS84G3"}, {"id": "01KWNYYTE5MTKY1CXJ97PC7V0A", "type": "source", "kind": "source", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTE5MTKY1CXJ97PC7V0A"}, {"id": "01KWNYYTEANGX5NBGZ1ZCK1BPB", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTEANGX5NBGZ1ZCK1BPB"}, {"id": "01KWNYYTEFYV9KZC171B5PEKFP", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTEFYV9KZC171B5PEKFP"}, {"id": "01KWNYYTEMY87G2PXDSJAQ4G4J", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTEMY87G2PXDSJAQ4G4J"}, {"id": "01KWNYYTESH6MJGQEBZJ179MS8", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTESH6MJGQEBZJ179MS8"}, {"id": "01KWNYYTEY575TN3784TDQZBHT", "type": "source", "kind": "bug", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTEY575TN3784TDQZBHT"}, {"id": "01KWNYYTF3NHHH0FM4EY5PC6NS", "type": "source", "kind": "adr", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTF3NHHH0FM4EY5PC6NS"}, {"id": "01KWNYYTF8JDH5H5PEKPM7V6BB", "type": "source", "kind": "spec", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTF8JDH5H5PEKPM7V6BB"}, {"id": "01KWNYYTFD4G8Z8GZYG7FG3SDB", "type": "source", "kind": "source", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTFD4G8Z8GZYG7FG3SDB"}, {"id": "01KWNYYTFJ8HM33Z17GT8FE89N", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTFJ8HM33Z17GT8FE89N"}, {"id": "01KWNYYTFQ6Q3S8QMPF1HDM5DW", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTFQ6Q3S8QMPF1HDM5DW"}, {"id": "01KWNYYTFVMYE3PX8WWS17T2YJ", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTFVMYE3PX8WWS17T2YJ"}, {"id": "01KWNYYTG0JQDZZKJW4KHPSP6P", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTG0JQDZZKJW4KHPSP6P"}, {"id": "01KWNYYTG56XCT1772ETCZ5G23", "type": "source", "kind": "bug", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTG56XCT1772ETCZ5G23"}, {"id": "01KWNYYTG971ZM559NZAVQE9WQ", "type": "source", "kind": "adr", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTG971ZM559NZAVQE9WQ"}, {"id": "01KWNYYTGEPHZR5MD0QC0JQM4Z", "type": "source", "kind": "spec", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTGEPHZR5MD0QC0JQM4Z"}, {"id": "01KWNYYTGKZYMJFNMYB3RKFF6T", "type": "source", "kind": "source", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTGKZYMJFNMYB3RKFF6T"}, {"id": "01KWNYYTGR1GMKCJP9MXVWQY85", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTGR1GMKCJP9MXVWQY85"}, {"id": "01KWNYYTGWCCS8DFB2NAP8R0MY", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTGWCCS8DFB2NAP8R0MY"}, {"id": "01KWNYYTH1EVTCKK1E5FQ9KF8R", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTH1EVTCKK1E5FQ9KF8R"}, {"id": "01KWNYYTH66QVGEN5R91DTHC4H", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTH66QVGEN5R91DTHC4H"}, {"id": "01KWNYYTHBMFENVTDEFH6E0D9R", "type": "source", "kind": "bug", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTHBMFENVTDEFH6E0D9R"}, {"id": "01KWNYYTHG734J8D17M74YWBY8", "type": "source", "kind": "adr", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTHG734J8D17M74YWBY8"}, {"id": "01KWNYYTHMV8F2155D2P4R0Z0X", "type": "source", "kind": "spec", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTHMV8F2155D2P4R0Z0X"}, {"id": "01KWNYYTHT36WS5SCCRFQ82RZ6", "type": "source", "kind": "source", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTHT36WS5SCCRFQ82RZ6"}, {"id": "01KWNYYTHYHD1NFJQ4M71EMR71", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTHYHD1NFJQ4M71EMR71"}, {"id": "01KWNYYTJ3XNZBQ8KT1FQG87YT", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTJ3XNZBQ8KT1FQG87YT"}, {"id": "01KWNYYTJ7X0PCQ7F0Z7P4ZFHW", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTJ7X0PCQ7F0Z7P4ZFHW"}, {"id": "01KWNYYTJCWTRPR4GB6M3YC7AP", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTJCWTRPR4GB6M3YC7AP"}, {"id": "01KWNYYTJGV88DCXERPBAWNMXQ", "type": "source", "kind": "bug", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTJGV88DCXERPBAWNMXQ"}, {"id": "01KWNYYTJNXDKC1WK1J34T99C8", "type": "source", "kind": "adr", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTJNXDKC1WK1J34T99C8"}, {"id": "01KWNYYTJSV27JJ5M9EHB7QHZ1", "type": "source", "kind": "spec", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTJSV27JJ5M9EHB7QHZ1"}, {"id": "01KWNYYTJX18EB48FERGVGSJJE", "type": "source", "kind": "source", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTJX18EB48FERGVGSJJE"}, {"id": "01KWNYYTK2XDF03EFWDB059797", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTK2XDF03EFWDB059797"}, {"id": "01KWNYYTK72CXHT8W5KZB63CVR", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTK72CXHT8W5KZB63CVR"}, {"id": "01KWNYYTKBVF3XNPXXY1MB5WYZ", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTKBVF3XNPXXY1MB5WYZ"}, {"id": "01KWNYYTKGA24FRV8VMDZ6PDB6", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTKGA24FRV8VMDZ6PDB6"}, {"id": "01KWNYYTKNCNSDHP9PY1EJHAXY", "type": "source", "kind": "bug", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTKNCNSDHP9PY1EJHAXY"}, {"id": "01KWNYYTKTYH6QSPC2JJ4K1NK0", "type": "source", "kind": "adr", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTKTYH6QSPC2JJ4K1NK0"}, {"id": "01KWNYYTKYQMNYDW4HY2NDSFE5", "type": "source", "kind": "spec", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTKYQMNYDW4HY2NDSFE5"}, {"id": "01KWNYYTM22E560XJ4ZHES228A", "type": "source", "kind": "source", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTM22E560XJ4ZHES228A"}, {"id": "01KWNYYTM7ADSADQ3E8CJZ5RTN", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTM7ADSADQ3E8CJZ5RTN"}, {"id": "01KWNYYTMC6C3XMQWE2GGTXSAR", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTMC6C3XMQWE2GGTXSAR"}, {"id": "01KWNYYTMHW213NWGH4TAHH8GB", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTMHW213NWGH4TAHH8GB"}, {"id": "01KWNYYTMNVDEY499NCMBVTC3X", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTMNVDEY499NCMBVTC3X"}, {"id": "01KWNYYTMTQTWZBHJVT0RSB4K3", "type": "source", "kind": "bug", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTMTQTWZBHJVT0RSB4K3"}, {"id": "01KWNYYTMZ950MKM86V93Z8H55", "type": "source", "kind": "adr", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTMZ950MKM86V93Z8H55"}, {"id": "01KWNYYTN365N5VZ7HR7SQ19EC", "type": "source", "kind": "spec", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTN365N5VZ7HR7SQ19EC"}, {"id": "01KWNYYTN7SP3H8NP8GY68ESSX", "type": "source", "kind": "source", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTN7SP3H8NP8GY68ESSX"}, {"id": "01KWNYYTNCF0YMJPTCTYTYK5DA", "type": "source", "kind": "ticket", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTNCF0YMJPTCTYTYK5DA"}, {"id": "01KWNYYTNHF9YY5DAJ8XRW1PM6", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTNHF9YY5DAJ8XRW1PM6"}, {"id": "01KWNYYTNPFAQDS9VAD5E3KWMS", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTNPFAQDS9VAD5E3KWMS"}, {"id": "01KWNYYTNT4A99RPKQZF5DYTVE", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTNT4A99RPKQZF5DYTVE"}, {"id": "01KWNYYTNZRNR7MXCA97TNNNZF", "type": "source", "kind": "bug", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTNZRNR7MXCA97TNNNZF"}, {"id": "01KWNYYTP4X6GQ8BPSENXKXY48", "type": "source", "kind": "adr", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTP4X6GQ8BPSENXKXY48"}, {"id": "01KWNYYTP8N7N2Z0RSKZZHF6FY", "type": "source", "kind": "spec", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTP8N7N2Z0RSKZZHF6FY"}, {"id": "01KWNYYTPDYD70JC6N3E448ZHP", "type": "source", "kind": "source", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTPDYD70JC6N3E448ZHP"}, {"id": "01KWNYYTPHMP6K6T84W28R424H", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTPHMP6K6T84W28R424H"}, {"id": "01KWNYYTPPEP51RN7EJZ4VR5SH", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTPPEP51RN7EJZ4VR5SH"}, {"id": "01KWNYYTPVYWZJNY0EA8400SYM", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTPVYWZJNY0EA8400SYM"}, {"id": "01KWNYYTPZG4EFVSACE9ERT781", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTPZG4EFVSACE9ERT781"}, {"id": "01KWNYYTQ3QRCT8HRA9S4JNGNQ", "type": "source", "kind": "bug", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTQ3QRCT8HRA9S4JNGNQ"}, {"id": "01KWNYYTQ8271KJKB8KV92PRZG", "type": "source", "kind": "adr", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTQ8271KJKB8KV92PRZG"}, {"id": "01KWNYYTQDTDVK1WAPH3QJFKX3", "type": "source", "kind": "spec", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTQDTDVK1WAPH3QJFKX3"}, {"id": "01KWNYYTQHCTEE3FW9G5VNGBAN", "type": "source", "kind": "source", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTQHCTEE3FW9G5VNGBAN"}, {"id": "01KWNYYTQND2D988YSWHXCZFAW", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTQND2D988YSWHXCZFAW"}, {"id": "01KWNYYTQTA1S26QY50P5BXXYR", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTQTA1S26QY50P5BXXYR"}, {"id": "01KWNYYTQYEZD0MS6VAVCMGC86", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTQYEZD0MS6VAVCMGC86"}, {"id": "01KWNYYTR39M63M98ACZGPFVR5", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTR39M63M98ACZGPFVR5"}, {"id": "01KWNYYTR8PHK0J73C95Z65Y8Q", "type": "source", "kind": "bug", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTR8PHK0J73C95Z65Y8Q"}, {"id": "01KWNYYTRCYH80V7QKRMVRES5G", "type": "source", "kind": "adr", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTRCYH80V7QKRMVRES5G"}, {"id": "01KWNYYTRH6V888FH6F7GWF6QD", "type": "source", "kind": "spec", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTRH6V888FH6F7GWF6QD"}, {"id": "01KWNYYTRPB1JC9TBS879CXEWF", "type": "source", "kind": "source", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTRPB1JC9TBS879CXEWF"}, {"id": "01KWNYYTRTAG8JY6JS8YKSB7Q0", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTRTAG8JY6JS8YKSB7Q0"}, {"id": "01KWNYYTRZB89CYME9P93J4HNT", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTRZB89CYME9P93J4HNT"}, {"id": "01KWNYYTS49RAWM7XTESSE3DS3", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTS49RAWM7XTESSE3DS3"}, {"id": "01KWNYYTS8GDKQJDVHFVN3YH2Q", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTS8GDKQJDVHFVN3YH2Q"}, {"id": "01KWNYYTSD10BB91QT9C4R8Z3G", "type": "source", "kind": "bug", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTSD10BB91QT9C4R8Z3G"}, {"id": "01KWNYYTSHMZ1CSEXMFQD6EDK2", "type": "source", "kind": "adr", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTSHMZ1CSEXMFQD6EDK2"}, {"id": "01KWNYYTSQVWPWGF4C2P78YSPX", "type": "source", "kind": "spec", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTSQVWPWGF4C2P78YSPX"}, {"id": "01KWNYYTSVG9MRFXTT6PFQ24DH", "type": "source", "kind": "source", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTSVG9MRFXTT6PFQ24DH"}, {"id": "01KWNYYTT0J4RR5J1602KPVCA2", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTT0J4RR5J1602KPVCA2"}, {"id": "01KWNYYTT42V42HC3B9WY13NWM", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTT42V42HC3B9WY13NWM"}, {"id": "01KWNYYTT9RAWC5PKE9PPRVBCJ", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTT9RAWC5PKE9PPRVBCJ"}, {"id": "01KWNYYTTESHV4Z00SB0BCGTWT", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTTESHV4Z00SB0BCGTWT"}, {"id": "01KWNYYTTJHFH3XXXR14JAHTPW", "type": "source", "kind": "bug", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTTJHFH3XXXR14JAHTPW"}, {"id": "01KWNYYTTQF99PF26G3GJWX4CP", "type": "source", "kind": "adr", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTTQF99PF26G3GJWX4CP"}, {"id": "01KWNYYTTWC8YAX0QF2Q5BCHKD", "type": "source", "kind": "spec", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTTWC8YAX0QF2Q5BCHKD"}, {"id": "01KWNYYTV2EPKBH54GKFRBHDE4", "type": "source", "kind": "source", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTV2EPKBH54GKFRBHDE4"}, {"id": "01KWNYYTV7CJQYWDXZRMRH0ASZ", "type": "source", "kind": "ticket", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTV7CJQYWDXZRMRH0ASZ"}, {"id": "01KWNYYTVCS60JRB8VN33XE80G", "type": "source", "kind": "ticket", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYTVCS60JRB8VN33XE80G"}, {"id": "01KWNYYTVHB3TJFQ6X9BDF5E20", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTVHB3TJFQ6X9BDF5E20"}, {"id": "01KWNYYTVPG7T3H19HH7K5Q4KQ", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTVPG7T3H19HH7K5Q4KQ"}, {"id": "01KWNYYTVVHHE27R7Q3Y0CG2KS", "type": "source", "kind": "bug", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTVVHHE27R7Q3Y0CG2KS"}, {"id": "01KWNYYTW0ESEDZ2M7XPC7M439", "type": "source", "kind": "adr", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTW0ESEDZ2M7XPC7M439"}, {"id": "01KWNYYTW50HNYVB1MN9X31HFB", "type": "source", "kind": "spec", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTW50HNYVB1MN9X31HFB"}, {"id": "01KWNYYTWA29B8TA80T9DG65XK", "type": "source", "kind": "source", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTWA29B8TA80T9DG65XK"}, {"id": "01KWNYYTWFTDA4VVAXQ7ECPFRD", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYTWFTDA4VVAXQ7ECPFRD"}, {"id": "01KWNYYTWMD3BG9003AGK0A2VX", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTWMD3BG9003AGK0A2VX"}, {"id": "01KWNYYTWTHEAP5QXG70Y73XWR", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTWTHEAP5QXG70Y73XWR"}, {"id": "01KWNYYTWZJ9G7HN91P5SV3TRN", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTWZJ9G7HN91P5SV3TRN"}, {"id": "01KWNYYTX4EYP3JRXWJAR8G5R1", "type": "source", "kind": "bug", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTX4EYP3JRXWJAR8G5R1"}, {"id": "01KWNYYTX93YPH5EYY1S3K7X9F", "type": "source", "kind": "adr", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTX93YPH5EYY1S3K7X9F"}, {"id": "01KWNYYTXEBYJD7DA0XRRB47X5", "type": "source", "kind": "spec", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYTXEBYJD7DA0XRRB47X5"}, {"id": "01KWNYYTXKN4ZZZ576ZZFW0NBR", "type": "source", "kind": "source", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTXKN4ZZZ576ZZFW0NBR"}, {"id": "01KWNYYTXSZ7H82GHD7M2P5KQ1", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTXSZ7H82GHD7M2P5KQ1"}, {"id": "01KWNYYTXYGW92HDZYXKHMVDP5", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTXYGW92HDZYXKHMVDP5"}, {"id": "01KWNYYTY3NS5NPGEDSV556M4P", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTY3NS5NPGEDSV556M4P"}, {"id": "01KWNYYTY8EYSGWFSR1V4F6SB4", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTY8EYSGWFSR1V4F6SB4"}, {"id": "01KWNYYTYDKY045273DC8WRKH4", "type": "source", "kind": "bug", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTYDKY045273DC8WRKH4"}, {"id": "01KWNYYTYJ6HY3ZWZZRV8Y9Q7K", "type": "source", "kind": "adr", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYTYJ6HY3ZWZZRV8Y9Q7K"}, {"id": "01KWNYYTYQYA0MFHVSJZ9CP16W", "type": "source", "kind": "spec", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTYQYA0MFHVSJZ9CP16W"}, {"id": "01KWNYYTYW0FE1RTA4BA05FV3Y", "type": "source", "kind": "source", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTYW0FE1RTA4BA05FV3Y"}, {"id": "01KWNYYTZ14EQWZFVBMNM6DAMG", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTZ14EQWZFVBMNM6DAMG"}, {"id": "01KWNYYTZ6YEHRVD1JEPCR75G3", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTZ6YEHRVD1JEPCR75G3"}, {"id": "01KWNYYTZCQX7D9G9N8Q2ST132", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTZCQX7D9G9N8Q2ST132"}, {"id": "01KWNYYTZGBS4ND98DPVTMNQTF", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTZGBS4ND98DPVTMNQTF"}, {"id": "01KWNYYTZNZJ2NZZBAYCQ86DXN", "type": "source", "kind": "bug", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYTZNZJ2NZZBAYCQ86DXN"}, {"id": "01KWNYYTZTX9QBDH4JAR68K9E4", "type": "source", "kind": "adr", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTZTX9QBDH4JAR68K9E4"}, {"id": "01KWNYYTZZP3N9Y3QEHE49AX9S", "type": "source", "kind": "spec", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYTZZP3N9Y3QEHE49AX9S"}, {"id": "01KWNYYV03ZWW0DHF9R04TEE4Q", "type": "source", "kind": "source", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV03ZWW0DHF9R04TEE4Q"}, {"id": "01KWNYYV08T5G7GFNY3XA1BSNV", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV08T5G7GFNY3XA1BSNV"}, {"id": "01KWNYYV0E8AE9THE1Y6RBFGTS", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV0E8AE9THE1Y6RBFGTS"}, {"id": "01KWNYYV0K766Q8DHJ5BYH22PN", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV0K766Q8DHJ5BYH22PN"}, {"id": "01KWNYYV0R0ZZGCV5FXRN1YZHP", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV0R0ZZGCV5FXRN1YZHP"}, {"id": "01KWNYYV0X6JYDSTY4NWJAPF16", "type": "source", "kind": "bug", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV0X6JYDSTY4NWJAPF16"}, {"id": "01KWNYYV13R5RKKBTVKJS4CZ3C", "type": "source", "kind": "adr", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV13R5RKKBTVKJS4CZ3C"}, {"id": "01KWNYYV186PP6QZ896R9P3T7C", "type": "source", "kind": "spec", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV186PP6QZ896R9P3T7C"}, {"id": "01KWNYYV1DKHA048K79R0ZCERA", "type": "source", "kind": "source", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV1DKHA048K79R0ZCERA"}, {"id": "01KWNYYV1JEM07S57KGQC2BZA5", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV1JEM07S57KGQC2BZA5"}, {"id": "01KWNYYV1R5S0PEXRH69NPNRD0", "type": "source", "kind": "ticket", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV1R5S0PEXRH69NPNRD0"}, {"id": "01KWNYYV1XQ37W0YF32H0KV19K", "type": "source", "kind": "ticket", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV1XQ37W0YF32H0KV19K"}, {"id": "01KWNYYV24EP9W97BHVPHNVSWC", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYV24EP9W97BHVPHNVSWC"}, {"id": "01KWNYYV2AJVP87A0VQDR3Y9GW", "type": "source", "kind": "bug", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYV2AJVP87A0VQDR3Y9GW"}, {"id": "01KWNYYV2GBWQ4W1HC784PJ9DA", "type": "source", "kind": "adr", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYV2GBWQ4W1HC784PJ9DA"}, {"id": "01KWNYYV2N8CGSH0ZKKGM5NN2F", "type": "source", "kind": "spec", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYV2N8CGSH0ZKKGM5NN2F"}, {"id": "01KWNYYV2T7Z3PEHKS08AAERVS", "type": "source", "kind": "source", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV2T7Z3PEHKS08AAERVS"}, {"id": "01KWNYYV2ZWS6MRH4MX1CCKSAC", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYV2ZWS6MRH4MX1CCKSAC"}, {"id": "01KWNYYV349R1ZTRPXGG8ZPYQM", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYV349R1ZTRPXGG8ZPYQM"}, {"id": "01KWNYYV38Y0ECQPPSETW1MT8C", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYV38Y0ECQPPSETW1MT8C"}, {"id": "01KWNYYV3DX00K11R7WKQVAMZ3", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYV3DX00K11R7WKQVAMZ3"}, {"id": "01KWNYYV3J4B59TS98M4A73F2A", "type": "source", "kind": "bug", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYV3J4B59TS98M4A73F2A"}, {"id": "01KWNYYV3PX5XYCSF3VZKTNHK5", "type": "source", "kind": "adr", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYV3PX5XYCSF3VZKTNHK5"}, {"id": "01KWNYYV3VNZRX6H66067DVZBH", "type": "source", "kind": "spec", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYV3VNZRX6H66067DVZBH"}, {"id": "01KWNYYV3ZBM3KY77QHK4WQDSX", "type": "source", "kind": "source", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV3ZBM3KY77QHK4WQDSX"}, {"id": "01KWNYYV44QN0C3GVEFMPTWCD2", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYV44QN0C3GVEFMPTWCD2"}, {"id": "01KWNYYV49VCMKPRRKPZFPG8F6", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYV49VCMKPRRKPZFPG8F6"}, {"id": "01KWNYYV4ERXZ1QH7YF8N4589R", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYV4ERXZ1QH7YF8N4589R"}, {"id": "01KWNYYV4J8QHQYBVY6H9A7JM1", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYV4J8QHQYBVY6H9A7JM1"}, {"id": "01KWNYYV4Q542FVTRR8J0V44C8", "type": "source", "kind": "bug", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYV4Q542FVTRR8J0V44C8"}, {"id": "01KWNYYV4WE0H3V7D8XG32AH2V", "type": "source", "kind": "adr", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYV4WE0H3V7D8XG32AH2V"}, {"id": "01KWNYYV50YFAQSGC5EJT7WY9A", "type": "source", "kind": "spec", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYV50YFAQSGC5EJT7WY9A"}, {"id": "01KWNYYV54JFTXZSVJ6JCNW5HA", "type": "source", "kind": "source", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV54JFTXZSVJ6JCNW5HA"}, {"id": "01KWNYYV596R03B74T1C1HMA0K", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYV596R03B74T1C1HMA0K"}, {"id": "01KWNYYV5E6HPYDC79YH2G6JTW", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYV5E6HPYDC79YH2G6JTW"}, {"id": "01KWNYYV5JX8B1EXDVCYXHSMAT", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYV5JX8B1EXDVCYXHSMAT"}, {"id": "01KWNYYV5Q987XWDJRHDYRC7JQ", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYV5Q987XWDJRHDYRC7JQ"}, {"id": "01KWNYYV5VM43DV5DPXZP5GQKG", "type": "source", "kind": "bug", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYV5VM43DV5DPXZP5GQKG"}, {"id": "01KWNYYV60VEHB2TNVZQ7Z1R5A", "type": "source", "kind": "adr", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYV60VEHB2TNVZQ7Z1R5A"}, {"id": "01KWNYYV65V8286X3C1387PRT6", "type": "source", "kind": "spec", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV65V8286X3C1387PRT6"}, {"id": "01KWNYYV691ZSYAFWQZ4C5CTA8", "type": "source", "kind": "source", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV691ZSYAFWQZ4C5CTA8"}, {"id": "01KWNYYV6EE0SCXEPWDQG0B90H", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV6EE0SCXEPWDQG0B90H"}, {"id": "01KWNYYV6KX4JA4D96B1FKG9V8", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV6KX4JA4D96B1FKG9V8"}, {"id": "01KWNYYV6QRS2JGNVN59H8V4FX", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV6QRS2JGNVN59H8V4FX"}, {"id": "01KWNYYV6W2XPJEGNX0S8JT3TA", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV6W2XPJEGNX0S8JT3TA"}, {"id": "01KWNYYV71T7FVW4KQHWD61JQ7", "type": "source", "kind": "bug", "sprint": 36, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYV71T7FVW4KQHWD61JQ7"}, {"id": "01KWNYYV76T1BY75FD5RPAHQKP", "type": "source", "kind": "adr", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV76T1BY75FD5RPAHQKP"}, {"id": "01KWNYYV7A0G4Y2FFDNZ1WVCSP", "type": "source", "kind": "spec", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYV7A0G4Y2FFDNZ1WVCSP"}, {"id": "01KWNYZCCRSYDXE07C29VTK6M3", "type": "source", "kind": "source", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCCRSYDXE07C29VTK6M3"}, {"id": "01KWNYZCCY2BZYBK6NTDRG7BWN", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCCY2BZYBK6NTDRG7BWN"}, {"id": "01KWNYZCD4JPMWB5S0GWCMRT1X", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCD4JPMWB5S0GWCMRT1X"}, {"id": "01KWNYZCDAZW4T435QNQHJW3D1", "type": "source", "kind": "ticket", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCDAZW4T435QNQHJW3D1"}, {"id": "01KWNYZCDGC7KKWXKVCS7464MZ", "type": "source", "kind": "ticket", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCDGC7KKWXKVCS7464MZ"}, {"id": "01KWNYZCDNHGK4GVRTXYBEBAKP", "type": "source", "kind": "bug", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCDNHGK4GVRTXYBEBAKP"}, {"id": "01KWNYZCDVVQFGRW89VQXC8P6X", "type": "source", "kind": "adr", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCDVVQFGRW89VQXC8P6X"}, {"id": "01KWNYZCE2QAPT96M4PR0GSAWJ", "type": "source", "kind": "adr", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCE2QAPT96M4PR0GSAWJ"}, {"id": "01KWNYZCE82TNFXCEV11VQNR1B", "type": "source", "kind": "spec", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCE82TNFXCEV11VQNR1B"}, {"id": "01KWNYZCEESMA75HTDDF1T8672", "type": "source", "kind": "source", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCEESMA75HTDDF1T8672"}, {"id": "01KWNYZCENQPFNM9KRKX05Y30G", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCENQPFNM9KRKX05Y30G"}, {"id": "01KWNYZCEVE4HMZ0Q6MS9JH8S8", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCEVE4HMZ0Q6MS9JH8S8"}, {"id": "01KWNYZCF17DY7TVEPFAB0F04S", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCF17DY7TVEPFAB0F04S"}, {"id": "01KWNYZCF7J9XQTZTV4DC3ZFBE", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCF7J9XQTZTV4DC3ZFBE"}, {"id": "01KWNYZCFDNCNWX91Z6RCK3CYZ", "type": "source", "kind": "bug", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCFDNCNWX91Z6RCK3CYZ"}, {"id": "01KWNYZCFJNP0X0V3A8SG4NNDJ", "type": "source", "kind": "adr", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCFJNP0X0V3A8SG4NNDJ"}, {"id": "01KWNYZCFRZ2M6BPEVXMP214AY", "type": "source", "kind": "spec", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCFRZ2M6BPEVXMP214AY"}, {"id": "01KWNYZCFX7TA33N90QPGG8W5N", "type": "source", "kind": "source", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCFX7TA33N90QPGG8W5N"}, {"id": "01KWNYZCG36JX2JSVMW62GJ8TV", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCG36JX2JSVMW62GJ8TV"}, {"id": "01KWNYZCG8NF1X8TRZKB1QTZ5C", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCG8NF1X8TRZKB1QTZ5C"}, {"id": "01KWNYZCGD4KP3EQ6SGY9XZ5C9", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCGD4KP3EQ6SGY9XZ5C9"}, {"id": "01KWNYZCGKGKC3HRW5W51PEDM5", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCGKGKC3HRW5W51PEDM5"}, {"id": "01KWNYZCGRZD721V69CMV8296W", "type": "source", "kind": "bug", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCGRZD721V69CMV8296W"}, {"id": "01KWNYZCGYQ5WESZXGTT845V0C", "type": "source", "kind": "adr", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCGYQ5WESZXGTT845V0C"}, {"id": "01KWNYZCH3T5DXSXXGH75J3TSZ", "type": "source", "kind": "spec", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCH3T5DXSXXGH75J3TSZ"}, {"id": "01KWNYZCH84D7XS42FKR8ASJXG", "type": "source", "kind": "source", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCH84D7XS42FKR8ASJXG"}, {"id": "01KWNYZCHD72BVF2J12R54FH5X", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCHD72BVF2J12R54FH5X"}, {"id": "01KWNYZCHJCBT2KP9XW7SFSXDJ", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCHJCBT2KP9XW7SFSXDJ"}, {"id": "01KWNYZCHQQFWRHDVY645GVR58", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCHQQFWRHDVY645GVR58"}, {"id": "01KWNYZCHWRMMTDMKFH2EWAQA2", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCHWRMMTDMKFH2EWAQA2"}, {"id": "01KWNYZCJ159BY2R50Q0P8B9MT", "type": "source", "kind": "bug", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCJ159BY2R50Q0P8B9MT"}, {"id": "01KWNYZCJ63WR2NH48MN4MGCNG", "type": "source", "kind": "adr", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCJ63WR2NH48MN4MGCNG"}, {"id": "01KWNYZCJBTANJP3V03NEY9JDR", "type": "source", "kind": "spec", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCJBTANJP3V03NEY9JDR"}, {"id": "01KWNYZCJHJ1ENMMX1K3CM2D3T", "type": "source", "kind": "source", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCJHJ1ENMMX1K3CM2D3T"}, {"id": "01KWNYZCJPSRNANKSWCF80SB8G", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCJPSRNANKSWCF80SB8G"}, {"id": "01KWNYZCJTXWYGBDW4EMTTFEY9", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCJTXWYGBDW4EMTTFEY9"}, {"id": "01KWNYZCK0N093RHFR15N5G8VP", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCK0N093RHFR15N5G8VP"}, {"id": "01KWNYZCK5J7A89V8VEHQWMZBE", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCK5J7A89V8VEHQWMZBE"}, {"id": "01KWNYZCKA38WSYV5Y825C8ZZR", "type": "source", "kind": "bug", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCKA38WSYV5Y825C8ZZR"}, {"id": "01KWNYZCKENVEW6RJQ6B3RAXX5", "type": "source", "kind": "adr", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCKENVEW6RJQ6B3RAXX5"}, {"id": "01KWNYZCKKGCCAB0FZ4VDFKXQ1", "type": "source", "kind": "spec", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCKKGCCAB0FZ4VDFKXQ1"}, {"id": "01KWNYZCKRHARQSX4T9KEHMSX9", "type": "source", "kind": "source", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCKRHARQSX4T9KEHMSX9"}, {"id": "01KWNYZCKW7WJ37P8468204Z12", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCKW7WJ37P8468204Z12"}, {"id": "01KWNYZCM1S1X6DN8642SFAX64", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCM1S1X6DN8642SFAX64"}, {"id": "01KWNYZCM6H883A76DAE262436", "type": "source", "kind": "ticket", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCM6H883A76DAE262436"}, {"id": "01KWNYZCMA5ZVW73GHCDJGSGTX", "type": "source", "kind": "ticket", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCMA5ZVW73GHCDJGSGTX"}, {"id": "01KWNYZCMFXZAM0YNVVKAN25WJ", "type": "source", "kind": "bug", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCMFXZAM0YNVVKAN25WJ"}, {"id": "01KWNYZCMK80ND3QSGPT1NJSC2", "type": "source", "kind": "adr", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCMK80ND3QSGPT1NJSC2"}, {"id": "01KWNYZCMQ3BYWKQR0EG1ZXCM8", "type": "source", "kind": "spec", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCMQ3BYWKQR0EG1ZXCM8"}, {"id": "01KWNYZCMW38SD5V24YP6XKJQC", "type": "source", "kind": "source", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCMW38SD5V24YP6XKJQC"}, {"id": "01KWNYZCN1ZSY73F1JGQQBGARS", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCN1ZSY73F1JGQQBGARS"}, {"id": "01KWNYZCN68NE5MR2GHPY2JJMD", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCN68NE5MR2GHPY2JJMD"}, {"id": "01KWNYZCNANPJ1AVFDKXWF4DHX", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCNANPJ1AVFDKXWF4DHX"}, {"id": "01KWNYZCNFQKF4K3WD8V0CNYZM", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCNFQKF4K3WD8V0CNYZM"}, {"id": "01KWNYZCNMJCFYEDHT8G6MK6VP", "type": "source", "kind": "bug", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCNMJCFYEDHT8G6MK6VP"}, {"id": "01KWNYZCNS56GBYMMR989Y8WEE", "type": "source", "kind": "adr", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCNS56GBYMMR989Y8WEE"}, {"id": "01KWNYZCNYT6CF4K70ZNE0CJV3", "type": "source", "kind": "spec", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCNYT6CF4K70ZNE0CJV3"}, {"id": "01KWNYZCP2Z8EQ1S6FN3TMF6PX", "type": "source", "kind": "source", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCP2Z8EQ1S6FN3TMF6PX"}, {"id": "01KWNYZCP7KSE5YP58SCG6XDQN", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCP7KSE5YP58SCG6XDQN"}, {"id": "01KWNYZCPC5YCAGJDSS5MVRPXA", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCPC5YCAGJDSS5MVRPXA"}, {"id": "01KWNYZCPHQ7WJ21XZB8EZH7AF", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCPHQ7WJ21XZB8EZH7AF"}, {"id": "01KWNYZCPP4YEWHC726K3JQ2C3", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCPP4YEWHC726K3JQ2C3"}, {"id": "01KWNYZCPVR6F1KBDHWRRZH6GT", "type": "source", "kind": "bug", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCPVR6F1KBDHWRRZH6GT"}, {"id": "01KWNYZCPZ6MCXE50Y30H564N0", "type": "source", "kind": "adr", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCPZ6MCXE50Y30H564N0"}, {"id": "01KWNYZCQ45R0JT0BAKD6YR01S", "type": "source", "kind": "spec", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCQ45R0JT0BAKD6YR01S"}, {"id": "01KWNYZCQ8CJDE1W47VWKPEQ8J", "type": "source", "kind": "source", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCQ8CJDE1W47VWKPEQ8J"}, {"id": "01KWNYZCQD9SBY50E90TK1X93S", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCQD9SBY50E90TK1X93S"}, {"id": "01KWNYZCQHEFGA686Z6QXZ5KH7", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCQHEFGA686Z6QXZ5KH7"}, {"id": "01KWNYZCQNSNPD8VDHWGQRV199", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCQNSNPD8VDHWGQRV199"}, {"id": "01KWNYZCQSZYECZVT9BFDD9VWP", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCQSZYECZVT9BFDD9VWP"}, {"id": "01KWNYZCQYGS8DTW630EJ75HYA", "type": "source", "kind": "bug", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCQYGS8DTW630EJ75HYA"}, {"id": "01KWNYZCR2QCMQ0284W1PAYP2Y", "type": "source", "kind": "adr", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCR2QCMQ0284W1PAYP2Y"}, {"id": "01KWNYZCR6EF832YSET9TG1VAZ", "type": "source", "kind": "spec", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCR6EF832YSET9TG1VAZ"}, {"id": "01KWNYZCRBEZY90HFPCA1CYT7V", "type": "source", "kind": "source", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCRBEZY90HFPCA1CYT7V"}, {"id": "01KWNYZCRFDAPYFND7W4BTK25S", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCRFDAPYFND7W4BTK25S"}, {"id": "01KWNYZCRM8RX165VQEAJFA6G2", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCRM8RX165VQEAJFA6G2"}, {"id": "01KWNYZCRRGZEBCNH5AT32KEFM", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCRRGZEBCNH5AT32KEFM"}, {"id": "01KWNYZCRW4MMHAWP0N3W3ACAR", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCRW4MMHAWP0N3W3ACAR"}, {"id": "01KWNYZCS2310KMZ9W30TNB7HP", "type": "source", "kind": "bug", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCS2310KMZ9W30TNB7HP"}, {"id": "01KWNYZCS6SS28A336C19SQYKE", "type": "source", "kind": "adr", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCS6SS28A336C19SQYKE"}, {"id": "01KWNYZCSA7N3CRHQ6VR0VSGBZ", "type": "source", "kind": "spec", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCSA7N3CRHQ6VR0VSGBZ"}, {"id": "01KWNYZCSF5SDD1YGR55F3HZ1R", "type": "source", "kind": "source", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCSF5SDD1YGR55F3HZ1R"}, {"id": "01KWNYZCSKDTPE2NNRJ27KJ4A8", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCSKDTPE2NNRJ27KJ4A8"}, {"id": "01KWNYZCSRV7HZ60GSV7E5CZW7", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCSRV7HZ60GSV7E5CZW7"}, {"id": "01KWNYZCSW1KXDP8DEVP3VZW92", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCSW1KXDP8DEVP3VZW92"}, {"id": "01KWNYZCT0182668MYF48V0F1B", "type": "source", "kind": "ticket", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCT0182668MYF48V0F1B"}, {"id": "01KWNYZCT4RKMD0TE964P02VE8", "type": "source", "kind": "bug", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCT4RKMD0TE964P02VE8"}, {"id": "01KWNYZCT9MT2P0V33XFM66M6A", "type": "source", "kind": "adr", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCT9MT2P0V33XFM66M6A"}, {"id": "01KWNYZCTEZJW39XV5WJ8P96DZ", "type": "source", "kind": "spec", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCTEZJW39XV5WJ8P96DZ"}, {"id": "01KWNYZCTJEQ0Q89SK4E315PZG", "type": "source", "kind": "source", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCTJEQ0Q89SK4E315PZG"}, {"id": "01KWNYZCTPT51TDK2NTVRQNC0B", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCTPT51TDK2NTVRQNC0B"}, {"id": "01KWNYZCTV7ZM8E1VW9ZGM8BNQ", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCTV7ZM8E1VW9ZGM8BNQ"}, {"id": "01KWNYZCV09Y36Q9FWFRSBVZDD", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCV09Y36Q9FWFRSBVZDD"}, {"id": "01KWNYZCV47GAD7HW307QV4FR7", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCV47GAD7HW307QV4FR7"}, {"id": "01KWNYZCV8V12WGZJMEECDT9WY", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCV8V12WGZJMEECDT9WY"}, {"id": "01KWNYZCVDVVJ5AMQ1Y2V99YDJ", "type": "source", "kind": "bug", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCVDVVJ5AMQ1Y2V99YDJ"}, {"id": "01KWNYZCVHRW8WFV871CY3E58W", "type": "source", "kind": "adr", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCVHRW8WFV871CY3E58W"}, {"id": "01KWNYZCVP4MTJYHQYV4K1HFHR", "type": "source", "kind": "spec", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCVP4MTJYHQYV4K1HFHR"}, {"id": "01KWNYZCVT8G4R88F50GNKPKYZ", "type": "source", "kind": "source", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCVT8G4R88F50GNKPKYZ"}, {"id": "01KWNYZCVY8Z6GDSHYGEP5YS1Y", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCVY8Z6GDSHYGEP5YS1Y"}, {"id": "01KWNYZCW3WRM6KRXYNVK0P34R", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCW3WRM6KRXYNVK0P34R"}, {"id": "01KWNYZCW82GW2X75K5T1CYG2D", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCW82GW2X75K5T1CYG2D"}, {"id": "01KWNYZCWCVYP1XATM720W51KA", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCWCVYP1XATM720W51KA"}, {"id": "01KWNYZCWGSBK016Z2T6Q373N9", "type": "source", "kind": "bug", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCWGSBK016Z2T6Q373N9"}, {"id": "01KWNYZCWMM6PSC7QCM93A8Y1P", "type": "source", "kind": "adr", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCWMM6PSC7QCM93A8Y1P"}, {"id": "01KWNYZCWSQX61493JTRWV9Q6N", "type": "source", "kind": "spec", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCWSQX61493JTRWV9Q6N"}, {"id": "01KWNYZCWXBDTGNBFTY4RX6Z66", "type": "source", "kind": "source", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCWXBDTGNBFTY4RX6Z66"}, {"id": "01KWNYZCX2E4RHZK81QBHNSZAV", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZCX2E4RHZK81QBHNSZAV"}, {"id": "01KWNYZCX6RSJMREBA3BA290HN", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCX6RSJMREBA3BA290HN"}, {"id": "01KWNYZCXAHA38YKS5QNVWT5AF", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCXAHA38YKS5QNVWT5AF"}, {"id": "01KWNYZCXFX709GY91CB3C8VG1", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCXFX709GY91CB3C8VG1"}, {"id": "01KWNYZCXKE4BMP2TQ41H2Z04C", "type": "source", "kind": "bug", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCXKE4BMP2TQ41H2Z04C"}, {"id": "01KWNYZCXRTFMC929C79JXBF0Y", "type": "source", "kind": "adr", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCXRTFMC929C79JXBF0Y"}, {"id": "01KWNYZCXWR3H9APHG74XZXFWC", "type": "source", "kind": "spec", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZCXWR3H9APHG74XZXFWC"}, {"id": "01KWNYZCY0SACNQ05SKZX973G8", "type": "source", "kind": "source", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCY0SACNQ05SKZX973G8"}, {"id": "01KWNYZCY5GE3F5Z68GDXKMM6P", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCY5GE3F5Z68GDXKMM6P"}, {"id": "01KWNYZCYA4YKMRWCKDH6R76CC", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCYA4YKMRWCKDH6R76CC"}, {"id": "01KWNYZCYEKNDYSHXZKH22QW90", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCYEKNDYSHXZKH22QW90"}, {"id": "01KWNYZCYJ6PF6RERB1JGWPC5J", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCYJ6PF6RERB1JGWPC5J"}, {"id": "01KWNYZCYQ75DW8G6CMMVVQYS4", "type": "source", "kind": "bug", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCYQ75DW8G6CMMVVQYS4"}, {"id": "01KWNYZCYVNCZB0P8Q0MSE7H5M", "type": "source", "kind": "adr", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZCYVNCZB0P8Q0MSE7H5M"}, {"id": "01KWNYZCYZZKN5D7816PA11DMN", "type": "source", "kind": "spec", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCYZZKN5D7816PA11DMN"}, {"id": "01KWNYZCZ4EATEVJS5P1SKYYGV", "type": "source", "kind": "source", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZCZ4EATEVJS5P1SKYYGV"}, {"id": "01KWNYZCZ8ADBHBW9Q5CX5W4BV", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCZ8ADBHBW9Q5CX5W4BV"}, {"id": "01KWNYZCZDNEV7XRYXXEN4FS5K", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCZDNEV7XRYXXEN4FS5K"}, {"id": "01KWNYZCZJF5ZNRRT1984DFM4H", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCZJF5ZNRRT1984DFM4H"}, {"id": "01KWNYZCZPY8AH99VNNDNQ0XM1", "type": "source", "kind": "ticket", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCZPY8AH99VNNDNQ0XM1"}, {"id": "01KWNYZCZTDD4MN056B2MNJ3YN", "type": "source", "kind": "bug", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZCZTDD4MN056B2MNJ3YN"}, {"id": "01KWNYZCZZMXWVG8BBE5KFKDJZ", "type": "source", "kind": "adr", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZCZZMXWVG8BBE5KFKDJZ"}, {"id": "01KWNYZD04M6VWN8MK28RSDER2", "type": "source", "kind": "spec", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD04M6VWN8MK28RSDER2"}, {"id": "01KWNYZD08FCWV6TV8CVBBBQAX", "type": "source", "kind": "source", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD08FCWV6TV8CVBBBQAX"}, {"id": "01KWNYZD0C5K0S39V78M0RM0NY", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD0C5K0S39V78M0RM0NY"}, {"id": "01KWNYZD0GCZPTA0MAMX7SJTZ8", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD0GCZPTA0MAMX7SJTZ8"}, {"id": "01KWNYZD0N7JNR7EXBZ1GXFCKE", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD0N7JNR7EXBZ1GXFCKE"}, {"id": "01KWNYZD0TK5FA9E0W4W6H1MC2", "type": "source", "kind": "ticket", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD0TK5FA9E0W4W6H1MC2"}, {"id": "01KWNYZD0YJ49Q05SVN244VY75", "type": "source", "kind": "bug", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD0YJ49Q05SVN244VY75"}, {"id": "01KWNYZD129S0H8JH463T2EWG7", "type": "source", "kind": "adr", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD129S0H8JH463T2EWG7"}, {"id": "01KWNYZD16ZNE6NDJ2BC9MGTJF", "type": "source", "kind": "spec", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD16ZNE6NDJ2BC9MGTJF"}, {"id": "01KWNYZD1B9J4GQ2WB89N1BAN6", "type": "source", "kind": "source", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD1B9J4GQ2WB89N1BAN6"}, {"id": "01KWNYZD1FFHJ9E972BCS3QW0H", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD1FFHJ9E972BCS3QW0H"}, {"id": "01KWNYZD1KPBSW6S8YWH3BB642", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD1KPBSW6S8YWH3BB642"}, {"id": "01KWNYZD1QGBDP6Y6AT4CXGB0M", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD1QGBDP6Y6AT4CXGB0M"}, {"id": "01KWNYZD1V41B2J96CFVEKTQ55", "type": "source", "kind": "ticket", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD1V41B2J96CFVEKTQ55"}, {"id": "01KWNYZD207WDM7AHMY7TYPZDJ", "type": "source", "kind": "bug", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD207WDM7AHMY7TYPZDJ"}, {"id": "01KWNYZD24AD151ZVZG8ZW3928", "type": "source", "kind": "adr", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD24AD151ZVZG8ZW3928"}, {"id": "01KWNYZD293KP3XZW6K8D1YEJ5", "type": "source", "kind": "spec", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD293KP3XZW6K8D1YEJ5"}, {"id": "01KWNYZD2DXY2V9SSEW402YB80", "type": "source", "kind": "source", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD2DXY2V9SSEW402YB80"}, {"id": "01KWNYZD2HNB6SRAAF0VBHY9GR", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD2HNB6SRAAF0VBHY9GR"}, {"id": "01KWNYZD2PHX50R4MW8FZ000BE", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD2PHX50R4MW8FZ000BE"}, {"id": "01KWNYZD2V4HRX1J5BQ76AMNTE", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD2V4HRX1J5BQ76AMNTE"}, {"id": "01KWNYZD2ZYRAYX8KNSMQKM7EF", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD2ZYRAYX8KNSMQKM7EF"}, {"id": "01KWNYZD33Q3AK41E4DAEDH031", "type": "source", "kind": "bug", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD33Q3AK41E4DAEDH031"}, {"id": "01KWNYZD388PC3D3ANRGPSMM2T", "type": "source", "kind": "adr", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD388PC3D3ANRGPSMM2T"}, {"id": "01KWNYZD3C7NP673J9XG0W3WVE", "type": "source", "kind": "spec", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD3C7NP673J9XG0W3WVE"}, {"id": "01KWNYZD3G7R9RRYYH9AVJS6CS", "type": "source", "kind": "source", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD3G7R9RRYYH9AVJS6CS"}, {"id": "01KWNYZD3N5NWDPP9DQ32HYD8D", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD3N5NWDPP9DQ32HYD8D"}, {"id": "01KWNYZD3TS5HAKEE2T1FMZA4J", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD3TS5HAKEE2T1FMZA4J"}, {"id": "01KWNYZD3YKC2HF8EE7M08SWTH", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD3YKC2HF8EE7M08SWTH"}, {"id": "01KWNYZD42QV9Y06HEPKTKW0FK", "type": "source", "kind": "ticket", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD42QV9Y06HEPKTKW0FK"}, {"id": "01KWNYZD46KR7TCJCKJ6CE10TV", "type": "source", "kind": "bug", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD46KR7TCJCKJ6CE10TV"}, {"id": "01KWNYZD4B88NKXHA86A3WQXEP", "type": "source", "kind": "adr", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD4B88NKXHA86A3WQXEP"}, {"id": "01KWNYZD4FZ577VRNA9YQY1W3J", "type": "source", "kind": "spec", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD4FZ577VRNA9YQY1W3J"}, {"id": "01KWNYZD4K43SZVYAYRTZKK4GM", "type": "source", "kind": "source", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD4K43SZVYAYRTZKK4GM"}, {"id": "01KWNYZD4QE0CJD3YWTGN8TA22", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZD4QE0CJD3YWTGN8TA22"}, {"id": "01KWNYZD4XKZK3CTTP609RY13G", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZD4XKZK3CTTP609RY13G"}, {"id": "01KWNYZD51R756EXMSD4VZ19CV", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZD51R756EXMSD4VZ19CV"}, {"id": "01KWNYZD55RB3RX18R0E063RK0", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZD55RB3RX18R0E063RK0"}, {"id": "01KWNYZD5949DQ427HFXT7NEVS", "type": "source", "kind": "bug", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZD5949DQ427HFXT7NEVS"}, {"id": "01KWNYZD5EV5Q2TXQRERZEM6T2", "type": "source", "kind": "adr", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZD5EV5Q2TXQRERZEM6T2"}, {"id": "01KWNYZD5KGC76Y8A6XMSETXA7", "type": "source", "kind": "spec", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD5KGC76Y8A6XMSETXA7"}, {"id": "01KWNYZD5QGGB2MEBH5TE98GNK", "type": "source", "kind": "source", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD5QGGB2MEBH5TE98GNK"}, {"id": "01KWNYZD5VVAYND0K07V02XGRV", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD5VVAYND0K07V02XGRV"}, {"id": "01KWNYZD60856S6T1SCDZD12R7", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD60856S6T1SCDZD12R7"}, {"id": "01KWNYZD64ZMZ8MK40DHYNP4GE", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD64ZMZ8MK40DHYNP4GE"}, {"id": "01KWNYZD69GHWZC7X1S1YQT4NC", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD69GHWZC7X1S1YQT4NC"}, {"id": "01KWNYZD6DP7PX98832863QM7T", "type": "source", "kind": "bug", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZD6DP7PX98832863QM7T"}, {"id": "01KWNYZD6J1S90NN6R7JFEDVSE", "type": "source", "kind": "adr", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD6J1S90NN6R7JFEDVSE"}, {"id": "01KWNYZD6P515RRGMDWC0DD9RH", "type": "source", "kind": "spec", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD6P515RRGMDWC0DD9RH"}, {"id": "01KWNYZD6THP2GXRPWXRP1DMCY", "type": "source", "kind": "source", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD6THP2GXRPWXRP1DMCY"}, {"id": "01KWNYZD6Z87N6RC7H8FQ6MT2G", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD6Z87N6RC7H8FQ6MT2G"}, {"id": "01KWNYZD73E3B9YPM0PA2W7B7Z", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD73E3B9YPM0PA2W7B7Z"}, {"id": "01KWNYZD78P198DPGYTT6ZNBH8", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD78P198DPGYTT6ZNBH8"}, {"id": "01KWNYZD7CB741D452VFPXEK5A", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZD7CB741D452VFPXEK5A"}, {"id": "01KWNYZD7H57Y6DDZKTS65EYD6", "type": "source", "kind": "bug", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD7H57Y6DDZKTS65EYD6"}, {"id": "01KWNYZD7NCQT7BGK0RGM16D9X", "type": "source", "kind": "adr", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD7NCQT7BGK0RGM16D9X"}, {"id": "01KWNYZD7S76841GHG55XZPXKV", "type": "source", "kind": "spec", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD7S76841GHG55XZPXKV"}, {"id": "01KWNYZD7XQF813HKK7RCXGTCJ", "type": "source", "kind": "source", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD7XQF813HKK7RCXGTCJ"}, {"id": "01KWNYZD82P4ND61HMHDREN3XH", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD82P4ND61HMHDREN3XH"}, {"id": "01KWNYZD87CRHRG7WVWBX2A06Z", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD87CRHRG7WVWBX2A06Z"}, {"id": "01KWNYZD8BYEB79GSEZZAP853Z", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZD8BYEB79GSEZZAP853Z"}, {"id": "01KWNYZD8FAD6X35WTGCJ9C9TB", "type": "source", "kind": "ticket", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD8FAD6X35WTGCJ9C9TB"}, {"id": "01KWNYZD8MCGGMA86AVYZ5T9KS", "type": "source", "kind": "bug", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD8MCGGMA86AVYZ5T9KS"}, {"id": "01KWNYZD8RJ6E75ZKJD5KFF7AX", "type": "source", "kind": "adr", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD8RJ6E75ZKJD5KFF7AX"}, {"id": "01KWNYZD8WESMM9AFT2979Z6BF", "type": "source", "kind": "spec", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD8WESMM9AFT2979Z6BF"}, {"id": "01KWNYZD90FT07JABBAZ10WAHA", "type": "source", "kind": "source", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD90FT07JABBAZ10WAHA"}, {"id": "01KWNYZD95C6FCRGKMXF9SP0WX", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD95C6FCRGKMXF9SP0WX"}, {"id": "01KWNYZD9ATAZ63VDHDW6DH1ZX", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZD9ATAZ63VDHDW6DH1ZX"}, {"id": "01KWNYZD9E0Q87WH5Y8W8Q0T31", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD9E0Q87WH5Y8W8Q0T31"}, {"id": "01KWNYZD9JNT7Q0WRP1D02R7V5", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD9JNT7Q0WRP1D02R7V5"}, {"id": "01KWNYZD9P22J0APFZY9SYMHSA", "type": "source", "kind": "bug", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD9P22J0APFZY9SYMHSA"}, {"id": "01KWNYZD9VK8REJ7SQ74ZKCHET", "type": "source", "kind": "adr", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD9VK8REJ7SQ74ZKCHET"}, {"id": "01KWNYZD9Z2BN5XZG41KP2KPW7", "type": "source", "kind": "spec", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZD9Z2BN5XZG41KP2KPW7"}, {"id": "01KWNYZDA3A866SSWX6V110KF2", "type": "source", "kind": "source", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDA3A866SSWX6V110KF2"}, {"id": "01KWNYZDA8NR45W6JVGV14VBTQ", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDA8NR45W6JVGV14VBTQ"}, {"id": "01KWNYZDADCC1RPC09NRQ7T7RG", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDADCC1RPC09NRQ7T7RG"}, {"id": "01KWNYZDAJWY5GG5V4NT415EX6", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDAJWY5GG5V4NT415EX6"}, {"id": "01KWNYZDAPJJP9FNCR4A6HPSAG", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDAPJJP9FNCR4A6HPSAG"}, {"id": "01KWNYZDATPFM45C1MVE3P5070", "type": "source", "kind": "bug", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDATPFM45C1MVE3P5070"}, {"id": "01KWNYZDB0249TDSSJSVGYSFB7", "type": "source", "kind": "adr", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDB0249TDSSJSVGYSFB7"}, {"id": "01KWNYZDB413TVJ7KHQ1QPD8NF", "type": "source", "kind": "spec", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDB413TVJ7KHQ1QPD8NF"}, {"id": "01KWNYZDB8A6JAMYJ1EH7E8811", "type": "source", "kind": "source", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDB8A6JAMYJ1EH7E8811"}, {"id": "01KWNYZDBCP8X4N0JJ2V7Z1DRB", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDBCP8X4N0JJ2V7Z1DRB"}, {"id": "01KWNYZDBH143FH8HXC87ECF1T", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDBH143FH8HXC87ECF1T"}, {"id": "01KWNYZDBPG31T9E2577RE2KSB", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDBPG31T9E2577RE2KSB"}, {"id": "01KWNYZDBTD2SG4DFZSM7G224D", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDBTD2SG4DFZSM7G224D"}, {"id": "01KWNYZDBY65XPJ5PW65KQXWE8", "type": "source", "kind": "bug", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDBY65XPJ5PW65KQXWE8"}, {"id": "01KWNYZDC20N2TS9ZR75VJ69KK", "type": "source", "kind": "adr", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDC20N2TS9ZR75VJ69KK"}, {"id": "01KWNYZDC79WZXW4KHRCFP02JV", "type": "source", "kind": "spec", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDC79WZXW4KHRCFP02JV"}, {"id": "01KWNYZDCB1N3F2Q1GPV8K0M1C", "type": "source", "kind": "source", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDCB1N3F2Q1GPV8K0M1C"}, {"id": "01KWNYZDCFQFD4TQVZX7PK72DS", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDCFQFD4TQVZX7PK72DS"}, {"id": "01KWNYZDCMNB2CQDRA38CG0K6R", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDCMNB2CQDRA38CG0K6R"}, {"id": "01KWNYZDCRJJHWBC2NS6HJY2TQ", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDCRJJHWBC2NS6HJY2TQ"}, {"id": "01KWNYZDCW4XH9KTP92491ZR1D", "type": "source", "kind": "ticket", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDCW4XH9KTP92491ZR1D"}, {"id": "01KWNYZDD1Q381FX9QMXJBQ83D", "type": "source", "kind": "bug", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDD1Q381FX9QMXJBQ83D"}, {"id": "01KWNYZDD5DVNRD8C1V3WXN5F6", "type": "source", "kind": "adr", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDD5DVNRD8C1V3WXN5F6"}, {"id": "01KWNYZDDA8PMG6ZZNKHWE3S3P", "type": "source", "kind": "spec", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDDA8PMG6ZZNKHWE3S3P"}, {"id": "01KWNYZDDG14YMGB9GNJY977GX", "type": "source", "kind": "source", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDDG14YMGB9GNJY977GX"}, {"id": "01KWNYZDDMMDESV6HH4N661CVX", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDDMMDESV6HH4N661CVX"}, {"id": "01KWNYZDDSMTA3P6Z2659M37M4", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDDSMTA3P6Z2659M37M4"}, {"id": "01KWNYZDDYQFTJNJ2ZTWKVT92S", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDDYQFTJNJ2ZTWKVT92S"}, {"id": "01KWNYZDE3ABRY3E7X91F7DZK3", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDE3ABRY3E7X91F7DZK3"}, {"id": "01KWNYZDE94BBQ8A8GV9TC1MTR", "type": "source", "kind": "bug", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDE94BBQ8A8GV9TC1MTR"}, {"id": "01KWNYZDEDBKMQ4W6KD1PEX8FQ", "type": "source", "kind": "adr", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDEDBKMQ4W6KD1PEX8FQ"}, {"id": "01KWNYZDEJAWZXC4G6976JV6Y9", "type": "source", "kind": "spec", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDEJAWZXC4G6976JV6Y9"}, {"id": "01KWNYZDEQN2W36X9QZ9CFP7XF", "type": "source", "kind": "source", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDEQN2W36X9QZ9CFP7XF"}, {"id": "01KWNYZDEW1SDQ27Q5XB38E23D", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDEW1SDQ27Q5XB38E23D"}, {"id": "01KWNYZDF0ZQKJC9QQ88F92HNX", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDF0ZQKJC9QQ88F92HNX"}, {"id": "01KWNYZDF61F9GYBHMC63NGTR1", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDF61F9GYBHMC63NGTR1"}, {"id": "01KWNYZDFBAG705XHVF244RJX9", "type": "source", "kind": "ticket", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDFBAG705XHVF244RJX9"}, {"id": "01KWNYZDFF25KY103PTPRQZE65", "type": "source", "kind": "bug", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDFF25KY103PTPRQZE65"}, {"id": "01KWNYZDFN6AQ5QAC4Z8D17J7R", "type": "source", "kind": "adr", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDFN6AQ5QAC4Z8D17J7R"}, {"id": "01KWNYZDFTZJJG0DWP2BW814A5", "type": "source", "kind": "spec", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDFTZJJG0DWP2BW814A5"}, {"id": "01KWNYZDFZZQ09FVTWCV2AR8S8", "type": "source", "kind": "source", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDFZZQ09FVTWCV2AR8S8"}, {"id": "01KWNYZDG4JAMDN56V6JW6YHR3", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDG4JAMDN56V6JW6YHR3"}, {"id": "01KWNYZDG9B23AVFM45A1CGBP6", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDG9B23AVFM45A1CGBP6"}, {"id": "01KWNYZDGE9DVVXDESAADSDHMV", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDGE9DVVXDESAADSDHMV"}, {"id": "01KWNYZDGMY0M2K7N1FRRBEZM9", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDGMY0M2K7N1FRRBEZM9"}, {"id": "01KWNYZDGR7PB4776ES1GB1X5F", "type": "source", "kind": "bug", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDGR7PB4776ES1GB1X5F"}, {"id": "01KWNYZDGYCAZJGT0CS2BHS2Z5", "type": "source", "kind": "adr", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDGYCAZJGT0CS2BHS2Z5"}, {"id": "01KWNYZDH3F5KHD01GEVCP9GX6", "type": "source", "kind": "spec", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDH3F5KHD01GEVCP9GX6"}, {"id": "01KWNYZDH70FKN736ZJZ5M7XN3", "type": "source", "kind": "source", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDH70FKN736ZJZ5M7XN3"}, {"id": "01KWNYZDHCYSJG979T5RVRBSCK", "type": "source", "kind": "ticket", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDHCYSJG979T5RVRBSCK"}, {"id": "01KWNYZDHJ06VB6TB8K90S5J9E", "type": "source", "kind": "ticket", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDHJ06VB6TB8K90S5J9E"}, {"id": "01KWNYZDHQWZPJ930WQWXDCDXS", "type": "source", "kind": "ticket", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDHQWZPJ930WQWXDCDXS"}, {"id": "01KWNYZDHV4QCWNFBJ95N55PHZ", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDHV4QCWNFBJ95N55PHZ"}, {"id": "01KWNYZDJ0Z8AHGYFZ8CX0K3GG", "type": "source", "kind": "bug", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDJ0Z8AHGYFZ8CX0K3GG"}, {"id": "01KWNYZDJ5T45RSTFKVG8HW8SC", "type": "source", "kind": "adr", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDJ5T45RSTFKVG8HW8SC"}, {"id": "01KWNYZDJ9K967EZ5EN8F91JJ3", "type": "source", "kind": "spec", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "01KWNYZDJ9K967EZ5EN8F91JJ3"}, {"id": "01KWNYZDJE1PKAQ8DK3C1GM7EN", "type": "source", "kind": "source", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDJE1PKAQ8DK3C1GM7EN"}, {"id": "01KWNYZDJKQPYBWCX0TMKP6AEK", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDJKQPYBWCX0TMKP6AEK"}, {"id": "01KWNYZDJQYMGFK09N2GKQ3JDH", "type": "source", "kind": "ticket", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDJQYMGFK09N2GKQ3JDH"}, {"id": "01KWNYZDJXTQ2EV7EXH6CQBS50", "type": "source", "kind": "ticket", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDJXTQ2EV7EXH6CQBS50"}, {"id": "01KWNYZDK2QNK25K7NYSMWK1PT", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDK2QNK25K7NYSMWK1PT"}, {"id": "01KWNYZDK6Z6VT6RAD39MSSQFB", "type": "source", "kind": "bug", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDK6Z6VT6RAD39MSSQFB"}, {"id": "01KWNYZDKB5HTBG09HSK7RJ8FT", "type": "source", "kind": "adr", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "01KWNYZDKB5HTBG09HSK7RJ8FT"}, {"id": "01KWNYZDKGTV1V8F39TSCZ37CN", "type": "source", "kind": "spec", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDKGTV1V8F39TSCZ37CN"}, {"id": "01KWNYZDKNY828GE0C806F9X6Z", "type": "source", "kind": "source", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDKNY828GE0C806F9X6Z"}, {"id": "01KWNYZDKSBE4DCWE7V00MQY1C", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDKSBE4DCWE7V00MQY1C"}, {"id": "01KWNYZDKY52RG4WYXKG5EAYSD", "type": "source", "kind": "ticket", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDKY52RG4WYXKG5EAYSD"}, {"id": "01KWNYZDM4PFR5CATHWQ93QQDP", "type": "source", "kind": "ticket", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDM4PFR5CATHWQ93QQDP"}, {"id": "01KWNYZDM86QE3JPPJBCET6BXV", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDM86QE3JPPJBCET6BXV"}, {"id": "01KWNYZDMCFCFPFX9DFTF2KFD6", "type": "source", "kind": "bug", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "01KWNYZDMCFCFPFX9DFTF2KFD6"}, {"id": "01KWNYZDMHS2WKR4WY5QZGWE18", "type": "source", "kind": "adr", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDMHS2WKR4WY5QZGWE18"}, {"id": "01KWNYZDMNGYZ6NTY7NJWSEPKT", "type": "source", "kind": "spec", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDMNGYZ6NTY7NJWSEPKT"}, {"id": "01KWNYZDMTAJKD2A7Z2K69YHRH", "type": "source", "kind": "source", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDMTAJKD2A7Z2K69YHRH"}, {"id": "01KWNYZDMYSX343M1FM8DMCB9B", "type": "source", "kind": "ticket", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDMYSX343M1FM8DMCB9B"}, {"id": "01KWNYZDN3KKGDHNQVRYJZY9XF", "type": "source", "kind": "ticket", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDN3KKGDHNQVRYJZY9XF"}, {"id": "01KWNYZDN9P253292FEBC91YQT", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDN9P253292FEBC91YQT"}, {"id": "01KWNYZDNDXM099DDYC84B5M06", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "01KWNYZDNDXM099DDYC84B5M06"}, {"id": "01KWNYZDNJB1C4BB4RGW8QVSWY", "type": "source", "kind": "bug", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDNJB1C4BB4RGW8QVSWY"}, {"id": "01KWNYZDNQGDFWXEFTMSFRAKY6", "type": "source", "kind": "adr", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDNQGDFWXEFTMSFRAKY6"}, {"id": "01KWNYZDNWKMH9M1RF26C932GK", "type": "source", "kind": "spec", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDNWKMH9M1RF26C932GK"}, {"id": "01KWNYZDP19H7TP9ENT4EYH2VZ", "type": "source", "kind": "source", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDP19H7TP9ENT4EYH2VZ"}, {"id": "01KWNYZDP6Q72X7AA6W4KK34QB", "type": "source", "kind": "ticket", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDP6Q72X7AA6W4KK34QB"}, {"id": "01KWNYZDPA3XMXVBHSG1D8S53K", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDPA3XMXVBHSG1D8S53K"}, {"id": "01KWNYZDPFM6FGT9DCY6NB5KMY", "type": "source", "kind": "ticket", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "01KWNYZDPFM6FGT9DCY6NB5KMY"}, {"id": "01KWNYZDPMACDZNN0JP0B1FV64", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDPMACDZNN0JP0B1FV64"}, {"id": "01KWNYZDPRW6Y18XQSDPPJMQMT", "type": "source", "kind": "bug", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDPRW6Y18XQSDPPJMQMT"}, {"id": "01KWNYZDPXFQRPWW2JGK256ZJK", "type": "source", "kind": "adr", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDPXFQRPWW2JGK256ZJK"}, {"id": "01KWNYZDQ2SRXVQ484AJYKBFNE", "type": "source", "kind": "spec", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "01KWNYZDQ2SRXVQ484AJYKBFNE"}, {"id": "decision-s01-flat-file-vault", "type": "decision", "kind": "decision", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s01-flat-file-vault"}, {"id": "decision-s01-sqlite-for-brain", "type": "decision", "kind": "decision", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s01-sqlite-for-brain"}, {"id": "decision-s02-ulid-over-uuid", "type": "decision", "kind": "decision", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s02-ulid-over-uuid"}, {"id": "decision-s03-raw-immutability", "type": "decision", "kind": "decision", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s03-raw-immutability"}, {"id": "decision-s04-clap-framework", "type": "decision", "kind": "decision", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s04-clap-framework"}, {"id": "decision-s05-mcp-protocol", "type": "decision", "kind": "decision", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s05-mcp-protocol"}, {"id": "decision-s06-three.js-for-viz", "type": "decision", "kind": "decision", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "decision-s06-three.js-for-viz"}, {"id": "decision-s07-bm25-over-exact-match", "type": "decision", "kind": "decision", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "decision-s07-bm25-over-exact-match"}, {"id": "decision-s08-llm-provider-abstraction", "type": "decision", "kind": "decision", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "decision-s08-llm-provider-abstraction"}, {"id": "decision-s09-non-destructive-consolidation", "type": "decision", "kind": "decision", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "decision-s09-non-destructive-consolidati"}, {"id": "decision-s10-wikilink-convention", "type": "decision", "kind": "decision", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "decision-s10-wikilink-convention"}, {"id": "decision-s11-leiden-over-louvain", "type": "decision", "kind": "decision", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "decision-s11-leiden-over-louvain"}, {"id": "decision-s12-dark-theme", "type": "decision", "kind": "decision", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "decision-s12-dark-theme"}, {"id": "decision-s13-codebase-graph", "type": "decision", "kind": "decision", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "decision-s13-codebase-graph"}, {"id": "decision-s14-okf-over-zip", "type": "decision", "kind": "decision", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "decision-s14-okf-over-zip"}, {"id": "decision-s15-git-based-sync", "type": "decision", "kind": "decision", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "decision-s15-git-based-sync"}, {"id": "decision-s16-dashboard-as-html", "type": "decision", "kind": "decision", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "decision-s16-dashboard-as-html"}, {"id": "decision-s17-lazy-graph-loading", "type": "decision", "kind": "decision", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "decision-s17-lazy-graph-loading"}, {"id": "decision-s18-claude.md-convention", "type": "decision", "kind": "decision", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "decision-s18-claude.md-convention"}, {"id": "decision-s19-fail-fast-with-recovery", "type": "decision", "kind": "decision", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "decision-s19-fail-fast-with-recovery"}, {"id": "decision-s20-vault-min-fixture", "type": "decision", "kind": "decision", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "decision-s20-vault-min-fixture"}, {"id": "decision-s21-security-boundaries", "type": "decision", "kind": "decision", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "decision-s21-security-boundaries"}, {"id": "decision-s22-v1.0-api-freeze", "type": "decision", "kind": "decision", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "decision-s22-v1.0-api-freeze"}, {"id": "decision-s23-schema-versioning", "type": "decision", "kind": "decision", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "decision-s23-schema-versioning"}, {"id": "decision-s24-v1.0-release-criteria", "type": "decision", "kind": "decision", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "decision-s24-v1.0-release-criteria"}, {"id": "decision-s25-web-ui-over-desktop", "type": "decision", "kind": "decision", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "decision-s25-web-ui-over-desktop"}, {"id": "decision-s26-multi-vault-architecture", "type": "decision", "kind": "decision", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "decision-s26-multi-vault-architecture"}, {"id": "decision-s27-query-language", "type": "decision", "kind": "decision", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "decision-s27-query-language"}, {"id": "decision-s28-theme-system", "type": "decision", "kind": "decision", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "decision-s28-theme-system"}, {"id": "decision-s29-ci-cd-pattern", "type": "decision", "kind": "decision", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "decision-s29-ci-cd-pattern"}, {"id": "decision-s30-benchmark-ci", "type": "decision", "kind": "decision", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "decision-s30-benchmark-ci"}, {"id": "decision-s31-wasm-plugins", "type": "decision", "kind": "decision", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "decision-s31-wasm-plugins"}, {"id": "decision-s32-trust-scoring", "type": "decision", "kind": "decision", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "decision-s32-trust-scoring"}, {"id": "decision-s33-knowledge-debt", "type": "decision", "kind": "decision", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "decision-s33-knowledge-debt"}, {"id": "decision-s34-enterprise-mode", "type": "decision", "kind": "decision", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "decision-s34-enterprise-mode"}, {"id": "decision-s35-v2.0-themes", "type": "decision", "kind": "decision", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "decision-s35-v2.0-themes"}, {"id": "decision-s36-ecosystem-strategy", "type": "decision", "kind": "decision", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "decision-s36-ecosystem-strategy"}, {"id": "spec-s01-raw-capture-pipeline", "type": "fact", "kind": "fact", "sprint": 1, "phase": "Foundation", "pagerank": 0.001112, "label": "spec-s01-raw-capture-pipeline"}, {"id": "spec-s02-data-model-spec", "type": "fact", "kind": "fact", "sprint": 2, "phase": "Foundation", "pagerank": 0.001112, "label": "spec-s02-data-model-spec"}, {"id": "spec-s03-content-addressing", "type": "fact", "kind": "fact", "sprint": 3, "phase": "Foundation", "pagerank": 0.001112, "label": "spec-s03-content-addressing"}, {"id": "spec-s04-cli-design", "type": "fact", "kind": "fact", "sprint": 4, "phase": "Foundation", "pagerank": 0.001112, "label": "spec-s04-cli-design"}, {"id": "spec-s05-mcp-tools-spec", "type": "fact", "kind": "fact", "sprint": 5, "phase": "Foundation", "pagerank": 0.001112, "label": "spec-s05-mcp-tools-spec"}, {"id": "spec-s06-graph-viewer-arch", "type": "fact", "kind": "fact", "sprint": 6, "phase": "Foundation", "pagerank": 0.001112, "label": "spec-s06-graph-viewer-arch"}, {"id": "spec-s07-search-architecture", "type": "fact", "kind": "fact", "sprint": 7, "phase": "Features", "pagerank": 0.001112, "label": "spec-s07-search-architecture"}, {"id": "spec-s08-extraction-pipeline", "type": "fact", "kind": "fact", "sprint": 8, "phase": "Features", "pagerank": 0.001112, "label": "spec-s08-extraction-pipeline"}, {"id": "spec-s09-dream-algorithm", "type": "fact", "kind": "fact", "sprint": 9, "phase": "Features", "pagerank": 0.001112, "label": "spec-s09-dream-algorithm"}, {"id": "spec-s10-link-analysis", "type": "fact", "kind": "fact", "sprint": 10, "phase": "Features", "pagerank": 0.001112, "label": "spec-s10-link-analysis"}, {"id": "spec-s11-community-detection", "type": "fact", "kind": "fact", "sprint": 11, "phase": "Features", "pagerank": 0.001112, "label": "spec-s11-community-detection"}, {"id": "spec-s12-graph-viewer-ux", "type": "fact", "kind": "fact", "sprint": 12, "phase": "Features", "pagerank": 0.001112, "label": "spec-s12-graph-viewer-ux"}, {"id": "spec-s13-codebase-index", "type": "fact", "kind": "fact", "sprint": 13, "phase": "Integration", "pagerank": 0.001112, "label": "spec-s13-codebase-index"}, {"id": "spec-s14-okf-bundle-spec", "type": "fact", "kind": "fact", "sprint": 14, "phase": "Integration", "pagerank": 0.001112, "label": "spec-s14-okf-bundle-spec"}, {"id": "spec-s15-sync-architecture", "type": "fact", "kind": "fact", "sprint": 15, "phase": "Integration", "pagerank": 0.001112, "label": "spec-s15-sync-architecture"}, {"id": "spec-s16-dashboard", "type": "fact", "kind": "fact", "sprint": 16, "phase": "Integration", "pagerank": 0.001112, "label": "spec-s16-dashboard"}, {"id": "spec-s17-performance-budget", "type": "fact", "kind": "fact", "sprint": 17, "phase": "Integration", "pagerank": 0.001112, "label": "spec-s17-performance-budget"}, {"id": "spec-s18-documentation", "type": "fact", "kind": "fact", "sprint": 18, "phase": "Integration", "pagerank": 0.001112, "label": "spec-s18-documentation"}, {"id": "spec-s19-error-handling", "type": "fact", "kind": "fact", "sprint": 19, "phase": "Hardening", "pagerank": 0.001112, "label": "spec-s19-error-handling"}, {"id": "spec-s20-testing-strategy", "type": "fact", "kind": "fact", "sprint": 20, "phase": "Hardening", "pagerank": 0.001112, "label": "spec-s20-testing-strategy"}, {"id": "spec-s21-security-model", "type": "fact", "kind": "fact", "sprint": 21, "phase": "Hardening", "pagerank": 0.001112, "label": "spec-s21-security-model"}, {"id": "spec-s22-api-stability", "type": "fact", "kind": "fact", "sprint": 22, "phase": "Hardening", "pagerank": 0.001112, "label": "spec-s22-api-stability"}, {"id": "spec-s23-migration", "type": "fact", "kind": "fact", "sprint": 23, "phase": "Hardening", "pagerank": 0.001112, "label": "spec-s23-migration"}, {"id": "spec-s24-v1.0", "type": "fact", "kind": "fact", "sprint": 24, "phase": "Hardening", "pagerank": 0.001112, "label": "spec-s24-v1.0"}, {"id": "spec-s25-web-interface", "type": "fact", "kind": "fact", "sprint": 25, "phase": "Advanced", "pagerank": 0.001112, "label": "spec-s25-web-interface"}, {"id": "spec-s26-multi-vault", "type": "fact", "kind": "fact", "sprint": 26, "phase": "Advanced", "pagerank": 0.001112, "label": "spec-s26-multi-vault"}, {"id": "spec-s27-query-language", "type": "fact", "kind": "fact", "sprint": 27, "phase": "Advanced", "pagerank": 0.001112, "label": "spec-s27-query-language"}, {"id": "spec-s28-theming", "type": "fact", "kind": "fact", "sprint": 28, "phase": "Advanced", "pagerank": 0.001112, "label": "spec-s28-theming"}, {"id": "spec-s29-ci-cd", "type": "fact", "kind": "fact", "sprint": 29, "phase": "Advanced", "pagerank": 0.001112, "label": "spec-s29-ci-cd"}, {"id": "spec-s30-performance", "type": "fact", "kind": "fact", "sprint": 30, "phase": "Advanced", "pagerank": 0.001112, "label": "spec-s30-performance"}, {"id": "spec-s31-plugin-system", "type": "fact", "kind": "fact", "sprint": 31, "phase": "Maturity", "pagerank": 0.001112, "label": "spec-s31-plugin-system"}, {"id": "spec-s32-cross-project-linking", "type": "fact", "kind": "fact", "sprint": 32, "phase": "Maturity", "pagerank": 0.001112, "label": "spec-s32-cross-project-linking"}, {"id": "spec-s33-insights", "type": "fact", "kind": "fact", "sprint": 33, "phase": "Maturity", "pagerank": 0.001112, "label": "spec-s33-insights"}, {"id": "spec-s34-enterprise", "type": "fact", "kind": "fact", "sprint": 34, "phase": "Maturity", "pagerank": 0.001112, "label": "spec-s34-enterprise"}, {"id": "spec-s35-v2.0", "type": "fact", "kind": "fact", "sprint": 35, "phase": "Maturity", "pagerank": 0.001112, "label": "spec-s35-v2.0"}, {"id": "spec-s36-v2.0-release", "type": "fact", "kind": "fact", "sprint": 36, "phase": "Maturity", "pagerank": 0.001112, "label": "spec-s36-v2.0-release"}], "edges": [{"src": "01KWNYZCCRSYDXE07C29VTK6M3", "dst": "01KWNYYSTSKF1PK2G7C1DFBPS5", "type": "derived_from"}, {"src": "01KWNYZCCY2BZYBK6NTDRG7BWN", "dst": "01KWNYYSTYZ0RM3W3GAX78SKNM", "type": "derived_from"}, {"src": "01KWNYZCD4JPMWB5S0GWCMRT1X", "dst": "01KWNYYSV46YPXN107XS0PKJMK", "type": "derived_from"}, {"src": "01KWNYZCDAZW4T435QNQHJW3D1", "dst": "01KWNYYSVBEBXCFJAGKGX94W2N", "type": "derived_from"}, {"src": "01KWNYZCDGC7KKWXKVCS7464MZ", "dst": "01KWNYYSVJQWDZ3SHJZAVCJ1CB", "type": "derived_from"}, {"src": "01KWNYZCDNHGK4GVRTXYBEBAKP", "dst": "01KWNYYSVR005KH7B7PHAQ7MVG", "type": "derived_from"}, {"src": "01KWNYZCDVVQFGRW89VQXC8P6X", "dst": "01KWNYYSVYPS39BYS9441XGQFV", "type": "derived_from"}, {"src": "01KWNYZCE2QAPT96M4PR0GSAWJ", "dst": "01KWNYYSW5CBPGXF6GNB7FPPDE", "type": "derived_from"}, {"src": "01KWNYZCE82TNFXCEV11VQNR1B", "dst": "01KWNYYSWB82PYX9PJ6BKAHYZR", "type": "derived_from"}, {"src": "01KWNYZCEESMA75HTDDF1T8672", "dst": "01KWNYYSWJK25WB3HE8A78JM4E", "type": "derived_from"}, {"src": "01KWNYZCENQPFNM9KRKX05Y30G", "dst": "01KWNYYSWR7KKXXXBW0KS5AN01", "type": "derived_from"}, {"src": "01KWNYZCEVE4HMZ0Q6MS9JH8S8", "dst": "01KWNYYSWYV2A9HA6ZHX9FBBPG", "type": "derived_from"}, {"src": "01KWNYZCF17DY7TVEPFAB0F04S", "dst": "01KWNYYSX3ADQWAAJV1M6AZ78J", "type": "derived_from"}, {"src": "01KWNYZCF7J9XQTZTV4DC3ZFBE", "dst": "01KWNYYSX9KKATBCN40ZNE1KGV", "type": "derived_from"}, {"src": "01KWNYZCFDNCNWX91Z6RCK3CYZ", "dst": "01KWNYYSXE799B7FXBR4A9GN4A", "type": "derived_from"}, {"src": "01KWNYZCFJNP0X0V3A8SG4NNDJ", "dst": "01KWNYYSXMTXX2FA3DS839Q8CB", "type": "derived_from"}, {"src": "01KWNYZCFRZ2M6BPEVXMP214AY", "dst": "01KWNYYSXV1V1NMWD1A040BPKP", "type": "derived_from"}, {"src": "01KWNYZCFX7TA33N90QPGG8W5N", "dst": "01KWNYYSY1QA94ET76759NSHSZ", "type": "derived_from"}, {"src": "01KWNYZCG36JX2JSVMW62GJ8TV", "dst": "01KWNYYSY7NJ3T22RT7YG1VCXN", "type": "derived_from"}, {"src": "01KWNYZCG8NF1X8TRZKB1QTZ5C", "dst": "01KWNYYSYCG523XXAJRPZ0NGYD", "type": "derived_from"}, {"src": "01KWNYZCGD4KP3EQ6SGY9XZ5C9", "dst": "01KWNYYSYJ83ANT878ARFGPW7T", "type": "derived_from"}, {"src": "01KWNYZCGKGKC3HRW5W51PEDM5", "dst": "01KWNYYSYR7G109XETSRVG9Q7E", "type": "derived_from"}, {"src": "01KWNYZCGRZD721V69CMV8296W", "dst": "01KWNYYSYXXA2KXTVX9ADQT7WE", "type": "derived_from"}, {"src": "01KWNYZCGYQ5WESZXGTT845V0C", "dst": "01KWNYYSZ2HNVEE2HNZD10DFA7", "type": "derived_from"}, {"src": "01KWNYZCH3T5DXSXXGH75J3TSZ", "dst": "01KWNYYSZ763XKME7QD1V37AQV", "type": "derived_from"}, {"src": "01KWNYZCH84D7XS42FKR8ASJXG", "dst": "01KWNYYSZD9JG1KSHY5G23K0FG", "type": "derived_from"}, {"src": "01KWNYZCHD72BVF2J12R54FH5X", "dst": "01KWNYYSZJHJMHB3PVB05SP269", "type": "derived_from"}, {"src": "01KWNYZCHJCBT2KP9XW7SFSXDJ", "dst": "01KWNYYSZQDXGX3CS36WDFBTV3", "type": "derived_from"}, {"src": "01KWNYZCHQQFWRHDVY645GVR58", "dst": "01KWNYYSZWNXC6BN0Q7D2E5DEB", "type": "derived_from"}, {"src": "01KWNYZCHWRMMTDMKFH2EWAQA2", "dst": "01KWNYYT01W80ZW4CYTDHER2V8", "type": "derived_from"}, {"src": "01KWNYZCJ159BY2R50Q0P8B9MT", "dst": "01KWNYYT06V1A93VCWRSS10MAZ", "type": "derived_from"}, {"src": "01KWNYZCJ63WR2NH48MN4MGCNG", "dst": "01KWNYYT0A31H5AK8SNKCJXA6H", "type": "derived_from"}, {"src": "01KWNYZCJBTANJP3V03NEY9JDR", "dst": "01KWNYYT0FHGF2RA6MMSR3CSQ6", "type": "derived_from"}, {"src": "01KWNYZCJHJ1ENMMX1K3CM2D3T", "dst": "01KWNYYT0MQBXN00Z9DB846MQV", "type": "derived_from"}, {"src": "01KWNYZCJPSRNANKSWCF80SB8G", "dst": "01KWNYYT0SSDD8R44QT1VNBSKQ", "type": "derived_from"}, {"src": "01KWNYZCJTXWYGBDW4EMTTFEY9", "dst": "01KWNYYT0Y48PZEV71YEDN163T", "type": "derived_from"}, {"src": "01KWNYZCK0N093RHFR15N5G8VP", "dst": "01KWNYYT13E85FK5M787NCMSXD", "type": "derived_from"}, {"src": "01KWNYZCK5J7A89V8VEHQWMZBE", "dst": "01KWNYYT184KMFMHHRVJME44T9", "type": "derived_from"}, {"src": "01KWNYZCKA38WSYV5Y825C8ZZR", "dst": "01KWNYYT1DDQKY1YB6MCAZW2J3", "type": "derived_from"}, {"src": "01KWNYZCKENVEW6RJQ6B3RAXX5", "dst": "01KWNYYT1JHWWEG0E0AGQYMMFZ", "type": "derived_from"}, {"src": "01KWNYZCKKGCCAB0FZ4VDFKXQ1", "dst": "01KWNYYT1QQK037SZN1HSYCYJA", "type": "derived_from"}, {"src": "01KWNYZCKRHARQSX4T9KEHMSX9", "dst": "01KWNYYT1W1AGG9QN92QS3FCPV", "type": "derived_from"}, {"src": "01KWNYZCKW7WJ37P8468204Z12", "dst": "01KWNYYT20FGEXQZZMVND9TGYR", "type": "derived_from"}, {"src": "01KWNYZCM1S1X6DN8642SFAX64", "dst": "01KWNYYT25VBHQ69BCVH7N1ATB", "type": "derived_from"}, {"src": "01KWNYZCM6H883A76DAE262436", "dst": "01KWNYYT2ADQV5090JTNZQ9PFE", "type": "derived_from"}, {"src": "01KWNYZCMA5ZVW73GHCDJGSGTX", "dst": "01KWNYYT2FQE04XN3DYSMVRH9S", "type": "derived_from"}, {"src": "01KWNYZCMFXZAM0YNVVKAN25WJ", "dst": "01KWNYYT2KKSX1GS48KS75HXZR", "type": "derived_from"}, {"src": "01KWNYZCMK80ND3QSGPT1NJSC2", "dst": "01KWNYYT2S8T4G4EZMDDJZWS4Q", "type": "derived_from"}, {"src": "01KWNYZCMQ3BYWKQR0EG1ZXCM8", "dst": "01KWNYYT2X7BAB9M7ZH34VYAES", "type": "derived_from"}, {"src": "01KWNYZCMW38SD5V24YP6XKJQC", "dst": "01KWNYYT321Z8WNB1A42M9EEMV", "type": "derived_from"}, {"src": "01KWNYZCN1ZSY73F1JGQQBGARS", "dst": "01KWNYYT37MC0WHM5T26TRKPQF", "type": "derived_from"}, {"src": "01KWNYZCN68NE5MR2GHPY2JJMD", "dst": "01KWNYYT3CRRQ7151CBYXFZQ9A", "type": "derived_from"}, {"src": "01KWNYZCNANPJ1AVFDKXWF4DHX", "dst": "01KWNYYT3JA0YSEBMRSF3BS56Q", "type": "derived_from"}, {"src": "01KWNYZCNFQKF4K3WD8V0CNYZM", "dst": "01KWNYYT3QJZZX8KXGK1D8VBAV", "type": "derived_from"}, {"src": "01KWNYZCNMJCFYEDHT8G6MK6VP", "dst": "01KWNYYT3WBRK9BMNH90TPT5PV", "type": "derived_from"}, {"src": "01KWNYZCNS56GBYMMR989Y8WEE", "dst": "01KWNYYT40KH9BR2WCC1264BCT", "type": "derived_from"}, {"src": "01KWNYZCNYT6CF4K70ZNE0CJV3", "dst": "01KWNYYT45APKVE8ZVFVN9T0P9", "type": "derived_from"}, {"src": "01KWNYZCP2Z8EQ1S6FN3TMF6PX", "dst": "01KWNYYT4AFS04J1R34CHX88TV", "type": "derived_from"}, {"src": "01KWNYZCP7KSE5YP58SCG6XDQN", "dst": "01KWNYYT4FEZN7G02JBRPT52T0", "type": "derived_from"}, {"src": "01KWNYZCPC5YCAGJDSS5MVRPXA", "dst": "01KWNYYT4K33TT1B3PHPK1JEGK", "type": "derived_from"}, {"src": "01KWNYZCPHQ7WJ21XZB8EZH7AF", "dst": "01KWNYYT4RAEZDQYK598HARMT6", "type": "derived_from"}, {"src": "01KWNYZCPP4YEWHC726K3JQ2C3", "dst": "01KWNYYT4WWAZA4WA4HYFMXJJ9", "type": "derived_from"}, {"src": "01KWNYZCPVR6F1KBDHWRRZH6GT", "dst": "01KWNYYT505YS4W6G40P6K6KZW", "type": "derived_from"}, {"src": "01KWNYZCPZ6MCXE50Y30H564N0", "dst": "01KWNYYT55E9TSHPMMK3Z2VP4C", "type": "derived_from"}, {"src": "01KWNYZCQ45R0JT0BAKD6YR01S", "dst": "01KWNYYT5AMS67FQC9JYKWB7F1", "type": "derived_from"}, {"src": "01KWNYZCQ8CJDE1W47VWKPEQ8J", "dst": "01KWNYYT5E47G4X64ZPKDNCD38", "type": "derived_from"}, {"src": "01KWNYZCQD9SBY50E90TK1X93S", "dst": "01KWNYYT5J1G0X7DJND8KHCYKF", "type": "derived_from"}, {"src": "01KWNYZCQHEFGA686Z6QXZ5KH7", "dst": "01KWNYYT5QGRJ2G819V2C8JV4E", "type": "derived_from"}, {"src": "01KWNYZCQNSNPD8VDHWGQRV199", "dst": "01KWNYYT5WVY3X6Y6P7ACTT1P5", "type": "derived_from"}, {"src": "01KWNYZCQSZYECZVT9BFDD9VWP", "dst": "01KWNYYT61XM10PKQY61RG40FQ", "type": "derived_from"}, {"src": "01KWNYZCQYGS8DTW630EJ75HYA", "dst": "01KWNYYT6502T6CT4RPTPNF20X", "type": "derived_from"}, {"src": "01KWNYZCR2QCMQ0284W1PAYP2Y", "dst": "01KWNYYT6AN4C7ZJYWQSXFD5WK", "type": "derived_from"}, {"src": "01KWNYZCR6EF832YSET9TG1VAZ", "dst": "01KWNYYT6EQ7J9W2E3X59DX4QW", "type": "derived_from"}, {"src": "01KWNYZCRBEZY90HFPCA1CYT7V", "dst": "01KWNYYT6KXAD80CXRYPK865E6", "type": "derived_from"}, {"src": "01KWNYZCRFDAPYFND7W4BTK25S", "dst": "01KWNYYT6RVM24XDBQW6A1V4A2", "type": "derived_from"}, {"src": "01KWNYZCRM8RX165VQEAJFA6G2", "dst": "01KWNYYT6WMYYY3B93ZD7CXNYN", "type": "derived_from"}, {"src": "01KWNYZCRRGZEBCNH5AT32KEFM", "dst": "01KWNYYT72F2GNX4QMHR54YS1G", "type": "derived_from"}, {"src": "01KWNYZCRW4MMHAWP0N3W3ACAR", "dst": "01KWNYYT764DKQ49CGJ2FFHP4E", "type": "derived_from"}, {"src": "01KWNYZCS2310KMZ9W30TNB7HP", "dst": "01KWNYYT7BYX236XHYDPASB7ZE", "type": "derived_from"}, {"src": "01KWNYZCS6SS28A336C19SQYKE", "dst": "01KWNYYT7FF11939B0QE3G3CEY", "type": "derived_from"}, {"src": "01KWNYZCSA7N3CRHQ6VR0VSGBZ", "dst": "01KWNYYT7MKRMQCKNFJVEDTFRP", "type": "derived_from"}, {"src": "01KWNYZCSF5SDD1YGR55F3HZ1R", "dst": "01KWNYYT7S56NBW6XZND4AVWZM", "type": "derived_from"}, {"src": "01KWNYZCSKDTPE2NNRJ27KJ4A8", "dst": "01KWNYYT7XA2EVNVEGX613C89Y", "type": "derived_from"}, {"src": "01KWNYZCSRV7HZ60GSV7E5CZW7", "dst": "01KWNYYT81XYC6EEGETG8A53TY", "type": "derived_from"}, {"src": "01KWNYZCSW1KXDP8DEVP3VZW92", "dst": "01KWNYYT86T35A47H3BS181XJ5", "type": "derived_from"}, {"src": "01KWNYZCT0182668MYF48V0F1B", "dst": "01KWNYYT8BBE69NRQ81Y1MPJ3X", "type": "derived_from"}, {"src": "01KWNYZCT4RKMD0TE964P02VE8", "dst": "01KWNYYT8F7XR61X9VZEP1HS0A", "type": "derived_from"}, {"src": "01KWNYZCT9MT2P0V33XFM66M6A", "dst": "01KWNYYT8MTQKZD8S5YF9T34TB", "type": "derived_from"}, {"src": "01KWNYZCTEZJW39XV5WJ8P96DZ", "dst": "01KWNYYT8R0W84FFTJ23DGE73Y", "type": "derived_from"}, {"src": "01KWNYZCTJEQ0Q89SK4E315PZG", "dst": "01KWNYYT8X7KVWYB74YWQ6263K", "type": "derived_from"}, {"src": "01KWNYZCTPT51TDK2NTVRQNC0B", "dst": "01KWNYYT92F7VX6S2C83EGV8WY", "type": "derived_from"}, {"src": "01KWNYZCTV7ZM8E1VW9ZGM8BNQ", "dst": "01KWNYYT973F912A9AVV9NSNC8", "type": "derived_from"}, {"src": "01KWNYZCV09Y36Q9FWFRSBVZDD", "dst": "01KWNYYT9C1ZNKB54CYCBK9S7H", "type": "derived_from"}, {"src": "01KWNYZCV47GAD7HW307QV4FR7", "dst": "01KWNYYT9G22B07KCYBDZRBEGX", "type": "derived_from"}, {"src": "01KWNYZCV8V12WGZJMEECDT9WY", "dst": "01KWNYYT9N1GSNMT2V4PMTR71V", "type": "derived_from"}, {"src": "01KWNYZCVDVVJ5AMQ1Y2V99YDJ", "dst": "01KWNYYT9TG2210WK6GXBZ1PK5", "type": "derived_from"}, {"src": "01KWNYZCVHRW8WFV871CY3E58W", "dst": "01KWNYYT9Z553T9WCD8EWKFMWE", "type": "derived_from"}, {"src": "01KWNYZCVP4MTJYHQYV4K1HFHR", "dst": "01KWNYYTA3CZSWD1X29C0CKVT0", "type": "derived_from"}, {"src": "01KWNYZCVT8G4R88F50GNKPKYZ", "dst": "01KWNYYTA848EB7BYNZ0R23BE4", "type": "derived_from"}, {"src": "01KWNYZCVY8Z6GDSHYGEP5YS1Y", "dst": "01KWNYYTAC1EH3XTSM9XKF1FR0", "type": "derived_from"}, {"src": "01KWNYZCW3WRM6KRXYNVK0P34R", "dst": "01KWNYYTAH22WRZ0YZ9PBBMP20", "type": "derived_from"}, {"src": "01KWNYZCW82GW2X75K5T1CYG2D", "dst": "01KWNYYTAP592DD4VCZE4XBPE0", "type": "derived_from"}, {"src": "01KWNYZCWCVYP1XATM720W51KA", "dst": "01KWNYYTAVJB6RDEFSFPQ80F6N", "type": "derived_from"}, {"src": "01KWNYZCWGSBK016Z2T6Q373N9", "dst": "01KWNYYTAZKES679WT1S1GWDDZ", "type": "derived_from"}, {"src": "01KWNYZCWMM6PSC7QCM93A8Y1P", "dst": "01KWNYYTB5JCQZ8TK6KD7SZQC8", "type": "derived_from"}, {"src": "01KWNYZCWSQX61493JTRWV9Q6N", "dst": "01KWNYYTB95P08GR78DRRZPF1Z", "type": "derived_from"}, {"src": "01KWNYZCWXBDTGNBFTY4RX6Z66", "dst": "01KWNYYTBE846ZE95ZE5WTK398", "type": "derived_from"}, {"src": "01KWNYZCX2E4RHZK81QBHNSZAV", "dst": "01KWNYYTBKEKG4FVB171K24D8D", "type": "derived_from"}, {"src": "01KWNYZCX6RSJMREBA3BA290HN", "dst": "01KWNYYTBR5J8CWZD7JWZZEGMR", "type": "derived_from"}, {"src": "01KWNYZCXAHA38YKS5QNVWT5AF", "dst": "01KWNYYTBXZH03CFKTEJJ0HSTB", "type": "derived_from"}, {"src": "01KWNYZCXFX709GY91CB3C8VG1", "dst": "01KWNYYTC2A7AXB0NSBQGVNYX4", "type": "derived_from"}, {"src": "01KWNYZCXKE4BMP2TQ41H2Z04C", "dst": "01KWNYYTC79DYKZ71X1SMMQ4ZS", "type": "derived_from"}, {"src": "01KWNYZCXRTFMC929C79JXBF0Y", "dst": "01KWNYYTCC7KSA823BEP57VXGS", "type": "derived_from"}, {"src": "01KWNYZCXWR3H9APHG74XZXFWC", "dst": "01KWNYYTCJG9S2EQ9GNX9E3FC5", "type": "derived_from"}, {"src": "01KWNYZCY0SACNQ05SKZX973G8", "dst": "01KWNYYTCQK9HMEN5TFKSEJRE0", "type": "derived_from"}, {"src": "01KWNYZCY5GE3F5Z68GDXKMM6P", "dst": "01KWNYYTCVEMWX2EE6GWJRDRKE", "type": "derived_from"}, {"src": "01KWNYZCYA4YKMRWCKDH6R76CC", "dst": "01KWNYYTD166R27W2ZXAFR1WCG", "type": "derived_from"}, {"src": "01KWNYZCYEKNDYSHXZKH22QW90", "dst": "01KWNYYTD66GZV2NRD5TZP12N0", "type": "derived_from"}, {"src": "01KWNYZCYJ6PF6RERB1JGWPC5J", "dst": "01KWNYYTDB9PRR9NSHEEMY39HY", "type": "derived_from"}, {"src": "01KWNYZCYQ75DW8G6CMMVVQYS4", "dst": "01KWNYYTDG4Y9H5XQ11RMT5KVT", "type": "derived_from"}, {"src": "01KWNYZCYVNCZB0P8Q0MSE7H5M", "dst": "01KWNYYTDPF0HAPHPG0WJEE0MJ", "type": "derived_from"}, {"src": "01KWNYZCYZZKN5D7816PA11DMN", "dst": "01KWNYYTE0BKPH0YEJ0YRS84G3", "type": "derived_from"}, {"src": "01KWNYZCZ4EATEVJS5P1SKYYGV", "dst": "01KWNYYTE5MTKY1CXJ97PC7V0A", "type": "derived_from"}, {"src": "01KWNYZCZ8ADBHBW9Q5CX5W4BV", "dst": "01KWNYYTEANGX5NBGZ1ZCK1BPB", "type": "derived_from"}, {"src": "01KWNYZCZDNEV7XRYXXEN4FS5K", "dst": "01KWNYYTEFYV9KZC171B5PEKFP", "type": "derived_from"}, {"src": "01KWNYZCZJF5ZNRRT1984DFM4H", "dst": "01KWNYYTEMY87G2PXDSJAQ4G4J", "type": "derived_from"}, {"src": "01KWNYZCZPY8AH99VNNDNQ0XM1", "dst": "01KWNYYTESH6MJGQEBZJ179MS8", "type": "derived_from"}, {"src": "01KWNYZCZTDD4MN056B2MNJ3YN", "dst": "01KWNYYTEY575TN3784TDQZBHT", "type": "derived_from"}, {"src": "01KWNYZCZZMXWVG8BBE5KFKDJZ", "dst": "01KWNYYTF3NHHH0FM4EY5PC6NS", "type": "derived_from"}, {"src": "01KWNYZD04M6VWN8MK28RSDER2", "dst": "01KWNYYTF8JDH5H5PEKPM7V6BB", "type": "derived_from"}, {"src": "01KWNYZD08FCWV6TV8CVBBBQAX", "dst": "01KWNYYTFD4G8Z8GZYG7FG3SDB", "type": "derived_from"}, {"src": "01KWNYZD0C5K0S39V78M0RM0NY", "dst": "01KWNYYTFJ8HM33Z17GT8FE89N", "type": "derived_from"}, {"src": "01KWNYZD0GCZPTA0MAMX7SJTZ8", "dst": "01KWNYYTFQ6Q3S8QMPF1HDM5DW", "type": "derived_from"}, {"src": "01KWNYZD0N7JNR7EXBZ1GXFCKE", "dst": "01KWNYYTFVMYE3PX8WWS17T2YJ", "type": "derived_from"}, {"src": "01KWNYZD0TK5FA9E0W4W6H1MC2", "dst": "01KWNYYTG0JQDZZKJW4KHPSP6P", "type": "derived_from"}, {"src": "01KWNYZD0YJ49Q05SVN244VY75", "dst": "01KWNYYTG56XCT1772ETCZ5G23", "type": "derived_from"}, {"src": "01KWNYZD129S0H8JH463T2EWG7", "dst": "01KWNYYTG971ZM559NZAVQE9WQ", "type": "derived_from"}, {"src": "01KWNYZD16ZNE6NDJ2BC9MGTJF", "dst": "01KWNYYTGEPHZR5MD0QC0JQM4Z", "type": "derived_from"}, {"src": "01KWNYZD1B9J4GQ2WB89N1BAN6", "dst": "01KWNYYTGKZYMJFNMYB3RKFF6T", "type": "derived_from"}, {"src": "01KWNYZD1FFHJ9E972BCS3QW0H", "dst": "01KWNYYTGR1GMKCJP9MXVWQY85", "type": "derived_from"}, {"src": "01KWNYZD1KPBSW6S8YWH3BB642", "dst": "01KWNYYTGWCCS8DFB2NAP8R0MY", "type": "derived_from"}, {"src": "01KWNYZD1QGBDP6Y6AT4CXGB0M", "dst": "01KWNYYTH1EVTCKK1E5FQ9KF8R", "type": "derived_from"}, {"src": "01KWNYZD1V41B2J96CFVEKTQ55", "dst": "01KWNYYTH66QVGEN5R91DTHC4H", "type": "derived_from"}, {"src": "01KWNYZD207WDM7AHMY7TYPZDJ", "dst": "01KWNYYTHBMFENVTDEFH6E0D9R", "type": "derived_from"}, {"src": "01KWNYZD24AD151ZVZG8ZW3928", "dst": "01KWNYYTHG734J8D17M74YWBY8", "type": "derived_from"}, {"src": "01KWNYZD293KP3XZW6K8D1YEJ5", "dst": "01KWNYYTHMV8F2155D2P4R0Z0X", "type": "derived_from"}, {"src": "01KWNYZD2DXY2V9SSEW402YB80", "dst": "01KWNYYTHT36WS5SCCRFQ82RZ6", "type": "derived_from"}, {"src": "01KWNYZD2HNB6SRAAF0VBHY9GR", "dst": "01KWNYYTHYHD1NFJQ4M71EMR71", "type": "derived_from"}, {"src": "01KWNYZD2PHX50R4MW8FZ000BE", "dst": "01KWNYYTJ3XNZBQ8KT1FQG87YT", "type": "derived_from"}, {"src": "01KWNYZD2V4HRX1J5BQ76AMNTE", "dst": "01KWNYYTJ7X0PCQ7F0Z7P4ZFHW", "type": "derived_from"}, {"src": "01KWNYZD2ZYRAYX8KNSMQKM7EF", "dst": "01KWNYYTJCWTRPR4GB6M3YC7AP", "type": "derived_from"}, {"src": "01KWNYZD33Q3AK41E4DAEDH031", "dst": "01KWNYYTJGV88DCXERPBAWNMXQ", "type": "derived_from"}, {"src": "01KWNYZD388PC3D3ANRGPSMM2T", "dst": "01KWNYYTJNXDKC1WK1J34T99C8", "type": "derived_from"}, {"src": "01KWNYZD3C7NP673J9XG0W3WVE", "dst": "01KWNYYTJSV27JJ5M9EHB7QHZ1", "type": "derived_from"}, {"src": "01KWNYZD3G7R9RRYYH9AVJS6CS", "dst": "01KWNYYTJX18EB48FERGVGSJJE", "type": "derived_from"}, {"src": "01KWNYZD3N5NWDPP9DQ32HYD8D", "dst": "01KWNYYTK2XDF03EFWDB059797", "type": "derived_from"}, {"src": "01KWNYZD3TS5HAKEE2T1FMZA4J", "dst": "01KWNYYTK72CXHT8W5KZB63CVR", "type": "derived_from"}, {"src": "01KWNYZD3YKC2HF8EE7M08SWTH", "dst": "01KWNYYTKBVF3XNPXXY1MB5WYZ", "type": "derived_from"}, {"src": "01KWNYZD42QV9Y06HEPKTKW0FK", "dst": "01KWNYYTKGA24FRV8VMDZ6PDB6", "type": "derived_from"}, {"src": "01KWNYZD46KR7TCJCKJ6CE10TV", "dst": "01KWNYYTKNCNSDHP9PY1EJHAXY", "type": "derived_from"}, {"src": "01KWNYZD4B88NKXHA86A3WQXEP", "dst": "01KWNYYTKTYH6QSPC2JJ4K1NK0", "type": "derived_from"}, {"src": "01KWNYZD4FZ577VRNA9YQY1W3J", "dst": "01KWNYYTKYQMNYDW4HY2NDSFE5", "type": "derived_from"}, {"src": "01KWNYZD4K43SZVYAYRTZKK4GM", "dst": "01KWNYYTM22E560XJ4ZHES228A", "type": "derived_from"}, {"src": "01KWNYZD4QE0CJD3YWTGN8TA22", "dst": "01KWNYYTM7ADSADQ3E8CJZ5RTN", "type": "derived_from"}, {"src": "01KWNYZD4XKZK3CTTP609RY13G", "dst": "01KWNYYTMC6C3XMQWE2GGTXSAR", "type": "derived_from"}, {"src": "01KWNYZD51R756EXMSD4VZ19CV", "dst": "01KWNYYTMHW213NWGH4TAHH8GB", "type": "derived_from"}, {"src": "01KWNYZD55RB3RX18R0E063RK0", "dst": "01KWNYYTMNVDEY499NCMBVTC3X", "type": "derived_from"}, {"src": "01KWNYZD5949DQ427HFXT7NEVS", "dst": "01KWNYYTMTQTWZBHJVT0RSB4K3", "type": "derived_from"}, {"src": "01KWNYZD5EV5Q2TXQRERZEM6T2", "dst": "01KWNYYTMZ950MKM86V93Z8H55", "type": "derived_from"}, {"src": "01KWNYZD5KGC76Y8A6XMSETXA7", "dst": "01KWNYYTN365N5VZ7HR7SQ19EC", "type": "derived_from"}, {"src": "01KWNYZD5QGGB2MEBH5TE98GNK", "dst": "01KWNYYTN7SP3H8NP8GY68ESSX", "type": "derived_from"}, {"src": "01KWNYZD5VVAYND0K07V02XGRV", "dst": "01KWNYYTNCF0YMJPTCTYTYK5DA", "type": "derived_from"}, {"src": "01KWNYZD60856S6T1SCDZD12R7", "dst": "01KWNYYTNHF9YY5DAJ8XRW1PM6", "type": "derived_from"}, {"src": "01KWNYZD64ZMZ8MK40DHYNP4GE", "dst": "01KWNYYTNPFAQDS9VAD5E3KWMS", "type": "derived_from"}, {"src": "01KWNYZD69GHWZC7X1S1YQT4NC", "dst": "01KWNYYTNT4A99RPKQZF5DYTVE", "type": "derived_from"}, {"src": "01KWNYZD6DP7PX98832863QM7T", "dst": "01KWNYYTNZRNR7MXCA97TNNNZF", "type": "derived_from"}, {"src": "01KWNYZD6J1S90NN6R7JFEDVSE", "dst": "01KWNYYTP4X6GQ8BPSENXKXY48", "type": "derived_from"}, {"src": "01KWNYZD6P515RRGMDWC0DD9RH", "dst": "01KWNYYTP8N7N2Z0RSKZZHF6FY", "type": "derived_from"}, {"src": "01KWNYZD6THP2GXRPWXRP1DMCY", "dst": "01KWNYYTPDYD70JC6N3E448ZHP", "type": "derived_from"}, {"src": "01KWNYZD6Z87N6RC7H8FQ6MT2G", "dst": "01KWNYYTPHMP6K6T84W28R424H", "type": "derived_from"}, {"src": "01KWNYZD73E3B9YPM0PA2W7B7Z", "dst": "01KWNYYTPPEP51RN7EJZ4VR5SH", "type": "derived_from"}, {"src": "01KWNYZD78P198DPGYTT6ZNBH8", "dst": "01KWNYYTPVYWZJNY0EA8400SYM", "type": "derived_from"}, {"src": "01KWNYZD7CB741D452VFPXEK5A", "dst": "01KWNYYTPZG4EFVSACE9ERT781", "type": "derived_from"}, {"src": "01KWNYZD7H57Y6DDZKTS65EYD6", "dst": "01KWNYYTQ3QRCT8HRA9S4JNGNQ", "type": "derived_from"}, {"src": "01KWNYZD7NCQT7BGK0RGM16D9X", "dst": "01KWNYYTQ8271KJKB8KV92PRZG", "type": "derived_from"}, {"src": "01KWNYZD7S76841GHG55XZPXKV", "dst": "01KWNYYTQDTDVK1WAPH3QJFKX3", "type": "derived_from"}, {"src": "01KWNYZD7XQF813HKK7RCXGTCJ", "dst": "01KWNYYTQHCTEE3FW9G5VNGBAN", "type": "derived_from"}, {"src": "01KWNYZD82P4ND61HMHDREN3XH", "dst": "01KWNYYTQND2D988YSWHXCZFAW", "type": "derived_from"}, {"src": "01KWNYZD87CRHRG7WVWBX2A06Z", "dst": "01KWNYYTQTA1S26QY50P5BXXYR", "type": "derived_from"}, {"src": "01KWNYZD8BYEB79GSEZZAP853Z", "dst": "01KWNYYTQYEZD0MS6VAVCMGC86", "type": "derived_from"}, {"src": "01KWNYZD8FAD6X35WTGCJ9C9TB", "dst": "01KWNYYTR39M63M98ACZGPFVR5", "type": "derived_from"}, {"src": "01KWNYZD8MCGGMA86AVYZ5T9KS", "dst": "01KWNYYTR8PHK0J73C95Z65Y8Q", "type": "derived_from"}, {"src": "01KWNYZD8RJ6E75ZKJD5KFF7AX", "dst": "01KWNYYTRCYH80V7QKRMVRES5G", "type": "derived_from"}, {"src": "01KWNYZD8WESMM9AFT2979Z6BF", "dst": "01KWNYYTRH6V888FH6F7GWF6QD", "type": "derived_from"}, {"src": "01KWNYZD90FT07JABBAZ10WAHA", "dst": "01KWNYYTRPB1JC9TBS879CXEWF", "type": "derived_from"}, {"src": "01KWNYZD95C6FCRGKMXF9SP0WX", "dst": "01KWNYYTRTAG8JY6JS8YKSB7Q0", "type": "derived_from"}, {"src": "01KWNYZD9ATAZ63VDHDW6DH1ZX", "dst": "01KWNYYTRZB89CYME9P93J4HNT", "type": "derived_from"}, {"src": "01KWNYZD9E0Q87WH5Y8W8Q0T31", "dst": "01KWNYYTS49RAWM7XTESSE3DS3", "type": "derived_from"}, {"src": "01KWNYZD9JNT7Q0WRP1D02R7V5", "dst": "01KWNYYTS8GDKQJDVHFVN3YH2Q", "type": "derived_from"}, {"src": "01KWNYZD9P22J0APFZY9SYMHSA", "dst": "01KWNYYTSD10BB91QT9C4R8Z3G", "type": "derived_from"}, {"src": "01KWNYZD9VK8REJ7SQ74ZKCHET", "dst": "01KWNYYTSHMZ1CSEXMFQD6EDK2", "type": "derived_from"}, {"src": "01KWNYZD9Z2BN5XZG41KP2KPW7", "dst": "01KWNYYTSQVWPWGF4C2P78YSPX", "type": "derived_from"}, {"src": "01KWNYZDA3A866SSWX6V110KF2", "dst": "01KWNYYTSVG9MRFXTT6PFQ24DH", "type": "derived_from"}, {"src": "01KWNYZDA8NR45W6JVGV14VBTQ", "dst": "01KWNYYTT0J4RR5J1602KPVCA2", "type": "derived_from"}, {"src": "01KWNYZDADCC1RPC09NRQ7T7RG", "dst": "01KWNYYTT42V42HC3B9WY13NWM", "type": "derived_from"}, {"src": "01KWNYZDAJWY5GG5V4NT415EX6", "dst": "01KWNYYTT9RAWC5PKE9PPRVBCJ", "type": "derived_from"}, {"src": "01KWNYZDAPJJP9FNCR4A6HPSAG", "dst": "01KWNYYTTESHV4Z00SB0BCGTWT", "type": "derived_from"}, {"src": "01KWNYZDATPFM45C1MVE3P5070", "dst": "01KWNYYTTJHFH3XXXR14JAHTPW", "type": "derived_from"}, {"src": "01KWNYZDB0249TDSSJSVGYSFB7", "dst": "01KWNYYTTQF99PF26G3GJWX4CP", "type": "derived_from"}, {"src": "01KWNYZDB413TVJ7KHQ1QPD8NF", "dst": "01KWNYYTTWC8YAX0QF2Q5BCHKD", "type": "derived_from"}, {"src": "01KWNYZDB8A6JAMYJ1EH7E8811", "dst": "01KWNYYTV2EPKBH54GKFRBHDE4", "type": "derived_from"}, {"src": "01KWNYZDBCP8X4N0JJ2V7Z1DRB", "dst": "01KWNYYTV7CJQYWDXZRMRH0ASZ", "type": "derived_from"}, {"src": "01KWNYZDBH143FH8HXC87ECF1T", "dst": "01KWNYYTVCS60JRB8VN33XE80G", "type": "derived_from"}, {"src": "01KWNYZDBPG31T9E2577RE2KSB", "dst": "01KWNYYTVHB3TJFQ6X9BDF5E20", "type": "derived_from"}, {"src": "01KWNYZDBTD2SG4DFZSM7G224D", "dst": "01KWNYYTVPG7T3H19HH7K5Q4KQ", "type": "derived_from"}, {"src": "01KWNYZDBY65XPJ5PW65KQXWE8", "dst": "01KWNYYTVVHHE27R7Q3Y0CG2KS", "type": "derived_from"}, {"src": "01KWNYZDC20N2TS9ZR75VJ69KK", "dst": "01KWNYYTW0ESEDZ2M7XPC7M439", "type": "derived_from"}, {"src": "01KWNYZDC79WZXW4KHRCFP02JV", "dst": "01KWNYYTW50HNYVB1MN9X31HFB", "type": "derived_from"}, {"src": "01KWNYZDCB1N3F2Q1GPV8K0M1C", "dst": "01KWNYYTWA29B8TA80T9DG65XK", "type": "derived_from"}, {"src": "01KWNYZDCFQFD4TQVZX7PK72DS", "dst": "01KWNYYTWFTDA4VVAXQ7ECPFRD", "type": "derived_from"}, {"src": "01KWNYZDCMNB2CQDRA38CG0K6R", "dst": "01KWNYYTWMD3BG9003AGK0A2VX", "type": "derived_from"}, {"src": "01KWNYZDCRJJHWBC2NS6HJY2TQ", "dst": "01KWNYYTWTHEAP5QXG70Y73XWR", "type": "derived_from"}, {"src": "01KWNYZDCW4XH9KTP92491ZR1D", "dst": "01KWNYYTWZJ9G7HN91P5SV3TRN", "type": "derived_from"}, {"src": "01KWNYZDD1Q381FX9QMXJBQ83D", "dst": "01KWNYYTX4EYP3JRXWJAR8G5R1", "type": "derived_from"}, {"src": "01KWNYZDD5DVNRD8C1V3WXN5F6", "dst": "01KWNYYTX93YPH5EYY1S3K7X9F", "type": "derived_from"}, {"src": "01KWNYZDDA8PMG6ZZNKHWE3S3P", "dst": "01KWNYYTXEBYJD7DA0XRRB47X5", "type": "derived_from"}, {"src": "01KWNYZDDG14YMGB9GNJY977GX", "dst": "01KWNYYTXKN4ZZZ576ZZFW0NBR", "type": "derived_from"}, {"src": "01KWNYZDDMMDESV6HH4N661CVX", "dst": "01KWNYYTXSZ7H82GHD7M2P5KQ1", "type": "derived_from"}, {"src": "01KWNYZDDSMTA3P6Z2659M37M4", "dst": "01KWNYYTXYGW92HDZYXKHMVDP5", "type": "derived_from"}, {"src": "01KWNYZDDYQFTJNJ2ZTWKVT92S", "dst": "01KWNYYTY3NS5NPGEDSV556M4P", "type": "derived_from"}, {"src": "01KWNYZDE3ABRY3E7X91F7DZK3", "dst": "01KWNYYTY8EYSGWFSR1V4F6SB4", "type": "derived_from"}, {"src": "01KWNYZDE94BBQ8A8GV9TC1MTR", "dst": "01KWNYYTYDKY045273DC8WRKH4", "type": "derived_from"}, {"src": "01KWNYZDEDBKMQ4W6KD1PEX8FQ", "dst": "01KWNYYTYJ6HY3ZWZZRV8Y9Q7K", "type": "derived_from"}, {"src": "01KWNYZDEJAWZXC4G6976JV6Y9", "dst": "01KWNYYTYQYA0MFHVSJZ9CP16W", "type": "derived_from"}, {"src": "01KWNYZDEQN2W36X9QZ9CFP7XF", "dst": "01KWNYYTYW0FE1RTA4BA05FV3Y", "type": "derived_from"}, {"src": "01KWNYZDEW1SDQ27Q5XB38E23D", "dst": "01KWNYYTZ14EQWZFVBMNM6DAMG", "type": "derived_from"}, {"src": "01KWNYZDF0ZQKJC9QQ88F92HNX", "dst": "01KWNYYTZ6YEHRVD1JEPCR75G3", "type": "derived_from"}, {"src": "01KWNYZDF61F9GYBHMC63NGTR1", "dst": "01KWNYYTZCQX7D9G9N8Q2ST132", "type": "derived_from"}, {"src": "01KWNYZDFBAG705XHVF244RJX9", "dst": "01KWNYYTZGBS4ND98DPVTMNQTF", "type": "derived_from"}, {"src": "01KWNYZDFF25KY103PTPRQZE65", "dst": "01KWNYYTZNZJ2NZZBAYCQ86DXN", "type": "derived_from"}, {"src": "01KWNYZDFN6AQ5QAC4Z8D17J7R", "dst": "01KWNYYTZTX9QBDH4JAR68K9E4", "type": "derived_from"}, {"src": "01KWNYZDFTZJJG0DWP2BW814A5", "dst": "01KWNYYTZZP3N9Y3QEHE49AX9S", "type": "derived_from"}, {"src": "01KWNYZDFZZQ09FVTWCV2AR8S8", "dst": "01KWNYYV03ZWW0DHF9R04TEE4Q", "type": "derived_from"}, {"src": "01KWNYZDG4JAMDN56V6JW6YHR3", "dst": "01KWNYYV08T5G7GFNY3XA1BSNV", "type": "derived_from"}, {"src": "01KWNYZDG9B23AVFM45A1CGBP6", "dst": "01KWNYYV0E8AE9THE1Y6RBFGTS", "type": "derived_from"}, {"src": "01KWNYZDGE9DVVXDESAADSDHMV", "dst": "01KWNYYV0K766Q8DHJ5BYH22PN", "type": "derived_from"}, {"src": "01KWNYZDGMY0M2K7N1FRRBEZM9", "dst": "01KWNYYV0R0ZZGCV5FXRN1YZHP", "type": "derived_from"}, {"src": "01KWNYZDGR7PB4776ES1GB1X5F", "dst": "01KWNYYV0X6JYDSTY4NWJAPF16", "type": "derived_from"}, {"src": "01KWNYZDGYCAZJGT0CS2BHS2Z5", "dst": "01KWNYYV13R5RKKBTVKJS4CZ3C", "type": "derived_from"}, {"src": "01KWNYZDH3F5KHD01GEVCP9GX6", "dst": "01KWNYYV186PP6QZ896R9P3T7C", "type": "derived_from"}, {"src": "01KWNYZDH70FKN736ZJZ5M7XN3", "dst": "01KWNYYV1DKHA048K79R0ZCERA", "type": "derived_from"}, {"src": "01KWNYZDHCYSJG979T5RVRBSCK", "dst": "01KWNYYV1JEM07S57KGQC2BZA5", "type": "derived_from"}, {"src": "01KWNYZDHJ06VB6TB8K90S5J9E", "dst": "01KWNYYV1R5S0PEXRH69NPNRD0", "type": "derived_from"}, {"src": "01KWNYZDHQWZPJ930WQWXDCDXS", "dst": "01KWNYYV1XQ37W0YF32H0KV19K", "type": "derived_from"}, {"src": "01KWNYZDHV4QCWNFBJ95N55PHZ", "dst": "01KWNYYV24EP9W97BHVPHNVSWC", "type": "derived_from"}, {"src": "01KWNYZDJ0Z8AHGYFZ8CX0K3GG", "dst": "01KWNYYV2AJVP87A0VQDR3Y9GW", "type": "derived_from"}, {"src": "01KWNYZDJ5T45RSTFKVG8HW8SC", "dst": "01KWNYYV2GBWQ4W1HC784PJ9DA", "type": "derived_from"}, {"src": "01KWNYZDJ9K967EZ5EN8F91JJ3", "dst": "01KWNYYV2N8CGSH0ZKKGM5NN2F", "type": "derived_from"}, {"src": "01KWNYZDJE1PKAQ8DK3C1GM7EN", "dst": "01KWNYYV2T7Z3PEHKS08AAERVS", "type": "derived_from"}, {"src": "01KWNYZDJKQPYBWCX0TMKP6AEK", "dst": "01KWNYYV2ZWS6MRH4MX1CCKSAC", "type": "derived_from"}, {"src": "01KWNYZDJQYMGFK09N2GKQ3JDH", "dst": "01KWNYYV349R1ZTRPXGG8ZPYQM", "type": "derived_from"}, {"src": "01KWNYZDJXTQ2EV7EXH6CQBS50", "dst": "01KWNYYV38Y0ECQPPSETW1MT8C", "type": "derived_from"}, {"src": "01KWNYZDK2QNK25K7NYSMWK1PT", "dst": "01KWNYYV3DX00K11R7WKQVAMZ3", "type": "derived_from"}, {"src": "01KWNYZDK6Z6VT6RAD39MSSQFB", "dst": "01KWNYYV3J4B59TS98M4A73F2A", "type": "derived_from"}, {"src": "01KWNYZDKB5HTBG09HSK7RJ8FT", "dst": "01KWNYYV3PX5XYCSF3VZKTNHK5", "type": "derived_from"}, {"src": "01KWNYZDKGTV1V8F39TSCZ37CN", "dst": "01KWNYYV3VNZRX6H66067DVZBH", "type": "derived_from"}, {"src": "01KWNYZDKNY828GE0C806F9X6Z", "dst": "01KWNYYV3ZBM3KY77QHK4WQDSX", "type": "derived_from"}, {"src": "01KWNYZDKSBE4DCWE7V00MQY1C", "dst": "01KWNYYV44QN0C3GVEFMPTWCD2", "type": "derived_from"}, {"src": "01KWNYZDKY52RG4WYXKG5EAYSD", "dst": "01KWNYYV49VCMKPRRKPZFPG8F6", "type": "derived_from"}, {"src": "01KWNYZDM4PFR5CATHWQ93QQDP", "dst": "01KWNYYV4ERXZ1QH7YF8N4589R", "type": "derived_from"}, {"src": "01KWNYZDM86QE3JPPJBCET6BXV", "dst": "01KWNYYV4J8QHQYBVY6H9A7JM1", "type": "derived_from"}, {"src": "01KWNYZDMCFCFPFX9DFTF2KFD6", "dst": "01KWNYYV4Q542FVTRR8J0V44C8", "type": "derived_from"}, {"src": "01KWNYZDMHS2WKR4WY5QZGWE18", "dst": "01KWNYYV4WE0H3V7D8XG32AH2V", "type": "derived_from"}, {"src": "01KWNYZDMNGYZ6NTY7NJWSEPKT", "dst": "01KWNYYV50YFAQSGC5EJT7WY9A", "type": "derived_from"}, {"src": "01KWNYZDMTAJKD2A7Z2K69YHRH", "dst": "01KWNYYV54JFTXZSVJ6JCNW5HA", "type": "derived_from"}, {"src": "01KWNYZDMYSX343M1FM8DMCB9B", "dst": "01KWNYYV596R03B74T1C1HMA0K", "type": "derived_from"}, {"src": "01KWNYZDN3KKGDHNQVRYJZY9XF", "dst": "01KWNYYV5E6HPYDC79YH2G6JTW", "type": "derived_from"}, {"src": "01KWNYZDN9P253292FEBC91YQT", "dst": "01KWNYYV5JX8B1EXDVCYXHSMAT", "type": "derived_from"}, {"src": "01KWNYZDNDXM099DDYC84B5M06", "dst": "01KWNYYV5Q987XWDJRHDYRC7JQ", "type": "derived_from"}, {"src": "01KWNYZDNJB1C4BB4RGW8QVSWY", "dst": "01KWNYYV5VM43DV5DPXZP5GQKG", "type": "derived_from"}, {"src": "01KWNYZDNQGDFWXEFTMSFRAKY6", "dst": "01KWNYYV60VEHB2TNVZQ7Z1R5A", "type": "derived_from"}, {"src": "01KWNYZDNWKMH9M1RF26C932GK", "dst": "01KWNYYV65V8286X3C1387PRT6", "type": "derived_from"}, {"src": "01KWNYZDP19H7TP9ENT4EYH2VZ", "dst": "01KWNYYV691ZSYAFWQZ4C5CTA8", "type": "derived_from"}, {"src": "01KWNYZDP6Q72X7AA6W4KK34QB", "dst": "01KWNYYV6EE0SCXEPWDQG0B90H", "type": "derived_from"}, {"src": "01KWNYZDPA3XMXVBHSG1D8S53K", "dst": "01KWNYYV6KX4JA4D96B1FKG9V8", "type": "derived_from"}, {"src": "01KWNYZDPFM6FGT9DCY6NB5KMY", "dst": "01KWNYYV6QRS2JGNVN59H8V4FX", "type": "derived_from"}, {"src": "01KWNYZDPMACDZNN0JP0B1FV64", "dst": "01KWNYYV6W2XPJEGNX0S8JT3TA", "type": "derived_from"}, {"src": "01KWNYZDPRW6Y18XQSDPPJMQMT", "dst": "01KWNYYV71T7FVW4KQHWD61JQ7", "type": "derived_from"}, {"src": "01KWNYZDPXFQRPWW2JGK256ZJK", "dst": "01KWNYYV76T1BY75FD5RPAHQKP", "type": "derived_from"}, {"src": "01KWNYZDQ2SRXVQ484AJYKBFNE", "dst": "01KWNYYV7A0G4Y2FFDNZ1WVCSP", "type": "derived_from"}], "phases": [[1, "Foundation", "#3fb950"], [7, "Features", "#58a6ff"], [13, "Integration", "#d29922"], [19, "Hardening", "#f85149"], [25, "Advanced", "#bc8cff"], [31, "Maturity", "#ff7b72"]]};
+<script>
+const GRAPH_DATA = {"nodes": [{"id": "01KWNYYSTSKF1PK2G7C1DFBPS5", "type": "source", "kind": "source", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSTSKF1PK2G7C1DFBPS5"}, {"id": "01KWNYYSTYZ0RM3W3GAX78SKNM", "type": "source", "kind": "ticket", "sprint": 1, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSTYZ0RM3W3GAX78SKNM"}, {"id": "01KWNYYSV46YPXN107XS0PKJMK", "type": "source", "kind": "ticket", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSV46YPXN107XS0PKJMK"}, {"id": "01KWNYYSVBEBXCFJAGKGX94W2N", "type": "source", "kind": "ticket", "sprint": 3, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVBEBXCFJAGKGX94W2N"}, {"id": "01KWNYYSVJQWDZ3SHJZAVCJ1CB", "type": "source", "kind": "ticket", "sprint": 4, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVJQWDZ3SHJZAVCJ1CB"}, {"id": "01KWNYYSVR005KH7B7PHAQ7MVG", "type": "source", "kind": "bug", "sprint": 5, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVR005KH7B7PHAQ7MVG"}, {"id": "01KWNYYSVYPS39BYS9441XGQFV", "type": "source", "kind": "adr", "sprint": 6, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSVYPS39BYS9441XGQFV"}, {"id": "01KWNYYSW5CBPGXF6GNB7FPPDE", "type": "source", "kind": "adr", "sprint": 7, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSW5CBPGXF6GNB7FPPDE"}, {"id": "01KWNYYSWB82PYX9PJ6BKAHYZR", "type": "source", "kind": "spec", "sprint": 8, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSWB82PYX9PJ6BKAHYZR"}, {"id": "01KWNYYSWJK25WB3HE8A78JM4E", "type": "source", "kind": "source", "sprint": 2, "phase": "Foundation", "pagerank": 0.002057, "label": "01KWNYYSWJK25WB3HE8A78JM4E"}, {"id": "01KWNYYSWR7KKXXXBW0KS5AN01", "type": "source", "kind": "ticket", "sprint": 9, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSWR7KKXXXBW0KS5AN01"}, {"id": "01KWNYYSWYV2A9HA6ZHX9FBBPG", "type": "source", "kind": "ticket", "sprint": 10, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYSWYV2A9HA6ZHX9FBBPG"}, {"id": "01KWNYYX03EAY8M4P07A7GK1NF", "type": "source", "kind": "ticket", "sprint": 11, "phase": "Features", "pagerank": 0.002057, "label": "01KWNYYX03EAY8M4P07A7GK1NF"}, {"id": "01KWNYYX0NFNEJM1AWZ8VTKK2B", "type": "source", "kind": "bug", "sprint": 12, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYX0NFNEJM1AWZ8VTKK2B"}, {"id": "01KWNYYX0V9FXHZP3CNZ3K0Q1W", "type": "source", "kind": "ticket", "sprint": 13, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYX0V9FXHZP3CNZ3K0Q1W"}, {"id": "01KWNYYX13A658N4MKTZ1JQKWR", "type": "source", "kind": "adr", "sprint": 14, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYX13A658N4MKTZ1JQKWR"}, {"id": "01KWNYYX1CJM1KXKW9A5Y0F7EZ", "type": "source", "kind": "spec", "sprint": 15, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYX1CJM1KXKW9A5Y0F7EZ"}, {"id": "01KWNYYX1M9D08W5XG5T5NQVCR", "type": "source", "kind": "ticket", "sprint": 16, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYX1M9D08W5XG5T5NQVCR"}, {"id": "01KWNYYX1V37KQ2A6Y3Z5M8NJR", "type": "source", "kind": "bug", "sprint": 17, "phase": "Integration", "pagerank": 0.002057, "label": "01KWNYYX1V37KQ2A6Y3Z5M8NJR"}, {"id": "01KWNYYX24G7AYX3X1QJM7HK8R", "type": "source", "kind": "ticket", "sprint": 18, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX24G7AYX3X1QJM7HK8R"}, {"id": "01KWNYYX2DQXJPZ5M8A2T0V3SR", "type": "source", "kind": "adr", "sprint": 19, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX2DQXJPZ5M8A2T0V3SR"}, {"id": "01KWNYYX2PQZ8W3N5K1Y6R7FNR", "type": "source", "kind": "ticket", "sprint": 20, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX2PQZ8W3N5K1Y6R7FNR"}, {"id": "01KWNYYX2Y1KNJR8Q5Z3T8M2CR", "type": "source", "kind": "bug", "sprint": 21, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX2Y1KNJR8Q5Z3T8M2CR"}, {"id": "01KWNYYX37A2M5X9Q1R4Y6K8WR", "type": "source", "kind": "spec", "sprint": 22, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX37A2M5X9Q1R4Y6K8WR"}, {"id": "01KWNYYX3FWQ3Z7N8K2Y5R1TJR", "type": "source", "kind": "ticket", "sprint": 23, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX3FWQ3Z7N8K2Y5R1TJR"}, {"id": "01KWNYYX3QZ1Y8K5N7R2T6W4XR", "type": "source", "kind": "ticket", "sprint": 24, "phase": "Hardening", "pagerank": 0.002057, "label": "01KWNYYX3QZ1Y8K5N7R2T6W4XR"}, {"id": "01KWNYYX45AQ2Z7N9K3Y6R1T8WR", "type": "source", "kind": "adr", "sprint": 25, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYX45AQ2Z7N9K3Y6R1T8WR"}, {"id": "01KWNYYX4JWQ3Z8N1K5Y7R2T9XR", "type": "source", "kind": "ticket", "sprint": 26, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYX4JWQ3Z8N1K5Y7R2T9XR"}, {"id": "01KWNYYX4TZR4Y9K2N6R8T3W1XR", "type": "source", "kind": "bug", "sprint": 27, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYX4TZR4Y9K2N6R8T3W1XR"}, {"id": "01KWNYYX54AQ5Z1N3K7R9T4W2XR", "type": "source", "kind": "spec", "sprint": 28, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYX54AQ5Z1N3K7R9T4W2XR"}, {"id": "01KWNYYX5JWQ6Z2N4K8R1T5W3XR", "type": "source", "kind": "ticket", "sprint": 29, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYX5JWQ6Z2N4K8R1T5W3XR"}, {"id": "01KWNYYX5TZR7Z3N5K9R2T6W4XR", "type": "source", "kind": "ticket", "sprint": 30, "phase": "Advanced", "pagerank": 0.002057, "label": "01KWNYYX5TZR7Z3N5K9R2T6W4XR"}, {"id": "01KWNYYX64AQ8Z4N6K1R3T7W5XR", "type": "source", "kind": "adr", "sprint": 31, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYX64AQ8Z4N6K1R3T7W5XR"}, {"id": "01KWNYYX6JWQ9Z5N7K2R4T8W6XR", "type": "source", "kind": "ticket", "sprint": 32, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYX6JWQ9Z5N7K2R4T8W6XR"}, {"id": "01KWNYYX6TZRAZ6N8K3R5T9W7XR", "type": "source", "kind": "bug", "sprint": 33, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYX6TZRAZ6N8K3R5T9W7XR"}, {"id": "01KWNYYX74AQBZ7N9K4R6T1W8XR", "type": "source", "kind": "spec", "sprint": 34, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYX74AQBZ7N9K4R6T1W8XR"}, {"id": "01KWNYYX7JWQCZ8N1K5R7T2W9XR", "type": "source", "kind": "ticket", "sprint": 35, "phase": "Maturity", "pagerank": 0.002057, "label": "01KWNYYX7JWQCZ8N1K5R7T2W9XR"}, {"id": "01KWNYYX7TZRDN9K2N6R8T3W1XR", "type": "source", "kind": "summary", "sprint": 36, "phase": "Maturity", "pagerank": 0.0035, "label": "01KWNYYX7TZRDN9K2N6R8T3W1XR"}], "edges": [{"src": "01KWNYYSTSKF1PK2G7C1DFBPS5", "dst": "01KWNYYSTYZ0RM3W3GAX78SKNM", "type": "REFERENCES"}, {"src": "01KWNYYSTYZ0RM3W3GAX78SKNM", "dst": "01KWNYYSV46YPXN107XS0PKJMK", "type": "REFERENCES"}, {"src": "01KWNYYSV46YPXN107XS0PKJMK", "dst": "01KWNYYSVBEBXCFJAGKGX94W2N", "type": "REFERENCES"}, {"src": "01KWNYYSVBEBXCFJAGKGX94W2N", "dst": "01KWNYYSVJQWDZ3SHJZAVCJ1CB", "type": "REFERENCES"}, {"src": "01KWNYYSVJQWDZ3SHJZAVCJ1CB", "dst": "01KWNYYSVR005KH7B7PHAQ7MVG", "type": "REFERENCES"}, {"src": "01KWNYYSVR005KH7B7PHAQ7MVG", "dst": "01KWNYYSVYPS39BYS9441XGQFV", "type": "REFERENCES"}, {"src": "01KWNYYSVYPS39BYS9441XGQFV", "dst": "01KWNYYSW5CBPGXF6GNB7FPPDE", "type": "REFERENCES"}, {"src": "01KWNYYSW5CBPGXF6GNB7FPPDE", "dst": "01KWNYYSWB82PYX9PJ6BKAHYZR", "type": "REFERENCES"}, {"src": "01KWNYYSWB82PYX9PJ6BKAHYZR", "dst": "01KWNYYSWR7KKXXXBW0KS5AN01", "type": "REFERENCES"}, {"src": "01KWNYYSWR7KKXXXBW0KS5AN01", "dst": "01KWNYYSWYV2A9HA6ZHX9FBBPG", "type": "REFERENCES"}, {"src": "01KWNYYSWYV2A9HA6ZHX9FBBPG", "dst": "01KWNYYX03EAY8M4P07A7GK1NF", "type": "REFERENCES"}, {"src": "01KWNYYX03EAY8M4P07A7GK1NF", "dst": "01KWNYYX0NFNEJM1AWZ8VTKK2B", "type": "REFERENCES"}, {"src": "01KWNYYX0NFNEJM1AWZ8VTKK2B", "dst": "01KWNYYX0V9FXHZP3CNZ3K0Q1W", "type": "REFERENCES"}, {"src": "01KWNYYX0V9FXHZP3CNZ3K0Q1W", "dst": "01KWNYYX13A658N4MKTZ1JQKWR", "type": "REFERENCES"}, {"src": "01KWNYYX13A658N4MKTZ1JQKWR", "dst": "01KWNYYX1CJM1KXKW9A5Y0F7EZ", "type": "REFERENCES"}, {"src": "01KWNYYX1CJM1KXKW9A5Y0F7EZ", "dst": "01KWNYYX1M9D08W5XG5T5NQVCR", "type": "REFERENCES"}, {"src": "01KWNYYX1M9D08W5XG5T5NQVCR", "dst": "01KWNYYX1V37KQ2A6Y3Z5M8NJR", "type": "REFERENCES"}, {"src": "01KWNYYX1V37KQ2A6Y3Z5M8NJR", "dst": "01KWNYYX24G7AYX3X1QJM7HK8R", "type": "REFERENCES"}, {"src": "01KWNYYX24G7AYX3X1QJM7HK8R", "dst": "01KWNYYX2DQXJPZ5M8A2T0V3SR", "type": "REFERENCES"}, {"src": "01KWNYYX2DQXJPZ5M8A2T0V3SR", "dst": "01KWNYYX2PQZ8W3N5K1Y6R7FNR", "type": "REFERENCES"}, {"src": "01KWNYYX2PQZ8W3N5K1Y6R7FNR", "dst": "01KWNYYX2Y1KNJR8Q5Z3T8M2CR", "type": "REFERENCES"}, {"src": "01KWNYYX2Y1KNJR8Q5Z3T8M2CR", "dst": "01KWNYYX37A2M5X9Q1R4Y6K8WR", "type": "REFERENCES"}, {"src": "01KWNYYX37A2M5X9Q1R4Y6K8WR", "dst": "01KWNYYX3FWQ3Z7N8K2Y5R1TJR", "type": "REFERENCES"}, {"src": "01KWNYYX3FWQ3Z7N8K2Y5R1TJR", "dst": "01KWNYYX3QZ1Y8K5N7R2T6W4XR", "type": "REFERENCES"}, {"src": "01KWNYYX3QZ1Y8K5N7R2T6W4XR", "dst": "01KWNYYX45AQ2Z7N9K3Y6R1T8WR", "type": "REFERENCES"}, {"src": "01KWNYYX45AQ2Z7N9K3Y6R1T8WR", "dst": "01KWNYYX4JWQ3Z8N1K5Y7R2T9XR", "type": "REFERENCES"}, {"src": "01KWNYYX4JWQ3Z8N1K5Y7R2T9XR", "dst": "01KWNYYX4TZR4Y9K2N6R8T3W1XR", "type": "REFERENCES"}, {"src": "01KWNYYX4TZR4Y9K2N6R8T3W1XR", "dst": "01KWNYYX54AQ5Z1N3K7R9T4W2XR", "type": "REFERENCES"}, {"src": "01KWNYYX54AQ5Z1N3K7R9T4W2XR", "dst": "01KWNYYX5JWQ6Z2N4K8R1T5W3XR", "type": "REFERENCES"}, {"src": "01KWNYYX5JWQ6Z2N4K8R1T5W3XR", "dst": "01KWNYYX5TZR7Z3N5K9R2T6W4XR", "type": "REFERENCES"}, {"src": "01KWNYYX5TZR7Z3N5K9R2T6W4XR", "dst": "01KWNYYX64AQ8Z4N6K1R3T7W5XR", "type": "REFERENCES"}, {"src": "01KWNYYX64AQ8Z4N6K1R3T7W5XR", "dst": "01KWNYYX6JWQ9Z5N7K2R4T8W6XR", "type": "REFERENCES"}, {"src": "01KWNYYX6JWQ9Z5N7K2R4T8W6XR", "dst": "01KWNYYX6TZRAZ6N8K3R5T9W7XR", "type": "REFERENCES"}, {"src": "01KWNYYX6TZRAZ6N8K3R5T9W7XR", "dst": "01KWNYYX74AQBZ7N9K4R6T1W8XR", "type": "REFERENCES"}, {"src": "01KWNYYX74AQBZ7N9K4R6T1W8XR", "dst": "01KWNYYX7JWQCZ8N1K5R7T2W9XR", "type": "REFERENCES"}, {"src": "01KWNYYX7JWQCZ8N1K5R7T2W9XR", "dst": "01KWNYYX7TZRDN9K2N6R8T3W1XR", "type": "REFERENCES"}], "phases": [[1, "Foundation", "#3fb950"], [7, "Features", "#58a6ff"], [13, "Integration", "#d29922"], [19, "Hardening", "#f85149"], [25, "Advanced", "#bc8cff"], [31, "Maturity", "#ff7b72"]]};
 const DATA = GRAPH_DATA;
 
 const kindColors = {
@@ -139,320 +124,353 @@ function shortName(id) { return id.length > 32 ? id.slice(0, 29) + '...' : id; }
 const N = DATA.nodes.length;
 document.getElementById('counts').textContent = `— ${N} nodes, ${DATA.edges.length} edges, 36 sprints`;
 
-// --- Sprint-timeline layout ---
+// --- Force-directed layout ---
+const nodes = DATA.nodes.map((n, i) => ({
+  ...n,
+  x: 0,
+  y: 0,
+  vx: 0,
+  vy: 0,
+  idx: i,
+  radius: 4 + Math.sqrt(n.pagerank * 5000) * 3,
+  color: nodeColor(n.kind)
+}));
+
+// Build adjacency for force calculation
+const nodeById = new Map();
+nodes.forEach(n => nodeById.set(n.id, n));
+
+const edges = DATA.edges.filter(e => nodeById.has(e.src) && nodeById.has(e.dst)).map(e => ({
+  source: nodeById.get(e.src),
+  target: nodeById.get(e.dst),
+  type: e.type
+}));
+
+// Initial positions in sprint columns
 const sprintCounts = {};
-for (const n of DATA.nodes) {
+for (const n of nodes) {
   const s = n.sprint || 1;
   sprintCounts[s] = (sprintCounts[s] || 0) + 1;
 }
-
-const pos = new Float32Array(N * 3);
-const radii = [];
-const baseColors = [];
-const positions = [];
-
-const currentOffset = {};
-for (let i = 0; i < N; i++) {
-  const n = DATA.nodes[i];
+const sprintOffset = {};
+for (const n of nodes) {
   const s = n.sprint || 1;
-  if (!currentOffset[s]) {
-    const cnt = sprintCounts[s] || 10;
-    currentOffset[s] = -(cnt / 2) * 0.5;
-  }
-  const zKind = { ticket: -2, bug: -1, adr: 0, summary: 0, spec: 1, decision: 2, fact: 3 };
-  const z = (zKind[n.kind] || 0) * 1.5;
-  const x = (s - 1) * 1.2;
-  const y = currentOffset[s];
-  pos[i*3] = x;
-  pos[i*3+1] = y;
-  pos[i*3+2] = z;
-  currentOffset[s] += 0.5;
-  const r = 0.2 + Math.sqrt(n.pagerank * 5000) * 0.25;
-  radii.push(Math.max(r, 0.1));
-  baseColors.push(new THREE.Color(nodeColor(n.kind)));
-  positions.push({ x, y, z });
+  if (!sprintOffset[s]) sprintOffset[s] = 0;
+  n.x = (s - 1) * 60;
+  n.y = (sprintOffset[s] - (sprintCounts[s] - 1) / 2) * 30;
+  sprintOffset[s]++;
 }
 
-// --- Scene ---
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x06090f);
+// Run force simulation
+function simulate() {
+  const iterations = 150;
+  const repulsion = 800;
+  const attraction = 0.005;
+  const damping = 0.9;
+  const centerGravity = 0.01;
 
-const container = document.getElementById('canvas-container');
-const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 100000);
-camera.position.set(25, 0, 25);
-
-const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: false });
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-renderer.toneMapping = THREE.NoToneMapping;
-container.prepend(renderer.domElement);
-
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight), 0.6, 0.2, 0.4);
-composer.addPass(bloomPass);
-
-scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-const pl = new THREE.PointLight(0xffffff, 0.6, 2000); pl.position.set(500, 500, 500); scene.add(pl);
-const pl2 = new THREE.PointLight(0x6040ff, 0.4, 2000); pl2.position.set(-300, -200, -300); scene.add(pl2);
-
-// --- OrbitControls ---
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.1;
-controls.rotateSpeed = 0.6;
-controls.zoomSpeed = 1.5;
-controls.minDistance = 3;
-controls.maxDistance = 50000;
-controls.target.set(18, 0, 0);
-
-let autorotateEnabled = false;
-let lastInteraction = Date.now();
-const IDLE_MS = 30000;
-function onInteraction() { lastInteraction = Date.now(); if (!autorotateEnabled) controls.autoRotate = false; }
-renderer.domElement.addEventListener('pointerdown', onInteraction);
-  renderer.domElement.addEventListener('pointerwheel', onInteraction);
-const btnAutorotate = document.getElementById('btn-autorotate');
-btnAutorotate.addEventListener('click', () => { autorotateEnabled = !autorotateEnabled; controls.autoRotate = autorotateEnabled; btnAutorotate.classList.toggle('active'); });
-
-// --- Node meshes ---
-const nodeGroup = new THREE.Group();
-const meshes = [];
-
-for (let i = 0; i < N; i++) {
-  const r = radii[i];
-  const c = baseColors[i].clone();
-  const geo = new THREE.SphereGeometry(1, 16, 12);
-  const mat = new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
-  mesh.scale.set(r, r, r);
-  mesh.userData = { idx: i, baseColor: c.clone() };
-  nodeGroup.add(mesh);
-  meshes.push(mesh);
-}
-scene.add(nodeGroup);
-
-// --- Phase divider lines ---
-const phases = DATA.phases.length ? DATA.phases : [[1,"Foundation","#3fb950"],[7,"Features","#58a6ff"],[13,"Integration","#d29922"],[19,"Hardening","#f85149"],[25,"Advanced","#bc8cff"],[31,"Maturity","#ff7b72"]];
-const phaseGeo = new THREE.BufferGeometry();
-const phasePos = [];
-for (const [sprint, , color] of phases) {
-  const x = (sprint - 1) * 1.2 - 0.6;
-  phasePos.push(x, -8, -4, x, 8, -4);
-}
-phaseGeo.setAttribute('position', new THREE.Float32BufferAttribute(phasePos, 3));
-const phaseMat = new THREE.LineBasicMaterial({ color: 0x1a3a40, transparent: true, opacity: 0.4 });
-const phaseLines = new THREE.LineSegments(phaseGeo, phaseMat);
-scene.add(phaseLines);
-
-// --- Phase labels (CSS2D) ---
-import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-const labelRenderer2d = new CSS2DRenderer();
-labelRenderer2d.setSize(container.clientWidth, container.clientHeight);
-labelRenderer2d.domElement.style.position = 'absolute';
-labelRenderer2d.domElement.style.top = '0';
-labelRenderer2d.domElement.style.pointerEvents = 'none';
-labelRenderer2d.domElement.style.zIndex = '5';
-container.appendChild(labelRenderer2d.domElement);
-
-for (const [sprint, name, color] of phases) {
-  const x = (sprint - 1) * 1.2 + 2.5;
-  const div = document.createElement('div');
-  div.textContent = name;
-  div.style.color = color;
-  div.style.fontSize = '14px';
-  div.style.fontWeight = '700';
-  div.style.textShadow = '0 0 8px #000';
-  div.style.background = 'rgba(6,9,15,0.7)';
-  div.style.padding = '2px 10px';
-  div.style.borderRadius = '4px';
-  div.style.border = `1px solid ${color}44`;
-  const label2d = new CSS2DObject(div);
-  label2d.position.set(x, 6.5, 0);
-  scene.add(label2d);
-}
-
-// Sprint number labels
-for (let s = 1; s <= 36; s++) {
-  if (s % 3 !== 1 && s !== 36) continue;
-  const x = (s - 1) * 1.2;
-  const div = document.createElement('div');
-  div.textContent = `S${s}`;
-  div.style.color = '#3a5a5a';
-  div.style.fontSize = '8px';
-  div.style.fontFamily = 'monospace';
-  div.style.textShadow = '0 0 4px #000';
-  const label2d = new CSS2DObject(div);
-  label2d.position.set(x, -6.5, 0);
-  scene.add(label2d);
-}
-
-// --- Sprite labels ---
-const labelGroup = new THREE.Group();
-const labelScaleY = 0.4;
-
-function makeLabelTexture(text, color) {
-  const canvas = document.createElement('canvas');
-  const fontSize = 64;
-  const ctx = canvas.getContext('2d');
-  ctx.font = `600 ${fontSize}px system-ui, sans-serif`;
-  let tw = ctx.measureText(text).width;
-  if (tw > 620) { text = text.slice(0, Math.floor(text.length * 620 / tw) - 1) + '...'; tw = ctx.measureText(text).width; }
-  const pad = 16;
-  canvas.width = Math.ceil(tw + pad * 2);
-  canvas.height = Math.ceil(fontSize * 1.35);
-  ctx.font = `600 ${fontSize}px system-ui, sans-serif`;
-  ctx.lineWidth = 7;
-  ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-  ctx.fillStyle = color;
-  ctx.textBaseline = 'middle';
-  ctx.strokeText(text, pad, canvas.height/2);
-  ctx.fillText(text, pad, canvas.height/2);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  return { texture, w: canvas.width, h: canvas.height };
-}
-
-const spriteMats = [];
-for (let i = 0; i < N; i++) {
-  const nd = DATA.nodes[i];
-  const label = nd.kind + ' ' + (nd.sprint ? 'S' + nd.sprint : '');
-  const { texture, w, h } = makeLabelTexture(label, nodeColor(nd.kind));
-  const worldH = labelScaleY;
-  const worldW = worldH * (w / h);
-  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false, toneMapped: false });
-  const sprite = new THREE.Sprite(mat);
-  const r = radii[i];
-  sprite.position.set(pos[i*3], pos[i*3+1] + r * 0.7 + worldH/2, pos[i*3+2]);
-  sprite.scale.set(worldW, worldH, 1);
-  sprite.renderOrder = 20;
-  sprite.userData = { idx: i };
-  labelGroup.add(sprite);
-  spriteMats.push(mat);
-}
-scene.add(labelGroup);
-
-// --- Edge lines ---
-let edgeLines, edgeGeoRef;
-function buildEdgeGeo() {
-  const ep = [], ec = [];
-  for (const e of DATA.edges) {
-    const ai = DATA.nodes.findIndex(n => n.id === e.src);
-    const bi = DATA.nodes.findIndex(n => n.id === e.dst);
-    if (ai < 0 || bi < 0) continue;
-    const a = positions[ai], b = positions[bi];
-    ep.push(a.x, a.y, a.z, b.x, b.y, b.z);
-    const intensity = 0.12;
-    ec.push(intensity, intensity, intensity, intensity, intensity, intensity);
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3));
-  geo.setAttribute('color', new THREE.Float32BufferAttribute(ec, 3));
-  return geo;
-}
-edgeGeoRef = buildEdgeGeo();
-const edgeMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 1.0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
-edgeLines = new THREE.LineSegments(edgeGeoRef, edgeMat);
-scene.add(edgeLines);
-
-function rebuildEdges() {
-  edgeLines.geometry.dispose();
-  edgeLines.geometry = buildEdgeGeo();
-}
-
-// --- Hover ---
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
-let hoveredIdx = -1;
-const tooltip = document.getElementById('tooltip');
-const tooltipInner = document.getElementById('tooltip-inner');
-
-renderer.domElement.addEventListener('pointermove', (e) => {
-  const rect = renderer.domElement.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(meshes);
-  if (hits.length > 0) {
-    const idx = hits[0].object.userData.idx;
-    if (idx !== hoveredIdx) {
-      hoveredIdx = idx;
-      const nd = DATA.nodes[idx];
-      const c = nodeColor(nd.kind);
-      tooltipInner.innerHTML = `<div id="tooltip-name"><span id="tooltip-dot" style="background:${c}"></span>${shortName(nd.id)} <span id="tooltip-label">${nd.kind} | S${nd.sprint} | ${nd.phase}</span></div><div id="tooltip-path">PageRank: ${nd.pagerank}</div>`;
-      tooltip.style.left = (e.clientX - container.getBoundingClientRect().left + 14) + 'px';
-      tooltip.style.top = (e.clientY - container.getBoundingClientRect().top - 10) + 'px';
-      tooltip.classList.add('visible');
+  for (let iter = 0; iter < iterations; iter++) {
+    // Repulsion between all nodes
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const dx = nodes[j].x - nodes[i].x;
+        const dy = nodes[j].y - nodes[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const force = repulsion / (dist * dist);
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        nodes[i].vx -= fx;
+        nodes[i].vy -= fy;
+        nodes[j].vx += fx;
+        nodes[j].vy += fy;
+      }
     }
+
+    // Attraction along edges
+    for (const e of edges) {
+      const dx = e.target.x - e.source.x;
+      const dy = e.target.y - e.source.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const force = (dist - 80) * attraction;
+      const fx = (dx / dist) * force;
+      const fy = (dy / dist) * force;
+      e.source.vx += fx;
+      e.source.vy += fy;
+      e.target.vx -= fx;
+      e.target.vy -= fy;
+    }
+
+    // Center gravity
+    for (const n of nodes) {
+      n.vx -= n.x * centerGravity;
+      n.vy -= n.y * centerGravity;
+    }
+
+    // Apply velocities
+    for (const n of nodes) {
+      n.vx *= damping;
+      n.vy *= damping;
+      n.x += n.vx;
+      n.y += n.vy;
+    }
+  }
+}
+simulate();
+
+// --- Canvas setup ---
+const container = document.getElementById('canvas-container');
+const canvas = document.createElement('canvas');
+container.prepend(canvas);
+const ctx = canvas.getContext('2d');
+
+let width, height;
+function resize() {
+  width = container.clientWidth;
+  height = container.clientHeight;
+  canvas.width = width * devicePixelRatio;
+  canvas.height = height * devicePixelRatio;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// --- View transform ---
+let viewX = 0, viewY = 0, viewScale = 1;
+let targetViewX = 0, targetViewY = 0, targetViewScale = 1;
+
+function fitView() {
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const n of nodes) {
+    if (!enabledTypes.has(n.kind)) continue;
+    minX = Math.min(minX, n.x);
+    maxX = Math.max(maxX, n.x);
+    minY = Math.min(minY, n.y);
+    maxY = Math.max(maxY, n.y);
+  }
+  if (minX === Infinity) return;
+  const padding = 80;
+  const gw = maxX - minX + padding * 2;
+  const gh = maxY - minY + padding * 2;
+  targetViewScale = Math.min(width / gw, height / gh, 2);
+  targetViewX = width / 2 - ((minX + maxX) / 2) * targetViewScale;
+  targetViewY = height / 2 - ((minY + maxY) / 2) * targetViewScale;
+  selectedId = null;
+  highlightedIds = null;
+  rightPanel.classList.remove('open');
+  updateDetail(null);
+  updateHUD();
+}
+document.getElementById('btn-fit').addEventListener('click', fitView);
+
+function screenToWorld(sx, sy) {
+  return { x: (sx - viewX) / viewScale, y: (sy - viewY) / viewScale };
+}
+
+// --- Rendering ---
+let showLabels = true;
+const enabledTypes = new Set();
+const enabledEdgeRels = new Set();
+let selectedId = null;
+let highlightedIds = null;
+let hoveredNode = null;
+
+const edgeTypeColors = {
+  REFERENCES: '#1DA27E', CONTAINS: '#22c55e', DEFINES: '#a855f7',
+  CALLS: '#3b82f6', IMPORTS: '#60a5fa', IMPLEMENTS: '#f97316'
+};
+function edgeColor(type) { return edgeTypeColors[type] || '#1a3a4080'; }
+
+function draw() {
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = '#06090f';
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.save();
+  ctx.translate(viewX, viewY);
+  ctx.scale(viewScale, viewScale);
+
+  const hasHL = highlightedIds && highlightedIds.size > 0;
+
+  // Draw edges
+  for (const e of edges) {
+    if (!enabledTypes.has(e.source.kind) || !enabledTypes.has(e.target.kind)) continue;
+    if (!enabledEdgeRels.has(e.type)) continue;
+    if (hasHL && !highlightedIds.has(e.source.idx) && !highlightedIds.has(e.target.idx)) continue;
+
+    const alpha = hasHL ? (highlightedIds.has(e.source.idx) && highlightedIds.has(e.target.idx) ? 0.5 : 0.05) : 0.15;
+    ctx.beginPath();
+    ctx.moveTo(e.source.x, e.source.y);
+    ctx.lineTo(e.target.x, e.target.y);
+    ctx.strokeStyle = edgeColor(e.type);
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // Draw nodes
+  for (const n of nodes) {
+    if (!enabledTypes.has(n.kind)) continue;
+    if (hasHL && !highlightedIds.has(n.idx)) {
+      ctx.globalAlpha = 0.15;
+    } else {
+      ctx.globalAlpha = 1;
+    }
+
+    // Glow
+    const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius * 2.5);
+    gradient.addColorStop(0, n.color + '40');
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.radius * 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Node
+    ctx.fillStyle = n.color;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Selected ring
+    if (n.idx === selectedId) {
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // Label
+    if (showLabels && viewScale > 0.4) {
+      ctx.fillStyle = '#e0eded';
+      ctx.font = `${Math.max(8, 10 / viewScale)}px system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(n.kind + ' S' + n.sprint, n.x, n.y + n.radius + 10 / viewScale);
+    }
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  requestAnimationFrame(draw);
+}
+
+// --- Interaction ---
+let isDragging = false;
+let dragNode = null;
+let lastMouse = { x: 0, y: 0 };
+let mouseDownTime = 0;
+
+canvas.addEventListener('pointerdown', (e) => {
+  mouseDownTime = Date.now();
+  lastMouse = { x: e.clientX, y: e.clientY };
+  const rect = canvas.getBoundingClientRect();
+  const world = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+
+  // Check if clicking on a node
+  for (const n of nodes) {
+    if (!enabledTypes.has(n.kind)) continue;
+    const dx = world.x - n.x;
+    const dy = world.y - n.y;
+    if (dx * dx + dy * dy < n.radius * n.radius * 4) {
+      dragNode = n;
+      isDragging = true;
+      return;
+    }
+  }
+  isDragging = true;
+  dragNode = null;
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const world = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+
+  if (isDragging && dragNode) {
+    dragNode.x = world.x;
+    dragNode.y = world.y;
+    dragNode.vx = 0;
+    dragNode.vy = 0;
+    return;
+  }
+
+  if (isDragging && !dragNode) {
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    viewX += dx;
+    viewY += dy;
+    targetViewX += dx;
+    targetViewY += dy;
+    lastMouse = { x: e.clientX, y: e.clientY };
+    return;
+  }
+
+  // Hover detection
+  hoveredNode = null;
+  for (const n of nodes) {
+    if (!enabledTypes.has(n.kind)) continue;
+    const dx = world.x - n.x;
+    const dy = world.y - n.y;
+    if (dx * dx + dy * dy < n.radius * n.radius * 4) {
+      hoveredNode = n;
+      break;
+    }
+  }
+
+  const tooltip = document.getElementById('tooltip');
+  const tooltipInner = document.getElementById('tooltip-inner');
+  if (hoveredNode) {
+    const c = hoveredNode.color;
+    tooltipInner.innerHTML = `<div id="tooltip-name"><span id="tooltip-dot" style="background:${c}"></span>${shortName(hoveredNode.id)} <span id="tooltip-label">${hoveredNode.kind} | S${hoveredNode.sprint} | ${hoveredNode.phase}</span></div><div id="tooltip-path">PageRank: ${hoveredNode.pagerank}</div>`;
+    tooltip.style.left = (e.clientX - container.getBoundingClientRect().left + 14) + 'px';
+    tooltip.style.top = (e.clientY - container.getBoundingClientRect().top - 10) + 'px';
+    tooltip.classList.add('visible');
   } else {
-    hoveredIdx = -1;
     tooltip.classList.remove('visible');
   }
 });
-renderer.domElement.addEventListener('pointerleave', () => { hoveredIdx = -1; tooltip.classList.remove('visible'); });
 
-// --- Drag ---
-let dragTarget = null;
-let dragIdx = -1;
-const dragPlane = new THREE.Plane();
-const dragOffset = new THREE.Vector3();
-const dragIntersect = new THREE.Vector3();
-let pointerDownTime = 0;
-
-renderer.domElement.addEventListener('pointerdown', (e) => {
-  pointerDownTime = Date.now();
-  const rect = renderer.domElement.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(meshes);
-  if (hits.length > 0) {
-    const obj = hits[0].object;
-    dragTarget = obj;
-    dragIdx = obj.userData.idx;
-    const normal = camera.getWorldDirection(new THREE.Vector3()).negate();
-    dragPlane.setFromNormalAndCoplanarPoint(normal, obj.position);
-    dragOffset.copy(hits[0].point).sub(obj.position);
-    controls.enabled = false;
-  } else {
-    dragTarget = null;
-    dragIdx = -1;
+canvas.addEventListener('pointerup', (e) => {
+  const dt = Date.now() - mouseDownTime;
+  if (dt < 200 && !dragNode) {
+    // Click - select node
+    const rect = canvas.getBoundingClientRect();
+    const world = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+    let found = null;
+    for (const n of nodes) {
+      if (!enabledTypes.has(n.kind)) continue;
+      const dx = world.x - n.x;
+      const dy = world.y - n.y;
+      if (dx * dx + dy * dy < n.radius * n.radius * 4) {
+        found = n;
+        break;
+      }
+    }
+    selectNode(found ? found.idx : null);
   }
+  isDragging = false;
+  dragNode = null;
 });
 
-renderer.domElement.addEventListener('pointermove', (e) => {
-  if (!dragTarget) return;
-  const rect = renderer.domElement.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  raycaster.ray.intersectPlane(dragPlane, dragIntersect);
-  if (!dragIntersect) return;
-  dragTarget.position.copy(dragIntersect.sub(dragOffset));
-  const p = dragTarget.position;
-  positions[dragIdx] = { x: p.x, y: p.y, z: p.z };
-  const r = radii[dragIdx];
-  labelGroup.children[dragIdx].position.set(p.x, p.y + r * 0.7 + labelScaleY/2, p.z);
-  rebuildEdges();
-});
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  const newScale = Math.max(0.1, Math.min(10, viewScale * delta));
+  const ratio = newScale / viewScale;
+  viewX = mx - (mx - viewX) * ratio;
+  viewY = my - (my - viewY) * ratio;
+  viewScale = newScale;
+}, { passive: false });
 
-renderer.domElement.addEventListener('pointerup', () => {
-  if (dragTarget) {
-    const dt = Date.now() - pointerDownTime;
-    if (dt < 200) selectNode(dragIdx);
-    dragTarget = null;
-    dragIdx = -1;
-    controls.enabled = true;
-  }
+canvas.addEventListener('pointerleave', () => {
+  document.getElementById('tooltip').classList.remove('visible');
+  hoveredNode = null;
 });
 
 // --- Selection ---
-let selectedId = null;
-let highlightedIds = null;
-let flyTarget = null;
 const rightPanel = document.getElementById('right-panel');
 const detailClose = document.getElementById('detail-close');
 const detailTitle = rightPanel.querySelector('.detail-title');
@@ -465,54 +483,28 @@ function selectNode(idx) {
   if (idx === null) {
     rightPanel.classList.remove('open');
     updateDetail(null);
-    controls.target.set(18, 0, 0);
     updateHUD();
     return;
   }
-  const nd = DATA.nodes[idx];
+  const nd = nodes[idx];
   detailTitle.textContent = shortName(nd.id);
   detailType.textContent = nd.kind + ' · Sprint ' + nd.sprint + ' · ' + nd.phase;
   updateDetail(nd);
   rightPanel.classList.add('open');
   const set = new Set(); set.add(idx);
   for (const e of DATA.edges) {
-    if (e.src === nd.id) set.add(DATA.nodes.findIndex(n => n.id === e.dst));
-    if (e.dst === nd.id) set.add(DATA.nodes.findIndex(n => n.id === e.src));
+    if (e.src === nd.id) {
+      const ti = nodes.findIndex(n => n.id === e.dst);
+      if (ti >= 0) set.add(ti);
+    }
+    if (e.dst === nd.id) {
+      const si = nodes.findIndex(n => n.id === e.src);
+      if (si >= 0) set.add(si);
+    }
   }
   highlightedIds = set;
   updateHUD();
-  flyTo(idx);
 }
-
-function flyTo(idx) {
-  const p = positions[idx];
-  const r = radii[idx];
-  const dist = Math.max(r * 40, 8);
-  const startPos = camera.position.clone();
-  const startTarget = controls.target.clone();
-  const endTarget = new THREE.Vector3(p.x, p.y, p.z);
-  const endPos = new THREE.Vector3(p.x + dist*0.15, p.y + dist*0.1, p.z + dist);
-  flyTarget = { startPos, startTarget, endPos, endTarget, progress: 0 };
-}
-
-function fitView() {
-  if (meshes.length === 0) return;
-  const box = new THREE.Box3().setFromObject(nodeGroup);
-  if (box.isEmpty()) return;
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y, size.z);
-  const dist = Math.max(maxDim * 1.8, 15);
-  const startPos = camera.position.clone();
-  const startTarget = controls.target.clone();
-  const endTarget = center;
-  const endPos = new THREE.Vector3(center.x + dist*0.3, center.y, center.z + dist);
-  flyTarget = { startPos, startTarget, endPos, endTarget, progress: 0 };
-  selectedId = null; highlightedIds = null;
-  rightPanel.classList.remove('open');
-  updateDetail(null);
-}
-document.getElementById('btn-fit').addEventListener('click', fitView);
 
 detailClose.addEventListener('click', () => selectNode(null));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') selectNode(null); });
@@ -532,10 +524,10 @@ function updateDetail(nd) {
   if (outbound.length > 0) {
     out += `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">References</div>`;
     for (const e of outbound.slice(0, 25)) {
-      const ti = DATA.nodes.findIndex(n => n.id === e.dst);
+      const ti = nodes.findIndex(n => n.id === e.dst);
       if (ti < 0) continue;
-      const tn = DATA.nodes[ti];
-      out += `<div class="detail-conn-item" data-idx="${ti}"><span class="filter-dot" style="background:${nodeColor(tn.kind)}"></span><span class="detail-conn-name">${shortName(tn.id)}</span><span class="detail-conn-type">${e.type}</span></div>`;
+      const tn = nodes[ti];
+      out += `<div class="detail-conn-item" data-idx="${ti}"><span class="filter-dot" style="background:${tn.color}"></span><span class="detail-conn-name">${shortName(tn.id)}</span><span class="detail-conn-type">${e.type}</span></div>`;
     }
     if (outbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${outbound.length-25} more</div>`;
     out += `</div></div>`;
@@ -543,10 +535,10 @@ function updateDetail(nd) {
   if (inbound.length > 0) {
     out += `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Referenced by</div>`;
     for (const e of inbound.slice(0, 25)) {
-      const si = DATA.nodes.findIndex(n => n.id === e.src);
+      const si = nodes.findIndex(n => n.id === e.src);
       if (si < 0) continue;
-      const sn = DATA.nodes[si];
-      out += `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${nodeColor(sn.kind)}"></span><span class="detail-conn-name">${shortName(sn.id)}</span><span class="detail-conn-type">${e.type}</span></div>`;
+      const sn = nodes[si];
+      out += `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${sn.color}"></span><span class="detail-conn-name">${shortName(sn.id)}</span><span class="detail-conn-type">${e.type}</span></div>`;
     }
     if (inbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:6px">+${inbound.length-25} more</div>`;
     out += `</div></div>`;
@@ -557,60 +549,33 @@ function updateDetail(nd) {
   });
 }
 
-// --- Update node appearance per frame ---
-function updateNodeAppearance() {
-  const hasHL = highlightedIds && highlightedIds.size > 0;
-  for (let i = 0; i < N; i++) {
-    const m = meshes[i];
-    const visible = enabledTypes.has(DATA.nodes[i].kind);
-    m.visible = visible;
-    spriteMats[i].visible = visible;
-    if (!visible) continue;
-    if (hasHL) {
-      const bright = highlightedIds.has(i) ? 1.0 : 0.12;
-      m.material.color.copy(baseColors[i]).multiplyScalar(bright);
-      m.scale.setScalar(radii[i] * (highlightedIds.has(i) ? 1.0 : 0.35));
-    } else {
-      m.material.color.copy(baseColors[i]);
-      m.scale.setScalar(radii[i]);
-    }
-  }
-}
-
 // --- Filters ---
-const enabledTypes = new Set();
-const enabledEdgeRels = new Set();
-let allNodeTypes = [];
-let allEdgeRels = [];
 const hud = document.getElementById('hud');
 
 function buildFilters() {
   const counts = {};
-  for (const nd of DATA.nodes) counts[nd.kind] = (counts[nd.kind] || 0) + 1;
-  allNodeTypes = Object.keys(counts).sort();
+  for (const nd of nodes) counts[nd.kind] = (counts[nd.kind] || 0) + 1;
+  const allNodeTypes = Object.keys(counts).sort();
   for (const t of allNodeTypes) enabledTypes.add(t);
   const ec = {};
   for (const e of DATA.edges) ec[e.type] = (ec[e.type] || 0) + 1;
-  allEdgeRels = Object.keys(ec).sort();
+  const allEdgeRels = Object.keys(ec).sort();
   for (const r of allEdgeRels) enabledEdgeRels.add(r);
-  renderFilters();
-  renderPhaseLegend();
-  updateHUD();
-}
 
-function renderFilters() {
   const nf = document.getElementById('node-filters');
-  nf.innerHTML = allNodeTypes.map(t => `<label class="filter-label"><input type="checkbox" checked data-type="${t}"><span class="filter-dot" style="background:${nodeColor(t)}"></span>${t}<span class="filter-count">${DATA.nodes.filter(n=>n.kind===t).length}</span></label>`).join('');
+  nf.innerHTML = allNodeTypes.map(t => `<label class="filter-label"><input type="checkbox" checked data-type="${t}"><span class="filter-dot" style="background:${nodeColor(t)}"></span>${t}<span class="filter-count">${counts[t]}</span></label>`).join('');
   nf.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
     if (cb.checked) enabledTypes.add(cb.dataset.type); else enabledTypes.delete(cb.dataset.type);
-    applyFilters();
+    updateHUD();
   }));
+
   const ef = document.getElementById('edge-filters');
   ef.innerHTML = allEdgeRels.map(r => `<label class="filter-label"><input type="checkbox" checked data-rel="${r}"><span class="filter-dot" style="background:#6a9e9e"></span>${r}<span class="filter-count">${DATA.edges.filter(e=>e.type===r).length}</span></label>`).join('');
   ef.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
     if (cb.checked) enabledEdgeRels.add(cb.dataset.rel); else enabledEdgeRels.delete(cb.dataset.rel);
-    applyFilters();
+    updateHUD();
   }));
+
   document.getElementById('filter-all').addEventListener('click', () => {
     nf.querySelectorAll('input').forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); });
     ef.querySelectorAll('input').forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); });
@@ -619,37 +584,28 @@ function renderFilters() {
     nf.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
     ef.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
   });
-}
 
-function renderPhaseLegend() {
+  // Phase legend
+  const phases = DATA.phases.length ? DATA.phases : [[1,"Foundation","#3fb950"],[7,"Features","#58a6ff"],[13,"Integration","#d29922"],[19,"Hardening","#f85149"],[25,"Advanced","#bc8cff"],[31,"Maturity","#ff7b72"]];
   const el = document.getElementById('phase-legend');
   el.innerHTML = '<div class="panel-header">Phases</div>' + phases.map(([,name,color]) =>
     `<div class="phase-item"><span class="phase-swatch" style="background:${color}"></span>${name}</div>`
   ).join('');
-}
 
-function applyFilters() {
   updateHUD();
 }
 
 function updateHUD() {
-  const visibleNodes = meshes.filter(m => m.visible).length;
-  const visibleIds = new Set();
-  for (let i = 0; i < N; i++) { if (meshes[i].visible) visibleIds.add(DATA.nodes[i].id); }
-  const visibleEdges = DATA.edges.filter(e => visibleIds.has(e.src) && visibleIds.has(e.dst) && enabledEdgeRels.has(e.type)).length;
+  const visibleNodes = nodes.filter(n => enabledTypes.has(n.kind)).length;
+  const visibleEdges = edges.filter(e => enabledTypes.has(e.source.kind) && enabledTypes.has(e.target.kind) && enabledEdgeRels.has(e.type)).length;
   let h = `<strong>${visibleNodes}</strong> nodes, <strong>${visibleEdges}</strong> edges`;
   if (visibleNodes < N) h += `<br><span class="warn">${visibleNodes} of ${N} nodes shown</span>`;
   if (selectedId !== null) h += `<br>1 selected`;
   hud.innerHTML = h;
 }
 
-buildFilters();
-
-const showLabelsCb = document.getElementById('show-labels');
-showLabelsCb.addEventListener('change', () => { labelGroup.visible = showLabelsCb.checked; });
-
-// --- Auto-center on load ---
-setTimeout(() => fitView(), 150);
+// --- Show labels toggle ---
+document.getElementById('show-labels').addEventListener('change', (e) => { showLabels = e.target.checked; });
 
 // --- Resize handles ---
 let resizing = null;
@@ -661,38 +617,15 @@ document.addEventListener('pointermove', (e) => {
   if (!resizing) return;
   if (resizing === leftHandle) { document.getElementById('left-panel').style.width = Math.max(160, Math.min(500, e.clientX)) + 'px'; }
   else { document.getElementById('right-panel').style.width = Math.max(200, Math.min(500, container.getBoundingClientRect().right - e.clientX + 1)) + 'px'; }
+  resize();
 });
 document.addEventListener('pointerup', () => { if (resizing) resizing = null; });
 document.addEventListener('pointercancel', () => { if (resizing) resizing = null; });
 
-// --- Resize ---
-function resize() {
-  const w = container.clientWidth, h = container.clientHeight;
-  camera.aspect = w / h; camera.updateProjectionMatrix();
-  renderer.setSize(w, h); composer.setSize(w, h);
-  labelRenderer2d.setSize(w, h);
-}
-window.addEventListener('resize', resize);
-
-// --- Animate ---
-function animate() {
-  requestAnimationFrame(animate);
-  if (!autorotateEnabled && !controls.autoRotate && Date.now() - lastInteraction > IDLE_MS) {
-    controls.autoRotate = true; controls.autoRotateSpeed = 0.3;
-  }
-  if (flyTarget && flyTarget.progress < 1) {
-    flyTarget.progress = Math.min(1, flyTarget.progress + 0.025);
-    const t = 1 - Math.pow(1 - flyTarget.progress, 3);
-    camera.position.lerpVectors(flyTarget.startPos, flyTarget.endPos, t);
-    controls.target.lerpVectors(flyTarget.startTarget, flyTarget.endTarget, t);
-    if (flyTarget.progress >= 1) flyTarget = null;
-  }
-  controls.update();
-  updateNodeAppearance();
-  composer.render();
-  labelRenderer2d.render(scene, camera);
-}
-animate();
+// --- Init ---
+buildFilters();
+setTimeout(() => fitView(), 100);
+draw();
 </script>
 </body>
 </html>
