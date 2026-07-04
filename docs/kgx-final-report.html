@@ -473,10 +473,14 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);color
 <!-- ============================================================ -->
 <section id="graph">
 <h2>3D Graph Visualization</h2>
-<p class="slead">Interactive Three.js 3D graph of the 36-sprint vault. Orbit, zoom, filter by node/edge type, click to inspect.</p>
+<p class="slead">Interactive WebGL 3D graph of the 36-sprint vault. Orbit, zoom, filter by node/edge type, click to inspect.</p>
+
+<div class="pills" style="justify-content:center;margin-bottom:.75rem">
+  <a href="kgx-3d-brain.html" target="_blank" style="background:var(--accent);color:#fff;padding:6px 16px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:600">Open Full 3D Brain</a>
+</div>
 
 <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#06090f;margin:1rem 0">
-  <iframe src="kgx-36sprints-graph.html" style="width:100%;height:560px;border:none" title="Interactive 3D KGX graph"></iframe>
+  <iframe src="kgx-3d-brain.html" style="width:100%;height:560px;border:none" title="Interactive 3D KGX graph"></iframe>
 </div>
 
 <div class="pills" style="justify-content:center;margin-top:.75rem">
@@ -484,7 +488,7 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);color
   <span class="pill">Zoom: scroll</span>
   <span class="pill">Pan: right-click+drag</span>
   <span class="pill">Select: click node</span>
-  <span class="pill">Filter: left panel</span>
+  <span class="pill">Search: left panel</span>
   <span class="pill">Deselect: Esc</span>
 </div>
 </section>
