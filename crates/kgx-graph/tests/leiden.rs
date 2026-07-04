@@ -21,7 +21,18 @@ fn leiden_deterministic_with_seed() {
         .conn()
         .query_row("SELECT count(*) FROM communities", [], |r| r.get(0))
         .unwrap();
-    assert_eq!(cnt as usize, notes.len());
+    // Leiden excludes `type: moc` notes (derived artifacts that would
+    // otherwise form singleton communities and create a feedback loop with
+    // --communities MOC generation). The fixture has 1 MOC (datastore-moc),
+    // so communities covers notes.len() - moc_count rows.
+    let non_moc_count = notes
+        .iter()
+        .filter(|n| !matches!(n.fm.r#type, kgx_core::NoteType::Moc))
+        .count();
+    assert_eq!(
+        cnt as usize, non_moc_count,
+        "communities table must have one row per non-MOC note"
+    );
 }
 
 #[test]
