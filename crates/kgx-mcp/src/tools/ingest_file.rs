@@ -47,9 +47,8 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
 }
 
 fn sha256(s: &str) -> String {
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::Hasher;
-    let mut hasher = DefaultHasher::new();
-    hasher.write(s.as_bytes());
-    format!("{:x}", hasher.finish())
+    use sha2::{Digest, Sha256};
+    let mut hasher = Sha256::new();
+    hasher.update(s.as_bytes());
+    format!("{:x}", hasher.finalize())
 }
