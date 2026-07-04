@@ -5,6 +5,8 @@
 
 **KGX** turns a plain Markdown + `[[wikilinks]]` vault into a living, queryable knowledge graph. The vault is your canonical, git-versioned source of truth. A disposable SQLite "brain" provides hybrid vector + graph + keyword retrieval, PageRank, and community summaries. AI agents ingest, extract, link, answer, and consolidate. You review via git diffs and Obsidian's native graph view.
 
+> **[Full Report (HTML)](docs/kgx-final-report.html)** — consolidated benchmarks, test results, architecture, sprint simulation, and all documentation in one page.
+
 ---
 
 ## Table of Contents
@@ -85,12 +87,14 @@ Brain Layers
 | `kgx-extract` | Raw → atomic facts/entities/decisions pipeline |
 | `kgx-dream` | 7 consolidation passes: dedup, contradict, supersede, stale, resummarize, orphan, questions |
 | `kgx-mcp` | JSON-RPC 2.0 stdio MCP server (9 tools) |
+| `kgx-store` | BrainStore trait, multi-project BrainSet |
 | `kgx-tokens` | Per-command token accounting, JSONL metrics |
 | `kgx-rtk` | Shell-output compression wrapper + hook installer |
 | `kgx-ponytail` | Prompt ladders with over-engineering audit rules |
 | `kgx-cron` | systemd/launchd timer manager |
 | `kgx-viz` | HTML/D3, Mermaid, DOT, Obsidian Canvas exporters |
 | `kgx-docs` | Use-case HTML generator (tera templates) |
+| `kgx-bench` | 3-arm corpus/gold/judge benchmark harness |
 | `kgx-cli` | `kg` binary — clap commands, JSON output |
 
 ---
@@ -571,7 +575,7 @@ Every command supports `--json` (emits `{"ok":bool,"command":"...","data":{...},
 
 ## E2E Integration Test Results
 
-All 18 PRD smoke tests pass. Tests run with `KGX_LLM=mock` for hermetic, network-free CI.
+All 18 PRD smoke tests pass + 83 workspace tests. Tests run with `KGX_LLM=mock` for hermetic, network-free CI.
 
 ```bash
 KGX_LLM=mock cargo test --package smoke --test '*' -- --test-threads=1
@@ -597,7 +601,7 @@ KGX_LLM=mock cargo test --package smoke --test '*' -- --test-threads=1
 | — `install_script_is_valid_bash` | `install.sh` is valid bash | 0.00s | ✅ PASS |
 | — `native_skill_packages_reference_same_mcp_tools` | Claude/Codex/Cursor skill files reference identical MCP tool names | 0.00s | ✅ PASS |
 
-**18 / 18 smoke tests pass. 0 failures.**
+**101 / 101 tests pass. 0 failures.**
 
 Additional test suites:
 
@@ -829,7 +833,7 @@ cargo test --workspace --test '*'
 All PRs require:
 - `cargo fmt` clean
 - `cargo clippy -D warnings` clean
-- All 18 smoke tests green (`KGX_LLM=mock`)
+- All 101 tests green (`KGX_LLM=mock cargo test --workspace`)
 - No `unwrap()` / `expect()` / `panic!` in library crates
 
 ---

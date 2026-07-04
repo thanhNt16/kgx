@@ -1,0 +1,428 @@
+# 3D Graph Viewer Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Replace the 2D SVG graph template with a Three.js 3D viewer with orbit controls, node selection, and node dragging.
+
+**Architecture:** Only two files change — the Tera template (`graph.html.tera`) and the test assertion (`html.rs`). The Rust backend, data model, and build pipeline are untouched. The template uses an importmap to load Three.js from esm.sh CDN.
+
+**Tech Stack:** Three.js 0.170 (ESM), CSS2DRenderer, OrbitControls, Raycaster
+
+## Global Constraints
+
+- No Rust code changes, no Cargo.toml changes
+- The data JSON (`{{ graph_data | safe }}`) remains the only bridge between Rust and JS
+- The HTML output must still be a single file (with CDN imports)
+- Node colors: `#2563eb` for `entity`, `#b45309` for `decision`, `#059669` for everything else
+- PageRank drives node radius: `0.07 + Math.min(0.12, pagerank * 0.5)`
+
+---
+
+### Task 1: Update test for 3D HTML output
+
+**Files:**
+- Modify: `crates/kgx-viz/tests/html.rs`
+
+**Interfaces:**
+- Consumes: existing `html::render()` — unchanged signature
+- Produces: passing test suite
+
+The existing test `html_is_self_contained_and_counts_match` asserts `!h.contains("http://") && !h.contains("https://")`. This needs to be relaxed because the 3D template imports Three.js from CDN.
+
+- [ ] **Step 1: Update the test assertion**
+
+Replace the current URL assertion with a check that allows the known CDN pattern, and add a new assertion verifying the importmap is present.
+
+```rust
+#[test]
+fn html_renders_with_3d_viewer_and_counts_match() {
+    let m = model();
+    let h = html::render(&m);
+    assert!(h.contains("<html") && h.contains("</html>"));
+    // Allow known CDN import for Three.js
+    assert!(h.contains("esm.sh/three"), "expected Three.js CDN import");
+    assert!(h.contains("\"nodes\":"));
+    assert_eq!(m.nodes.len(), 17);
+    assert_eq!(h.matches("\"title\":").count(), m.nodes.len());
+}
+```
+
+- [ ] **Step 2: Run test to verify it fails with old template**
+
+```bash
+cd /Users/harry/Desktop/kgx && cargo test -p kgx-viz html_renders_with_3d_viewer_and_counts_match -- --nocapture 2>&1
+```
+
+Expected: FAIL — the current SVG template does NOT contain `esm.sh/three`.
+
+- [ ] **Step 3: Commit test change**
+
+```bash
+git add crates/kgx-viz/tests/html.rs
+git commit -m "test: relax URL assertion for Three.js CDN
+```
+
+---
+
+### Task 2: Replace template with Three.js 3D viewer
+
+**Files:**
+- Modify: `crates/kgx-viz/templates/graph.html.tera` — complete replace
+
+**Interfaces:**
+- Consumes: `{{ graph_data | safe }}` — same JSON structure as before
+- Produces: self-contained HTML page with 3D interactive graph
+
+The template imports Three.js via importmap, runs a force-directed 3D layout, renders nodes as spheres + CSS2D labels and edges as lines, and supports orbit controls, click-to-select, and node dragging.
+
+- [ ] **Step 1: Write the complete template**
+
+Replace the entire file content:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KGX Graph</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three@0.170",
+    "three/addons/": "https://esm.sh/three@0.170/examples/jsm/"
+  }
+}
+</script>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; color: #1f2937; background: #f7f7f4; }
+header { padding: 12px 16px; border-bottom: 1px solid #d7d7cf; background: #fff; display: flex; align-items: center; gap: 12px; }
+header strong { font-size: 15px; }
+#counts { color: #6b7280; font-size: 13px; }
+main { display: grid; grid-template-columns: 1fr 280px; height: calc(100vh - 49px); }
+#canvas-container { position: relative; background: #fafaf8; overflow: hidden; }
+#canvas-container canvas { display: block; }
+aside { border-left: 1px solid #d7d7cf; padding: 16px; background: #fff; overflow-y: auto; font-size: 14px; }
+aside h2 { margin: 0 0 8px; font-size: 16px; }
+aside p { margin: 0 0 6px; }
+aside .muted { color: #6b7280; font-size: 12px; }
+#controls-hint { position: absolute; bottom: 12px; left: 12px; font-size: 11px; color: #9ca3af; pointer-events: none; background: rgba(255,255,255,0.85); padding: 4px 10px; border-radius: 6px; border: 1px solid #e5e7eb; }
+</style>
+</head>
+<body>
+<header>
+  <strong>KGX Graph</strong>
+  <span id="counts"></span>
+</header>
+<main>
+  <div id="canvas-container">
+    <div id="controls-hint">Rotate: click+drag &middot; Zoom: scroll &middot; Pan: right-click+drag</div>
+  </div>
+  <aside id="detail">Select a node</aside>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+const DATA = {{ graph_data | safe }};
+const container = document.getElementById('canvas-container');
+const detail = document.getElementById('detail');
+document.getElementById('counts').textContent = `\u2014 ${DATA.nodes.length} nodes, ${DATA.edges.length} edges`;
+
+// --- Scene setup ---
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xfafaf8);
+
+const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(10, 8, 12);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+container.prepend(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(container.clientWidth, container.clientHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+container.prepend(labelRenderer.domElement);
+
+// --- Lighting ---
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+sun.position.set(5, 10, 7);
+scene.add(sun);
+
+// --- Orbit controls ---
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 2;
+controls.maxDistance = 80;
+
+// --- Force-directed 3D layout ---
+const N = DATA.nodes.length;
+const pos = new Float32Array(N * 3);
+const vel = new Float32Array(N * 3);
+
+for (let i = 0; i < N; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  const r = Math.cbrt(Math.random()) * 6;
+  pos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+  pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+  pos[i*3+2] = r * Math.cos(phi);
+}
+
+const ITERS = 150;
+for (let iter = 0; iter < ITERS; iter++) {
+  const rep = 0.008, attr = 0.012, center = 0.002, damp = 0.85;
+  // Repulsion
+  for (let i = 0; i < N; i++) {
+    for (let j = i + 1; j < N; j++) {
+      const dx = pos[i*3] - pos[j*3], dy = pos[i*3+1] - pos[j*3+1], dz = pos[i*3+2] - pos[j*3+2];
+      const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) + 0.01;
+      const f = rep / (dist * dist + 0.5);
+      vel[i*3] += dx/dist * f; vel[i*3+1] += dy/dist * f; vel[i*3+2] += dz/dist * f;
+      vel[j*3] -= dx/dist * f; vel[j*3+1] -= dy/dist * f; vel[j*3+2] -= dz/dist * f;
+    }
+  }
+  // Attraction along edges
+  for (const e of DATA.edges) {
+    const ai = DATA.nodes.findIndex(n => n.id === e.src);
+    const bi = DATA.nodes.findIndex(n => n.id === e.dst);
+    if (ai < 0 || bi < 0) continue;
+    const dx = pos[bi*3] - pos[ai*3], dy = pos[bi*3+1] - pos[ai*3+1], dz = pos[bi*3+2] - pos[ai*3+2];
+    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) + 0.01;
+    const f = (dist - 2.5) * attr;
+    vel[ai*3] += dx/dist * f; vel[ai*3+1] += dy/dist * f; vel[ai*3+2] += dz/dist * f;
+    vel[bi*3] -= dx/dist * f; vel[bi*3+1] -= dy/dist * f; vel[bi*3+2] -= dz/dist * f;
+  }
+  // Centering
+  for (let i = 0; i < N; i++) {
+    vel[i*3] -= pos[i*3] * center; vel[i*3+1] -= pos[i*3+1] * center; vel[i*3+2] -= pos[i*3+2] * center;
+  }
+  // Dampen
+  for (let i = 0; i < pos.length; i++) { vel[i] *= damp; pos[i] += vel[i]; }
+}
+
+// --- Build node meshes ---
+const nodeGroup = new THREE.Group();
+const nodeMeshes = [];
+const nodePositions = [];
+
+for (let i = 0; i < N; i++) {
+  const node = DATA.nodes[i];
+  const radius = 0.07 + Math.min(0.12, node.pagerank * 0.5);
+  const color = node.type === 'entity' ? 0x2563eb : node.type === 'decision' ? 0xb45309 : 0x059669;
+  const geo = new THREE.SphereGeometry(radius, 20, 20);
+  const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.1 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
+  mesh.userData = { idx: i, id: node.id };
+  nodeGroup.add(mesh);
+  nodeMeshes.push(mesh);
+  nodePositions.push({ x: pos[i*3], y: pos[i*3+1], z: pos[i*3+2] });
+}
+
+// --- Labels ---
+const labelGroup = new THREE.Group();
+for (let i = 0; i < N; i++) {
+  const el = document.createElement('div');
+  el.textContent = DATA.nodes[i].title;
+  el.style.color = '#1f2937';
+  el.style.fontSize = '11px';
+  el.style.fontFamily = 'system-ui, sans-serif';
+  el.style.padding = '1px 5px';
+  el.style.background = 'rgba(247,247,244,0.85)';
+  el.style.borderRadius = '3px';
+  el.style.whiteSpace = 'nowrap';
+  el.style.pointerEvents = 'none';
+  const label = new CSS2DObject(el);
+  label.position.set(pos[i*3], pos[i*3+1] + 0.18, pos[i*3+2]);
+  labelGroup.add(label);
+}
+
+// --- Edges ---
+const edgePositions = [];
+for (const e of DATA.edges) {
+  const ai = DATA.nodes.findIndex(n => n.id === e.src);
+  const bi = DATA.nodes.findIndex(n => n.id === e.dst);
+  if (ai < 0 || bi < 0) continue;
+  edgePositions.push(pos[ai*3], pos[ai*3+1], pos[ai*3+2]);
+  edgePositions.push(pos[bi*3], pos[bi*3+1], pos[bi*3+2]);
+}
+const edgeGeo = new THREE.BufferGeometry();
+edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3));
+const edgeMat = new THREE.LineBasicMaterial({ color: 0x8b8f97, transparent: true, opacity: 0.35 });
+const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
+
+scene.add(edgeLines);
+scene.add(nodeGroup);
+scene.add(labelGroup);
+
+// --- Raycaster + selection ---
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let selected = null;
+const origColors = new Map();
+
+function selectNode(mesh) {
+  if (selected === mesh) return;
+  if (selected) {
+    origColors.forEach((c, m) => { m.material.color.setHex(c); });
+    origColors.clear();
+  }
+  selected = mesh;
+  if (mesh) {
+    const node = DATA.nodes[mesh.userData.idx];
+    detail.innerHTML = `<h2>${node.title}</h2><p><b>ID</b><br><span class="muted">${node.id}</span></p><p><b>Type</b><br>${node.type}</p><p><b>Status</b><br>${node.status}</p>`;
+    // Highlight connected nodes + edges
+    const connected = new Set();
+    for (const e of DATA.edges) {
+      if (e.src === node.id) connected.add(e.dst);
+      if (e.dst === node.id) connected.add(e.src);
+    }
+    for (const m of nodeMeshes) {
+      const n = DATA.nodes[m.userData.idx];
+      if (n.id === node.id || connected.has(n.id)) {
+        origColors.set(m, m.material.color.getHex());
+        m.material.color.setHex(0xf59e0b);
+      }
+    }
+  } else {
+    detail.innerHTML = 'Select a node';
+  }
+}
+
+// --- Node dragging ---
+let dragTarget = null;
+let dragPlane = new THREE.Plane();
+let dragOffset = new THREE.Vector3();
+let intersection = new THREE.Vector3();
+
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(nodeMeshes);
+  if (hits.length > 0) {
+    const hit = hits[0];
+    dragTarget = hit.object;
+    const normal = camera.getWorldDirection(new THREE.Vector3()).negate();
+    dragPlane.setFromNormalAndCoplanarPoint(normal, hit.object.position);
+    dragOffset.copy(hit.point).sub(hit.object.position);
+    controls.enabled = false;
+    return;
+  }
+  // Click empty space -> deselect
+  if (hits.length === 0) selectNode(null);
+});
+
+renderer.domElement.addEventListener('pointermove', (e) => {
+  if (!dragTarget) return;
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  raycaster.ray.intersectPlane(dragPlane, intersection);
+  if (!intersection) return;
+  dragTarget.position.copy(intersection.sub(dragOffset));
+  // Update connected edges
+  const idx = dragTarget.userData.idx;
+  const p = dragTarget.position;
+  nodePositions[idx] = { x: p.x, y: p.y, z: p.z };
+  // Update label position
+  labelGroup.children[idx].position.set(p.x, p.y + 0.18, p.z);
+  rebuildEdges();
+});
+
+renderer.domElement.addEventListener('pointerup', () => {
+  if (dragTarget) {
+    selectNode(dragTarget);
+    dragTarget = null;
+    controls.enabled = true;
+  }
+});
+
+function rebuildEdges() {
+  const ep = [];
+  for (const e of DATA.edges) {
+    const ai = DATA.nodes.findIndex(n => n.id === e.src);
+    const bi = DATA.nodes.findIndex(n => n.id === e.dst);
+    if (ai < 0 || bi < 0) continue;
+    const a = nodePositions[ai], b = nodePositions[bi];
+    ep.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  }
+  edgeLines.geometry.dispose();
+  edgeLines.geometry = new THREE.BufferGeometry();
+  edgeLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3));
+}
+
+// --- Click to select (not drag - handled by pointerup delay) ---
+let pointerDownTime = 0;
+renderer.domElement.addEventListener('pointerdown', () => { pointerDownTime = Date.now(); });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (Date.now() - pointerDownTime > 200) return; // was a drag
+  if (dragTarget) return;
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(nodeMeshes);
+  if (hits.length > 0) selectNode(hits[0].object);
+});
+
+// --- Auto-center camera ---
+const box = new THREE.Box3().setFromObject(nodeGroup);
+if (!box.isEmpty()) {
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  controls.target.copy(center);
+  camera.position.set(center.x + maxDim * 1.5, center.y + maxDim * 1.2, center.z + maxDim * 1.8);
+  controls.update();
+}
+
+// --- Resize ---
+function resize() {
+  const w = container.clientWidth, h = container.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  labelRenderer.setSize(w, h);
+}
+window.addEventListener('resize', resize);
+
+// --- Animate ---
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: Verify tests pass**
+
+```bash
+cd /Users/harry/Desktop/kgx && cargo test -p kgx-viz -- --nocapture 2>&1
+```
+
+Expected: Both `html_renders_with_3d_viewer_and_counts_match` and `mermaid_renders_edges` pass. Verify the output contains `test result: ok` and no panics.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add crates/kgx-viz/templates/graph.html.tera crates/kgx-viz/tests/html.rs
+git commit -m "feat: replace 2D SVG graph viewer with Three.js 3D viewer"
+```

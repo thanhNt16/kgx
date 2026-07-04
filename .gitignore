@@ -1,2 +1,13 @@
 .kg/
 .obsidian/workspace*
+target/
+*.swp
+*.swo
+*~
+.DS_Store
+graph.html
+raw/
+notes/
+log.md
+/.claude/
+.kgx/

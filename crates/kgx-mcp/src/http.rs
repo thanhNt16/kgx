@@ -62,7 +62,9 @@ async fn handle_jsonrpc(
                 Err(e) => {
                     return (
                         StatusCode::INTERNAL_SERVER_ERROR,
-                        Json(json!({"jsonrpc":"2.0","id":id,"error":{"code":-32603,"message":e.to_string()}})),
+                        Json(
+                            json!({"jsonrpc":"2.0","id":id,"error":{"code":-32603,"message":e.to_string()}}),
+                        ),
                     );
                 }
             }
@@ -142,7 +144,8 @@ async fn handle_briefing(
     let brain_path = if project == "_default" || project == "default" {
         state.root.join(".kg/brain.sqlite")
     } else {
-        state.root
+        state
+            .root
             .join("projects")
             .join(&project)
             .join(".kg/brain.sqlite")
