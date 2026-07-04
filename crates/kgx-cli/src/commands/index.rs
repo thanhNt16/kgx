@@ -96,9 +96,10 @@ pub fn run(
 
 fn find_changed_ids(brain: &Brain, notes: &[Note]) -> anyhow::Result<Vec<String>> {
     use std::collections::BTreeMap;
-    // Pull the stored content fingerprint per note id. We hash the
-    // concatenation of title + "\n" + body, matching what gets embedded
-    // (build.rs uses format!("{}\n{}", title, body)).
+    // Pull the stored content fingerprint per note id. We hash body only
+    // (raw_text), not title+body, because raw_text is what's persisted and
+    // re-derivable here — see the inline note below on the title-edit
+    // trade-off.
     let stored: BTreeMap<String, u64> = {
         let mut stmt = brain
             .conn()
