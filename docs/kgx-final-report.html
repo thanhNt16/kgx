@@ -99,6 +99,7 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);color
   <a href="#sprint">Sprint Sim</a>
   <a href="#tests">Tests</a>
   <a href="#arch">Architecture</a>
+  <a href="#graph">3D Graph</a>
   <a href="#mcp">MCP</a>
   <a href="#skills">Skills</a>
   <a href="#commands">Commands</a>
@@ -467,6 +468,25 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);color
 <tr><td>Graph nodes</td><td>653</td><td>BM25-indexed FTS5 with PageRank ranking</td></tr>
 <tr><td>Phantom links</td><td>12</td><td>External references (structure fine, targets MIA)</td></tr>
 </table></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="graph">
+<h2>3D Graph Visualization</h2>
+<p class="slead">Interactive Three.js 3D graph of the 36-sprint vault. Orbit, zoom, filter by node/edge type, click to inspect.</p>
+
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#06090f;margin:1rem 0">
+  <iframe src="kgx-36sprints-graph.html" style="width:100%;height:560px;border:none" title="Interactive 3D KGX graph"></iframe>
+</div>
+
+<div class="pills" style="justify-content:center;margin-top:.75rem">
+  <span class="pill">Orbit: click+drag</span>
+  <span class="pill">Zoom: scroll</span>
+  <span class="pill">Pan: right-click+drag</span>
+  <span class="pill">Select: click node</span>
+  <span class="pill">Filter: left panel</span>
+  <span class="pill">Deselect: Esc</span>
+</div>
 </section>
 
 <!-- ============================================================ -->
