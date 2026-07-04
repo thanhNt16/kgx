@@ -51,11 +51,24 @@ pub fn run(
         for summary in summaries {
             let body = format!("{}\n\nMembers: {}", summary.summary, summary.member_count);
             let path = moc_dir.join(format!("community-{}.md", summary.community_id));
+            // Deterministic id keyed on community_id: 26 chars ('01MOC' +
+            // 21-char zero-padded community_id), matching ULID length. The
+            // same community always produces the same id, so re-running
+            // --communities overwrites the same MOC file/row instead of
+            // minting fresh ones. (MOC notes are also excluded from Leiden
+            // input — see leiden.rs — so they cannot create feedback.)
+            let moc_id = format!("01MOC{:021}", summary.community_id);
+            debug_assert_eq!(
+                moc_id.len(),
+                26,
+                "MOC id must be 26 chars, got {}: {moc_id}",
+                moc_id.len()
+            );
             std::fs::write(
                 path,
                 format!(
                     "---\ntype: moc\nid: {}\ntitle: \"{}\"\ntags: [entrypoint, community]\ncreated_by: agent\ncreated_via: cli\n---\n{}\n",
-                    kgx_core::util::new_ulid(),
+                    moc_id,
                     summary.title.replace('"', "\\\""),
                     body
                 ),

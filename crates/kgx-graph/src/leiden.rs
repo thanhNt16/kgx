@@ -31,10 +31,16 @@ fn modularity_gain(k_i: f64, k_i_in_c: f64, sigma_tot_c: f64, m: f64) -> f64 {
 const MAX_PASSES: usize = 32;
 
 pub fn detect(brain: &mut Brain, seed: u64) -> Result<CommunityStats> {
+    // Exclude `type: moc` notes from community detection. MOC notes are
+    // derived artifacts (one per community, written by `kg index
+    // --communities`); feeding them back in puts each in a singleton
+    // community, which then generates its own MOC next run — an unbounded
+    // feedback loop. Their edges (if any) are dropped via the `index.get`
+    // guard below, so dangling references are safe.
     let ids: Vec<String> = {
         let mut stmt = brain
             .conn()
-            .prepare("SELECT id FROM notes ORDER BY id")
+            .prepare("SELECT id FROM notes WHERE type != 'moc' ORDER BY id")
             .map_err(|e| KgError::Brain(e.to_string()))?;
         let rows = stmt
             .query_map([], |r| r.get(0))
