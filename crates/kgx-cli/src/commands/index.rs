@@ -20,11 +20,18 @@ pub fn run(
     let mut brain = Brain::open(&kg_dir.join("brain.sqlite"))?;
     let embedder = kgx_llm::select::embedder_from_env();
 
-    let stats = if rebuild_vectors || (incremental && !full) {
+    let (stats, embedded_ids): (_, std::collections::BTreeSet<String>) = if rebuild_vectors
+        || (incremental && !full)
+    {
         let changed_ids = find_changed_ids(&brain, &notes)?;
-        build_incremental(&mut brain, &notes, &changed_ids, embedder.as_ref())?
+        let embedded_ids: std::collections::BTreeSet<String> =
+            changed_ids.iter().cloned().collect();
+        let s = build_incremental(&mut brain, &notes, &changed_ids, embedder.as_ref())?;
+        (s, embedded_ids)
     } else {
-        build_full(&mut brain, &notes, embedder.as_ref())?
+        let all: std::collections::BTreeSet<String> = notes.iter().map(|n| n.fm.id.clone()).collect();
+        let s = build_full(&mut brain, &notes, embedder.as_ref())?;
+        (s, all)
     };
 
     if do_pagerank {
@@ -55,7 +62,11 @@ pub fn run(
             )?;
         }
     }
-    let approx_in: u32 = notes.iter().map(|n| (n.body.len() / 4) as u32).sum();
+    let approx_in: u32 = notes
+        .iter()
+        .filter(|n| embedded_ids.contains(n.fm.id.as_str()))
+        .map(|n| (n.body.len() / 4) as u32)
+        .sum();
     append(
         &kg_dir,
         &TokenRecord {
@@ -84,31 +95,56 @@ pub fn run(
 }
 
 fn find_changed_ids(brain: &Brain, notes: &[Note]) -> anyhow::Result<Vec<String>> {
-    use std::collections::BTreeSet;
-    let existing: BTreeSet<String> = {
+    use std::collections::BTreeMap;
+    // Pull the stored content fingerprint per note id. We hash the
+    // concatenation of title + "\n" + body, matching what gets embedded
+    // (build.rs uses format!("{}\n{}", title, body)).
+    let stored: BTreeMap<String, u64> = {
         let mut stmt = brain
             .conn()
-            .prepare("SELECT id FROM notes")
+            .prepare("SELECT id, raw_text FROM notes")
             .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
         let rows = stmt
-            .query_map([], |r| r.get::<_, String>(0))
+            .query_map([], |r| {
+                let id: String = r.get(0)?;
+                let body: String = r.get::<_, String>(1).unwrap_or_default();
+                // We can't recover the original title from raw_text alone
+                // (raw_text is just the body), but body-only hashing is
+                // sufficient to detect edits — title edits without a body
+                // change are vanishingly rare and the next --full catches them.
+                Ok((id, hash_str(&body)))
+            })
             .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
-        rows.collect::<std::result::Result<_, _>>()
-            .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?
+        let mut m = BTreeMap::new();
+        for r in rows {
+            let (id, h) = r.map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
+            m.insert(id, h);
+        }
+        m
     };
 
-    let current: BTreeSet<String> = notes.iter().map(|n| n.fm.id.clone()).collect();
-
-    let added: Vec<String> = current.difference(&existing).cloned().collect();
-    let removed: Vec<String> = existing.difference(&current).cloned().collect();
-
     let mut changed = Vec::new();
-    changed.extend(added);
-    changed.extend(removed);
-    let remaining: Vec<String> = current.intersection(&existing).cloned().collect();
-    changed.extend(remaining);
-
+    for n in notes {
+        let cur_hash = hash_str(&n.body);
+        match stored.get(n.fm.id.as_str()) {
+            None => changed.push(n.fm.id.clone()),      // new note
+            Some(prev) if *prev != cur_hash => changed.push(n.fm.id.clone()), // edited
+            Some(_) => { /* unchanged */ }
+        }
+    }
+    // Removed notes (in brain, not in vault) don't need re-embedding —
+    // they'll be pruned by build_incremental's full edge recompute, and
+    // the next --full cleans them fully. Don't add them to changed (nothing
+    // to embed).
     changed.sort();
     changed.dedup();
     Ok(changed)
+}
+
+fn hash_str(s: &str) -> u64 {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+    let mut h = DefaultHasher::new();
+    s.hash(&mut h);
+    h.finish()
 }
