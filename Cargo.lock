@@ -1709,6 +1709,7 @@ dependencies = [
  "rusqlite",
  "serde",
  "serde_json",
+ "sha2",
  "tempfile",
  "tokio",
  "tower 0.4.13",
@@ -3133,6 +3134,7 @@ name = "smoke"
 version = "0.1.0"
 dependencies = [
  "assert_cmd",
+ "kgx-mcp",
  "kgx-rtk",
  "rusqlite",
  "serde_json",
