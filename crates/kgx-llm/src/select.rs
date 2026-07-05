@@ -72,9 +72,9 @@ pub fn rerank_choice(
     semantic_built: bool,
 ) -> RerankChoice {
     match var {
-        Some("off") => RerankChoice::Off,
+        Some("off" | "false") => RerankChoice::Off,
         Some("mock") => RerankChoice::Mock,
-        _ if semantic_built => {
+        Some("jina-turbo") | Some("bge-base") | Some("on") | Some("true") if semantic_built => {
             RerankChoice::FastEmbed(model_var.unwrap_or("jina-turbo").to_string())
         }
         _ => RerankChoice::Off,
@@ -153,7 +153,11 @@ pub fn retrieval_label() -> String {
     let mut candidates = String::from("bm25+like+tags");
     let var = std::env::var("KGX_EMBED").ok();
     if matches!(
-        embed_choice(var.as_deref(), cfg!(feature = "semantic"), cfg!(feature = "candle")),
+        embed_choice(
+            var.as_deref(),
+            cfg!(feature = "semantic"),
+            cfg!(feature = "candle")
+        ),
         EmbedChoice::FastEmbed | EmbedChoice::MiniLm
     ) {
         candidates.push_str("+dense");
@@ -267,12 +271,13 @@ mod tests {
     }
 
     #[test]
-    fn rerank_choice_defaults_on_when_semantic_built() {
+    fn rerank_choice_defaults_off() {
+        assert_eq!(rerank_choice(None, None, true), RerankChoice::Off);
+        assert_eq!(rerank_choice(None, None, false), RerankChoice::Off);
         assert_eq!(
-            rerank_choice(None, None, true),
+            rerank_choice(Some("jina-turbo"), None, true),
             RerankChoice::FastEmbed("jina-turbo".into())
         );
-        assert_eq!(rerank_choice(None, None, false), RerankChoice::Off);
     }
 
     #[test]
@@ -280,7 +285,7 @@ mod tests {
         assert_eq!(rerank_choice(Some("off"), None, true), RerankChoice::Off);
         assert_eq!(rerank_choice(Some("mock"), None, true), RerankChoice::Mock);
         assert_eq!(
-            rerank_choice(None, Some("bge-base"), true),
+            rerank_choice(Some("on"), Some("bge-base"), true),
             RerankChoice::FastEmbed("bge-base".into())
         );
     }

@@ -811,11 +811,11 @@ entities) → local cross-encoder rerank. All models are local ONNX
 |---|---|---|
 | `KGX_EMBED` | `fastembed` / `minilm` / `mock` / `off` | `fastembed` |
 | `KGX_SPARSE` | on / `off` / `mock` | on |
-| `KGX_RERANK` | on / `off` / `mock` | on |
+| `KGX_RERANK` | on / `off` / `mock` | off |
 | `KGX_RERANK_MODEL` | `jina-turbo` / `bge-base` | `jina-turbo` |
 | `KGX_RERANK_TOPK` | integer | `30` |
 
-`kg status` prints the active stages (`retrieval: bm25+like+tags+dense+sparse | ppr | rerank(jina-turbo)`).
+`kg status` prints the active stages (e.g. `retrieval: bm25+like+tags+dense+sparse | ppr | rerank(jina-turbo)` when reranker is enabled).
 
 ### Extraction Semantics
 

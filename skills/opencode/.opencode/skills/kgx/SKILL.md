@@ -68,7 +68,7 @@ kg search <query> [--mode keyword|semantic|hybrid] [--limit <n>]
 |---|---|---|
 | `KGX_EMBED` | `fastembed` / `minilm` / `mock` / `off` | `fastembed` |
 | `KGX_SPARSE` | on / `off` / `mock` | on |
-| `KGX_RERANK` | on / `off` / `mock` | on |
+| `KGX_RERANK` | on / `off` / `mock` | off |
 | `KGX_RERANK_MODEL` | `jina-turbo` / `bge-base` | `jina-turbo` |
 | `KGX_RERANK_TOPK` | integer | `30` |
 

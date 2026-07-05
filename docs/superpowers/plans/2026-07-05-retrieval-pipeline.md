@@ -14,7 +14,7 @@
 
 - Default search path: local ONNX only, offline after first download, **no LLM tokens per query**. LLM rerank stays behind `--rerank-llm`.
 - Latency gate: **p95 end-to-end `kg search` < 200 ms** on the 220-note bench corpus (recorded in `bench/results.json`).
-- Env contract: `KGX_RERANK` = unset→on (when `semantic` feature built) / `off` / `mock`; `KGX_RERANK_MODEL` = `jina-turbo` (default) / `bge-base`; `KGX_RERANK_TOPK` default `30`; `KGX_SPARSE` = unset→on (when `semantic` built) / `off` / `mock`.
+- Env contract: `KGX_RERANK` = unset→off / `jina-turbo` / `bge-base` / `on` / `off` / `mock`; `KGX_RERANK_MODEL` = `jina-turbo` (default) / `bge-base`; `KGX_RERANK_TOPK` default `30`; `KGX_SPARSE` = unset→on (when `semantic` built) / `off` / `mock`.
 - Entity seeding constants: cosine threshold **0.60**, cap **5**, seed weight **0.5/(i+1)**.
 - Sparse RRF ranking uses **k = 60** (same as BM25/dense).
 - `SCHEMA_VERSION` becomes **3** (spec allocation; battletest-gaps WS2 owns 2). Phase 3 (Tasks 11+) requires battletest-gaps WS2 (POLE) merged; Tasks 1–10 only require WS1 (already on this branch).
