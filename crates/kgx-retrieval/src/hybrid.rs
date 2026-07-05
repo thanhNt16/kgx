@@ -164,6 +164,29 @@ pub fn search(
                 ks.push(300.0);
             }
         }
+
+        // Ranking 4: SPLADE sparse (learned term expansion).
+        if let Some(sparse) = r.sparse {
+            match sparse.embed_sparse(&[query.to_string()]) {
+                Ok(mut qv) if !qv.is_empty() => {
+                    let q = qv.remove(0);
+                    if let Ok(sp) = kgx_graph::sparse::sparse_search(brain, &q, 50) {
+                        if !sp.is_empty() {
+                            for (id, _) in &sp {
+                                signals_for
+                                    .entry(id.clone())
+                                    .or_default()
+                                    .push("sparse".into());
+                            }
+                            rankings.push(sp.into_iter().map(|(id, _)| id).collect());
+                            ks.push(60.0);
+                        }
+                    }
+                }
+                Ok(_) => {}
+                Err(e) => eprintln!("warning: sparse query embed failed, stage skipped: {e}"),
+            }
+        }
     }
     if matches!(opts.mode, Mode::Semantic | Mode::Hybrid) && r.embedder.is_semantic() {
         let q = r.embedder.embed(&[query.to_string()])?.remove(0);

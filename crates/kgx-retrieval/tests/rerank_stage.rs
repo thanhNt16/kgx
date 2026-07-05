@@ -70,3 +70,30 @@ fn no_reranker_means_no_rerank_signal() {
     .unwrap();
     assert!(hits.iter().all(|h| !h.signals.contains(&"rerank".to_string())));
 }
+
+#[test]
+fn sparse_ranking_contributes_signal() {
+    let tmp = tempfile::tempdir().unwrap();
+    let brain = fixture_brain(tmp.path());
+    let sparse = kgx_graph::sparse_embed::MockSparseEmbedder;
+    let notes = kgx_vault::scan::scan_vault(tmp.path()).unwrap();
+    let refs: Vec<&kgx_core::Note> = notes.iter().collect();
+    kgx_graph::sparse::index_sparse(&brain, &refs, &sparse).unwrap();
+
+    let embedder = kgx_graph::embed::MockEmbedder::new();
+    let r = kgx_retrieval::Retrievers::new(&embedder).with_sparse(Some(&sparse));
+    let hits = search(
+        &brain,
+        &r,
+        "glacier",
+        SearchOpts {
+            mode: Mode::Hybrid,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert!(
+        hits.iter().any(|h| h.signals.contains(&"sparse".to_string())),
+        "sparse signal expected: {hits:?}"
+    );
+}
