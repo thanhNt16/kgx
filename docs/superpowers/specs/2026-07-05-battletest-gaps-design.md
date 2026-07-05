@@ -6,8 +6,9 @@
 
 ## Goal
 
-Close all 8 gaps surfaced by the 36-sprint battle test in one coordinated effort,
-organized as 8 workstreams. The centerpiece decision — which storage/search/graph
+Close all 8 gaps surfaced by the 36-sprint battle test, plus add native ZCode
+harness support (CLI installer, skills pack, MCP config — a committed PRD
+target not yet shipped), in one coordinated effort organized as 8 workstreams. The centerpiece decision — which storage/search/graph
 engine serves semantic search, keyword search, and the POLE graph — is resolved:
 **evolve the existing embedded SQLite spine** (sqlite-vec + FTS5 + edges/petgraph)
 rather than adopting an external or multi-model engine.
@@ -145,19 +146,35 @@ absent. README language is ahead of the code.
   pipeline.
 - Docs updated so "refine/curate" describes shipped behavior.
 
-### WS8 — Harness parity (Codex, Cursor, Opencode)
+### WS8 — Harness parity (Codex, Cursor, Opencode) + ZCode native support
 
 **Gap:** `codebase-memory-mcp` registered only for Claude Code; Cursor lacks
 the `verify-finished` hook and `kgx-codebase` rule; `dev-install.sh` Opencode
-branch hardcodes `/usr/local/bin/kg` and omits `--transport stdio`.
+branch hardcodes `/usr/local/bin/kg` and omits `--transport stdio`. ZCode is
+named a first-class harness in the unified PRD (§2 G3, §6.4, Phase 8) but has
+no shipped support: no `skills/zcode/` template pack, no installer branch, no
+scaffolding.
 
-**Design:**
-- Register `codebase-memory-mcp` in all 4 harness configs.
+**Design (parity for the existing 3):**
+- Register `codebase-memory-mcp` in every harness config.
 - Add Cursor `verify-finished` hook + `kgx-codebase` rule file.
 - Fix `dev-install.sh` Opencode branch: derive the binary path, include
   `--transport stdio`, match the in-repo template.
+
+**Design (ZCode as 5th native harness, per the PRD contract — same MCP-stdio
+contract as Cursor):**
+- `skills/zcode/` template pack: `.mcp.json` with `mcpServers.kgx` (the real
+  9 tools) **and** `codebase-memory-mcp`; the `kgx*` SKILL.md pack mirrored
+  from the canonical skill content; optional SessionStart hook wiring the
+  `verify-finished` finish gate.
+- CLI wiring: `dev-install.sh --agent zcode` branch (installs MCP config +
+  mirrors skills into `~/.zcode/skills/kgx*/`), and `kg init --with-skills`
+  scaffolds the ZCode pack alongside the other harnesses (`init.rs`).
+- Docs: README + install docs list ZCode in the supported-harness matrix.
+
+**Drift prevention (all 5):**
 - Extend `tests/smoke/tests/t_skills_valid.rs` with a structural parity
-  check: all 4 harness configs must reference the same MCP servers and tool
+  check: all 5 harness configs must reference the same MCP servers and tool
   names as the source of truth (`crates/kgx-mcp/src/tools/mod.rs`). Config
   drift becomes a test failure, not a battle-test surprise.
 
