@@ -1,5 +1,5 @@
 use kgx_core::{
-    llm::{Embedder, LlmProvider, Reranker},
+    llm::{Embedder, LlmProvider, Reranker, SparseEmbedder},
     KgError, Result,
 };
 
@@ -113,6 +113,41 @@ pub fn rerank_topk_from_env() -> usize {
         .unwrap_or(30)
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SparseChoice {
+    Off,
+    Mock,
+    FastEmbed,
+}
+
+/// Pure selection logic. `var` = KGX_SPARSE.
+pub fn sparse_choice(var: Option<&str>, semantic_built: bool) -> SparseChoice {
+    match var {
+        Some("off") => SparseChoice::Off,
+        Some("mock") => SparseChoice::Mock,
+        _ if semantic_built => SparseChoice::FastEmbed,
+        _ => SparseChoice::Off,
+    }
+}
+
+pub fn sparse_from_env() -> Option<Box<dyn SparseEmbedder>> {
+    let var = std::env::var("KGX_SPARSE").ok();
+    match sparse_choice(var.as_deref(), cfg!(feature = "semantic")) {
+        SparseChoice::Off => None,
+        SparseChoice::Mock => Some(Box::new(kgx_graph::sparse_embed::MockSparseEmbedder)),
+        #[cfg(feature = "semantic")]
+        SparseChoice::FastEmbed => match kgx_graph::sparse_embed::FastEmbedSparse::load() {
+            Ok(s) => Some(Box::new(s)),
+            Err(e) => {
+                eprintln!("warning: SPLADE failed to load, sparse stage disabled: {e}");
+                None
+            }
+        },
+        #[cfg(not(feature = "semantic"))]
+        SparseChoice::FastEmbed => None,
+    }
+}
+
 /// One-line summary of active retrieval stages for `kg status`.
 pub fn retrieval_label() -> String {
     let mut candidates = String::from("bm25+like+tags");
@@ -122,6 +157,13 @@ pub fn retrieval_label() -> String {
         EmbedChoice::FastEmbed | EmbedChoice::MiniLm
     ) {
         candidates.push_str("+dense");
+    }
+    let svar = std::env::var("KGX_SPARSE").ok();
+    if !matches!(
+        sparse_choice(svar.as_deref(), cfg!(feature = "semantic")),
+        SparseChoice::Off
+    ) {
+        candidates.push_str("+sparse");
     }
     let rerank = {
         let var = std::env::var("KGX_RERANK").ok();
@@ -241,5 +283,13 @@ mod tests {
             rerank_choice(None, Some("bge-base"), true),
             RerankChoice::FastEmbed("bge-base".into())
         );
+    }
+
+    #[test]
+    fn sparse_choice_defaults_on_when_semantic_built() {
+        assert_eq!(sparse_choice(None, true), SparseChoice::FastEmbed);
+        assert_eq!(sparse_choice(None, false), SparseChoice::Off);
+        assert_eq!(sparse_choice(Some("off"), true), SparseChoice::Off);
+        assert_eq!(sparse_choice(Some("mock"), true), SparseChoice::Mock);
     }
 }

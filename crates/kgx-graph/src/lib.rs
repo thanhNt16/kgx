@@ -11,6 +11,7 @@ pub mod query;
 pub mod rerank;
 pub mod schema;
 pub mod sparse;
+pub mod sparse_embed;
 pub mod vec;
 
 pub use brain::Brain;
