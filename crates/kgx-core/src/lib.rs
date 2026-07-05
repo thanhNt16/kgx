@@ -7,5 +7,6 @@ pub mod util;
 
 pub use error::{KgError, Result};
 pub use types::{
-    Confidence, CreatedBy, CreatedVia, Edge, Frontmatter, Note, NoteType, RelType, Status,
+    Confidence, CreatedBy, CreatedVia, Edge, EntityType, Frontmatter, Note, NoteType, RelType,
+    Status,
 };

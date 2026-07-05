@@ -42,6 +42,37 @@ impl Confidence {
     }
 }
 
+/// POLE classification for entity notes (Person / Object / Location / Event).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum EntityType {
+    Person,
+    Object,
+    Location,
+    Event,
+}
+
+impl EntityType {
+    pub fn parse(s: &str) -> Option<EntityType> {
+        match s.to_ascii_lowercase().as_str() {
+            "person" => Some(Self::Person),
+            "object" => Some(Self::Object),
+            "location" => Some(Self::Location),
+            "event" => Some(Self::Event),
+            _ => None,
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Person => "person",
+            Self::Object => "object",
+            Self::Location => "location",
+            Self::Event => "event",
+        }
+    }
+}
+
 /// Edge relationship type stored in the brain.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -52,6 +83,17 @@ pub enum RelType {
     Cites,
     MentionsEntity,
     Contradicts,
+    ParticipatesIn,
+    LocatedAt,
+    Owns,
+    Decided,
+    Caused,
+}
+
+impl RelType {
+    pub fn parse(s: &str) -> Option<RelType> {
+        serde_json::from_value(serde_json::Value::String(s.to_string())).ok()
+    }
 }
 
 /// Parsed frontmatter. Unknown keys preserved in `extra` (OKF §9 tolerance).
@@ -148,5 +190,29 @@ mod tests {
         let yaml = "type: fact\nid: X\ntitle: T\ncustom_key: hello\n";
         let fm: Frontmatter = serde_yaml::from_str(yaml).unwrap();
         assert!(fm.extra.contains_key("custom_key"));
+    }
+
+    #[test]
+    fn entity_type_parses_pole_only() {
+        assert_eq!(EntityType::parse("person"), Some(EntityType::Person));
+        assert_eq!(EntityType::parse("OBJECT"), Some(EntityType::Object));
+        assert_eq!(EntityType::parse("location"), Some(EntityType::Location));
+        assert_eq!(EntityType::parse("event"), Some(EntityType::Event));
+        assert_eq!(EntityType::parse("system"), None);
+        assert_eq!(EntityType::Person.as_str(), "person");
+    }
+
+    #[test]
+    fn rel_type_parses_snake_case_typed_relations() {
+        assert_eq!(
+            RelType::parse("participates_in"),
+            Some(RelType::ParticipatesIn)
+        );
+        assert_eq!(RelType::parse("located_at"), Some(RelType::LocatedAt));
+        assert_eq!(RelType::parse("owns"), Some(RelType::Owns));
+        assert_eq!(RelType::parse("decided"), Some(RelType::Decided));
+        assert_eq!(RelType::parse("caused"), Some(RelType::Caused));
+        assert_eq!(RelType::parse("links_to"), Some(RelType::LinksTo));
+        assert_eq!(RelType::parse("nonsense"), None);
     }
 }
