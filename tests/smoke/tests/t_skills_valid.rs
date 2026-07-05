@@ -6,6 +6,7 @@ fn native_skill_packages_reference_same_mcp_tools() {
         root.join("skills/codex/AGENTS.md"),
         root.join("skills/cursor/.cursor/rules/kgx.mdc"),
         root.join("skills/opencode/.opencode/skills/kgx/SKILL.md"),
+        root.join("skills/zcode/.zcode/skills/kgx/SKILL.md"),
     ];
     // Tools must match the real MCP tool names exposed by crates/kgx-mcp/src/tools/mod.rs
     let tools = [
@@ -31,6 +32,7 @@ fn native_skill_packages_reference_same_mcp_tools() {
         root.join("skills/codex/config.toml"),
         root.join("skills/cursor/.cursor/mcp.json"),
         root.join("skills/opencode/opencode.json"),
+        root.join("skills/zcode/.mcp.json"),
     ] {
         let text = std::fs::read_to_string(&config)
             .unwrap_or_else(|e| panic!("failed to read {}: {e}", config.display()));
@@ -51,4 +53,25 @@ fn native_skill_packages_reference_same_mcp_tools() {
             hook.display()
         );
     }
+    // Every harness must register the codebase MCP server, not just Claude.
+    for config in [
+        root.join("skills/claude/.mcp.json"),
+        root.join("skills/codex/config.toml"),
+        root.join("skills/cursor/.cursor/mcp.json"),
+        root.join("skills/opencode/opencode.json"),
+        root.join("skills/zcode/.mcp.json"),
+    ] {
+        let text = std::fs::read_to_string(&config)
+            .unwrap_or_else(|e| panic!("failed to read {}: {e}", config.display()));
+        assert!(
+            text.contains("codebase-memory-mcp"),
+            "{} missing codebase-memory-mcp registration",
+            config.display()
+        );
+    }
+    // Cursor's finish gate ships as an alwaysApply rule.
+    let cursor_finish = root.join("skills/cursor/.cursor/rules/kgx-finish.mdc");
+    let text = std::fs::read_to_string(&cursor_finish)
+        .unwrap_or_else(|e| panic!("failed to read {}: {e}", cursor_finish.display()));
+    assert!(text.contains("verify-finished"));
 }
