@@ -39,9 +39,10 @@ pub fn run(
             "semantic" => Mode::Semantic,
             _ => Mode::Hybrid,
         };
+        let r = kgx_retrieval::Retrievers::new(embedder.as_ref());
         let hits = search(
             &brain,
-            embedder.as_ref(),
+            &r,
             question,
             SearchOpts {
                 mode: m,
@@ -50,8 +51,8 @@ pub fn run(
                 filter_entities: true,
                 rerank_graph: false,
                 rerank_llm: false,
+                rerank_topk: 0,
             },
-            None,
         )?;
         for h in &hits {
             if let Some(n) = notes.iter().find(|n| n.fm.id == h.id) {

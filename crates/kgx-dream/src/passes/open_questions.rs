@@ -25,9 +25,10 @@ pub async fn run(ctx: &DreamContext<'_>) -> Result<Vec<ProposedDiff>> {
             continue;
         }
 
+        let r = kgx_retrieval::Retrievers::new(ctx.embedder);
         let hits = search(
             ctx.brain,
-            ctx.embedder,
+            &r,
             &query,
             SearchOpts {
                 mode: kgx_retrieval::Mode::Hybrid,
@@ -36,8 +37,8 @@ pub async fn run(ctx: &DreamContext<'_>) -> Result<Vec<ProposedDiff>> {
                 filter_entities: true,
                 rerank_graph: false,
                 rerank_llm: false,
+                rerank_topk: 0,
             },
-            None,
         )?;
 
         // Filter hits to active facts (not the question itself)

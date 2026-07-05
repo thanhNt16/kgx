@@ -286,3 +286,12 @@ pub fn neighbors(brain: &Brain, id: &str, hops: u32) -> Result<Vec<String>> {
     out.sort();
     Ok(out)
 }
+
+pub fn has_edges(brain: &Brain) -> Result<bool> {
+    brain
+        .conn()
+        .query_row("SELECT EXISTS(SELECT 1 FROM edges LIMIT 1)", [], |r| {
+            r.get(0)
+        })
+        .map_err(|e| KgError::Brain(e.to_string()))
+}

@@ -28,9 +28,13 @@ pub fn run(
     } else {
         None
     };
+    let reranker = kgx_llm::select::reranker_from_env();
+    let r = kgx_retrieval::Retrievers::new(embedder.as_ref())
+        .with_llm(llm.as_deref())
+        .with_reranker(reranker.as_deref());
     let hits = search(
         &brain,
-        embedder.as_ref(),
+        &r,
         query,
         SearchOpts {
             mode: m,
@@ -39,8 +43,8 @@ pub fn run(
             filter_entities: false,
             rerank_graph,
             rerank_llm,
+            rerank_topk: kgx_llm::select::rerank_topk_from_env(),
         },
-        llm.as_deref(),
     )?;
     emit(
         "search",

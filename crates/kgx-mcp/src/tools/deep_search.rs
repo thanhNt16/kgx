@@ -10,9 +10,10 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
     let query = args["query"].as_str().unwrap_or("");
     let limit = args["limit"].as_u64().unwrap_or(10) as usize;
 
+    let r = kgx_retrieval::Retrievers::new(embedder.as_ref());
     let hits = kgx_retrieval::search(
         &brain,
-        embedder.as_ref(),
+        &r,
         query,
         kgx_retrieval::SearchOpts {
             mode: kgx_retrieval::Mode::Hybrid,
@@ -21,8 +22,8 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
             filter_entities: true,
             rerank_graph: true,
             rerank_llm: false,
+            rerank_topk: 0,
         },
-        None,
     )
     .map_err(|e| KgError::Other(e.to_string()))?;
 

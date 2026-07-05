@@ -1,6 +1,6 @@
 use crate::{ppr::personalized, ppr::personalized_scoped, rrf::fuse_multi_k};
 use kgx_core::{
-    llm::{Embedder, LlmProvider, LlmRequest},
+    llm::{Embedder, LlmProvider, LlmRequest, Reranker, SparseEmbedder},
     Result,
 };
 use kgx_graph::{
@@ -28,6 +28,9 @@ pub struct SearchOpts {
     /// When true, results from the fused RRF pipeline are reranked by the LLM
     /// (semantic relevance scoring).
     pub rerank_llm: bool,
+    /// How many fused candidates to pass through the cross-encoder reranker.
+    /// 0 disables the rerank stage entirely.
+    pub rerank_topk: usize,
 }
 impl Default for SearchOpts {
     fn default() -> Self {
@@ -38,6 +41,7 @@ impl Default for SearchOpts {
             filter_entities: false,
             rerank_graph: false,
             rerank_llm: false,
+            rerank_topk: 30,
         }
     }
 }
@@ -48,12 +52,43 @@ pub struct SearchHit {
     pub signals: Vec<String>,
 }
 
+/// Bundle of model handles for the search pipeline. Only `embedder` is
+/// required; every optional stage degrades to a no-op when absent.
+pub struct Retrievers<'a> {
+    pub embedder: &'a dyn Embedder,
+    pub llm: Option<&'a dyn LlmProvider>,
+    pub reranker: Option<&'a dyn Reranker>,
+    pub sparse: Option<&'a dyn SparseEmbedder>,
+}
+
+impl<'a> Retrievers<'a> {
+    pub fn new(embedder: &'a dyn Embedder) -> Self {
+        Self {
+            embedder,
+            llm: None,
+            reranker: None,
+            sparse: None,
+        }
+    }
+    pub fn with_llm(mut self, llm: Option<&'a dyn LlmProvider>) -> Self {
+        self.llm = llm;
+        self
+    }
+    pub fn with_reranker(mut self, reranker: Option<&'a dyn Reranker>) -> Self {
+        self.reranker = reranker;
+        self
+    }
+    pub fn with_sparse(mut self, sparse: Option<&'a dyn SparseEmbedder>) -> Self {
+        self.sparse = sparse;
+        self
+    }
+}
+
 pub fn search(
     brain: &Brain,
-    embedder: &dyn Embedder,
+    r: &Retrievers,
     query: &str,
     opts: SearchOpts,
-    llm: Option<&dyn LlmProvider>,
 ) -> Result<Vec<SearchHit>> {
     // Retrieve → graph rerank pipeline (bypasses fused RRF)
     if opts.rerank_graph && matches!(opts.mode, Mode::Keyword) {
@@ -130,9 +165,8 @@ pub fn search(
             }
         }
     }
-    let mut has_vector = false;
-    if matches!(opts.mode, Mode::Semantic | Mode::Hybrid) && embedder.is_semantic() {
-        let q = embedder.embed(&[query.to_string()])?.remove(0);
+    if matches!(opts.mode, Mode::Semantic | Mode::Hybrid) && r.embedder.is_semantic() {
+        let q = r.embedder.embed(&[query.to_string()])?.remove(0);
         let vec = vector_search(brain, &q, 50)?;
         for (id, _) in &vec {
             signals_for
@@ -142,10 +176,9 @@ pub fn search(
         }
         rankings.push(vec.into_iter().map(|(id, _)| id).collect());
         ks.push(60.0);
-        has_vector = true;
     }
     let mut fused = fuse_multi_k(&rankings, &ks);
-    if opts.expand_ppr && has_vector && !fused.is_empty() {
+    if opts.expand_ppr && !fused.is_empty() && kgx_graph::query::has_edges(brain)? {
         let seeds: Vec<(String, f32)> = if !bm25_weighted_seeds.is_empty() {
             bm25_weighted_seeds
         } else {
@@ -176,9 +209,21 @@ pub fn search(
         fused.retain(|(id, _)| !entities.contains(id));
     }
 
+    // Stage 4: local cross-encoder rerank of the fused head.
+    if let Some(reranker) = r.reranker {
+        let head = opts.rerank_topk.min(fused.len());
+        fused = crate::rerank::apply_rerank(reranker, brain, query, fused, opts.rerank_topk)?;
+        for (id, _) in fused.iter().take(head) {
+            signals_for
+                .entry(id.clone())
+                .or_default()
+                .push("rerank".into());
+        }
+    }
+
     // Optional LLM reranker: reorder fused results by LLM relevance scores.
     if opts.rerank_llm {
-        if let Some(llm) = llm {
+        if let Some(llm) = r.llm {
             fused = llm_rerank(brain, llm, query, &fused, opts.limit)?;
         }
     }

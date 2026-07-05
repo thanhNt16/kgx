@@ -32,9 +32,10 @@ pub async fn run(root: &Path, args: &Value) -> Result<Value> {
                 Some("semantic") => kgx_retrieval::Mode::Semantic,
                 _ => kgx_retrieval::Mode::Hybrid,
             };
+            let r = kgx_retrieval::Retrievers::new(embedder.as_ref());
             let hits = kgx_retrieval::search(
                 &brain,
-                embedder.as_ref(),
+                &r,
                 query,
                 kgx_retrieval::SearchOpts {
                     mode,
@@ -43,8 +44,8 @@ pub async fn run(root: &Path, args: &Value) -> Result<Value> {
                     filter_entities: true,
                     rerank_graph: false,
                     rerank_llm: false,
+                    rerank_topk: 0,
                 },
-                None,
             )
             .map_err(|e| KgError::Other(e.to_string()))?;
             Ok(json!(hits))
