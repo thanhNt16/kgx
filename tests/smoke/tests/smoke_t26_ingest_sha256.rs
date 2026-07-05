@@ -10,7 +10,9 @@ fn t26_ingest_file_hash_is_sha256() {
     let args = json!({ "content": content });
     let result = kgx_mcp::tools::ingest_file::run(tmp.path(), &args).unwrap();
 
-    let hash = result["hash"].as_str().expect("hash field must be present on first call");
+    let hash = result["hash"]
+        .as_str()
+        .expect("hash field must be present on first call");
     assert_eq!(
         hash.len(),
         64,
@@ -21,7 +23,8 @@ fn t26_ingest_file_hash_is_sha256() {
 
     // Verify the digest is lowercase hex (SHA-256's canonical encoding).
     assert!(
-        hash.chars().all(|c| c.is_ascii_hexdigit() && !c.is_ascii_uppercase()),
+        hash.chars()
+            .all(|c| c.is_ascii_hexdigit() && !c.is_ascii_uppercase()),
         "SHA-256 hex must be lowercase; got {hash}"
     );
 
@@ -30,7 +33,9 @@ fn t26_ingest_file_hash_is_sha256() {
     // the path-exists skip branch doesn't interfere.)
     let tmp2 = tempfile::tempdir().unwrap();
     let result2 = kgx_mcp::tools::ingest_file::run(tmp2.path(), &args).unwrap();
-    let hash2 = result2["hash"].as_str().expect("second call must also return hash");
+    let hash2 = result2["hash"]
+        .as_str()
+        .expect("second call must also return hash");
     assert_eq!(hash, hash2, "same content must hash identically");
 
     // Different content must produce a different digest.

@@ -55,8 +55,8 @@ fn fastembed_returns_semantic_neighbors_not_keyword_overlap() {
     // keyword search would wrongly prefer.
     let phrases = vec![
         "how do I store information in my application".to_string(), // query-ish
-        "best practices for persisting records".to_string(),       // semantically close, no word overlap
-        "the weather forecast for tomorrow".to_string(),           // unrelated distractor
+        "best practices for persisting records".to_string(), // semantically close, no word overlap
+        "the weather forecast for tomorrow".to_string(),     // unrelated distractor
     ];
     let embs = e.embed(&phrases).expect("embed must succeed");
     assert_eq!(embs.len(), 3);

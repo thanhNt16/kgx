@@ -20,19 +20,19 @@ pub fn run(
     let mut brain = Brain::open(&kg_dir.join("brain.sqlite"))?;
     let embedder = kgx_llm::select::embedder_from_env();
 
-    let (stats, embedded_ids): (_, std::collections::BTreeSet<String>) = if rebuild_vectors
-        || (incremental && !full)
-    {
-        let changed_ids = find_changed_ids(&brain, &notes)?;
-        let embedded_ids: std::collections::BTreeSet<String> =
-            changed_ids.iter().cloned().collect();
-        let s = build_incremental(&mut brain, &notes, &changed_ids, embedder.as_ref())?;
-        (s, embedded_ids)
-    } else {
-        let all: std::collections::BTreeSet<String> = notes.iter().map(|n| n.fm.id.clone()).collect();
-        let s = build_full(&mut brain, &notes, embedder.as_ref())?;
-        (s, all)
-    };
+    let (stats, embedded_ids): (_, std::collections::BTreeSet<String>) =
+        if rebuild_vectors || (incremental && !full) {
+            let changed_ids = find_changed_ids(&brain, &notes)?;
+            let embedded_ids: std::collections::BTreeSet<String> =
+                changed_ids.iter().cloned().collect();
+            let s = build_incremental(&mut brain, &notes, &changed_ids, embedder.as_ref())?;
+            (s, embedded_ids)
+        } else {
+            let all: std::collections::BTreeSet<String> =
+                notes.iter().map(|n| n.fm.id.clone()).collect();
+            let s = build_full(&mut brain, &notes, embedder.as_ref())?;
+            (s, all)
+        };
 
     if do_pagerank {
         pagerank::compute(&mut brain, 0.85, 30)?;
@@ -141,7 +141,7 @@ fn find_changed_ids(brain: &Brain, notes: &[Note]) -> anyhow::Result<Vec<String>
     for n in notes {
         let cur_hash = hash_str(&n.body);
         match stored.get(n.fm.id.as_str()) {
-            None => changed.push(n.fm.id.clone()),      // new note
+            None => changed.push(n.fm.id.clone()), // new note
             Some(prev) if *prev != cur_hash => changed.push(n.fm.id.clone()), // edited
             Some(_) => { /* unchanged */ }
         }
