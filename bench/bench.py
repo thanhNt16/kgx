@@ -24,7 +24,7 @@ GOLD = sys.argv[2] if len(sys.argv) > 2 else "/tmp/kgx-corpus/gold.json"
 K = 5
 OUT_JSON = sys.argv[3] if len(sys.argv) > 3 else "/tmp/kgx-bench-results.json"
 
-def run_search(query, mode="keyword", limit=K):
+def run_search(query, mode="hybrid", limit=K):
     """Run real kg search; return list of (note_id, score, signals) and latency_ms."""
     t0 = time.perf_counter()
     try:

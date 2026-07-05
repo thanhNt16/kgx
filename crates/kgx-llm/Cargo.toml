@@ -5,7 +5,7 @@ version.workspace = true
 license.workspace = true
 
 [features]
-default = []
+default = ["semantic"]
 candle = ["kgx-graph/candle"]
 semantic = ["kgx-graph/semantic"]
 
