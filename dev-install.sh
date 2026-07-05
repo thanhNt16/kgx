@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # dev-install.sh — build from source, install binary, wire MCP + skills + rules
-# Usage: ./dev-install.sh [--agent claude|opencode|codex|cursor] [--vault ~/path/to/vault]
+# Usage: ./dev-install.sh [--agent claude|opencode|codex|cursor|zcode] [--vault ~/path/to/vault]
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,8 +19,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$AGENT" in
-  claude|opencode|codex|cursor) ;;
-  *) echo "Invalid --agent: $AGENT (choose: claude, opencode, codex, cursor)"; exit 1 ;;
+  claude|opencode|codex|cursor|zcode) ;;
+  *) echo "Invalid --agent: $AGENT (choose: claude, opencode, codex, cursor, zcode)"; exit 1 ;;
 esac
 
 step() { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
@@ -124,18 +124,22 @@ case "$AGENT" in
     cp "$REPO_DIR/skills/opencode/opencode.json" "$VAULT_DIR/opencode.json"
     ok "copied opencode.json -> $VAULT_DIR/opencode.json"
 
-    cat > "${HOME}/.config/opencode/opencode.json" << 'OPENCODE_EOF'
+    cat > "${HOME}/.config/opencode/opencode.json" << OPENCODE_EOF
 {
-  "mcpServers": {
+  "\$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "kgx": {
-      "command": "/usr/local/bin/kg",
-      "args": ["mcp-server"],
-      "type": "stdio"
+      "type": "local",
+      "command": ["$BIN_DIR/kg", "mcp-server", "--transport", "stdio"]
+    },
+    "codebase-memory-mcp": {
+      "type": "local",
+      "command": ["$BIN_DIR/codebase-memory-mcp"]
     }
   }
 }
 OPENCODE_EOF
-    ok "registered kgx MCP server in ~/.config/opencode/opencode.json"
+    ok "registered kgx + codebase-memory-mcp in ~/.config/opencode/opencode.json"
 
     SKILLBASE="$VAULT_DIR/.opencode/skills"
     cp "$REPO_DIR/skills/opencode/.opencode/skills/kgx/SKILL.md" \
@@ -186,6 +190,16 @@ OPENCODE_EOF
       cp "$REPO_DIR/skills/cursor/.cursor/mcp.json" "$TARGET_MCP"
       ok "created $TARGET_MCP"
     fi
+    ;;
+
+  zcode)
+    cp "$REPO_DIR/skills/zcode/.mcp.json" "$VAULT_DIR/.mcp.json"
+    ok "copied .mcp.json -> $VAULT_DIR/.mcp.json (kgx + codebase-memory-mcp, stdio)"
+    for s in kgx kgx-codebase kgx-codebase-index; do
+      mkdir -p "${HOME}/.zcode/skills/$s"
+      cp "$REPO_DIR/skills/zcode/.zcode/skills/$s/SKILL.md" "${HOME}/.zcode/skills/$s/SKILL.md"
+    done
+    ok "mirrored kgx skills -> ~/.zcode/skills/"
     ;;
 esac
 

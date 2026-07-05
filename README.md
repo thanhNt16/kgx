@@ -165,6 +165,7 @@ The `dev-install.sh` script builds from source, installs the binary, scaffolds a
 ./dev-install.sh --agent opencode    # OpenCode
 ./dev-install.sh --agent codex       # Codex CLI
 ./dev-install.sh --agent cursor      # Cursor
+./dev-install.sh --agent zcode       # ZCode
 
 # Custom vault location:
 ./dev-install.sh --agent cursor --vault ~/my-project
@@ -178,6 +179,7 @@ Per-agent, it installs:
 | opencode | `opencode.json` | `.opencode/skills/kgx/SKILL.md` | `.opencode/plugins/kgx-verify-finished.js` |
 | codex | `config.toml` | `AGENTS.md` | `hooks.json` |
 | cursor | `.cursor/mcp.json` (merged) | `.cursor/rules/kgx.mdc` | — |
+| zcode | `.mcp.json` (stdio) | `~/.zcode/skills/` | installed via `./dev-install.sh --agent zcode` |
 
 ### Initialize a Vault
 
