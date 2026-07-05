@@ -1,5 +1,5 @@
 use kgx_core::{
-    llm::{Embedder, LlmProvider},
+    llm::{Embedder, LlmProvider, Reranker},
     KgError, Result,
 };
 
@@ -56,6 +56,61 @@ pub fn embed_choice(var: Option<&str>, semantic_built: bool, candle_built: bool)
         Some("fastembed") | None if semantic_built => EmbedChoice::FastEmbed,
         Some(_) | None => EmbedChoice::Mock,
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RerankChoice {
+    Off,
+    Mock,
+    FastEmbed(String),
+}
+
+/// Pure selection logic. `var` = KGX_RERANK, `model_var` = KGX_RERANK_MODEL.
+pub fn rerank_choice(
+    var: Option<&str>,
+    model_var: Option<&str>,
+    semantic_built: bool,
+) -> RerankChoice {
+    match var {
+        Some("off") => RerankChoice::Off,
+        Some("mock") => RerankChoice::Mock,
+        _ if semantic_built => {
+            RerankChoice::FastEmbed(model_var.unwrap_or("jina-turbo").to_string())
+        }
+        _ => RerankChoice::Off,
+    }
+}
+
+pub fn reranker_from_env() -> Option<Box<dyn Reranker>> {
+    let var = std::env::var("KGX_RERANK").ok();
+    let model_var = std::env::var("KGX_RERANK_MODEL").ok();
+    match rerank_choice(
+        var.as_deref(),
+        model_var.as_deref(),
+        cfg!(feature = "semantic"),
+    ) {
+        RerankChoice::Off => None,
+        RerankChoice::Mock => Some(Box::new(kgx_graph::rerank::MockReranker)),
+        #[cfg(feature = "semantic")]
+        RerankChoice::FastEmbed(model) => {
+            match kgx_graph::rerank::FastEmbedReranker::load(&model) {
+                Ok(r) => Some(Box::new(r)),
+                Err(e) => {
+                    eprintln!("warning: reranker failed to load, rerank stage disabled: {e}");
+                    None
+                }
+            }
+        }
+        #[cfg(not(feature = "semantic"))]
+        RerankChoice::FastEmbed(_) => None,
+    }
+}
+
+pub fn rerank_topk_from_env() -> usize {
+    std::env::var("KGX_RERANK_TOPK")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(30)
 }
 
 /// Human-readable label for `kg status` / warnings.
@@ -145,5 +200,24 @@ mod tests {
             EmbedChoice::Mock
         );
         assert_eq!(embed_choice(Some("minilm"), true, false), EmbedChoice::Mock);
+    }
+
+    #[test]
+    fn rerank_choice_defaults_on_when_semantic_built() {
+        assert_eq!(
+            rerank_choice(None, None, true),
+            RerankChoice::FastEmbed("jina-turbo".into())
+        );
+        assert_eq!(rerank_choice(None, None, false), RerankChoice::Off);
+    }
+
+    #[test]
+    fn rerank_choice_off_mock_and_model_override() {
+        assert_eq!(rerank_choice(Some("off"), None, true), RerankChoice::Off);
+        assert_eq!(rerank_choice(Some("mock"), None, true), RerankChoice::Mock);
+        assert_eq!(
+            rerank_choice(None, Some("bge-base"), true),
+            RerankChoice::FastEmbed("bge-base".into())
+        );
     }
 }
