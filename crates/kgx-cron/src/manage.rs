@@ -87,6 +87,35 @@ pub fn disable(name: &str) -> Result<()> {
     shell(&platform_cmd("disable", name))
 }
 
+/// Delete the unit files for `name` (after a best-effort disable).
+/// `disable` keeps the files; `remove` deletes them.
+pub fn remove(name: &str) -> Result<Vec<PathBuf>> {
+    let candidates: Vec<PathBuf> = match Platform::detect() {
+        Platform::Linux => vec![
+            systemd_dir().join(format!("kgx-{name}.service")),
+            systemd_dir().join(format!("kgx-{name}.timer")),
+        ],
+        Platform::Macos => vec![launchd_dir().join(format!("sh.kgx.{name}.plist"))],
+        Platform::Other => return Err(KgError::Other("unsupported platform for cron".into())),
+    };
+    let existing: Vec<PathBuf> = candidates.into_iter().filter(|p| p.exists()).collect();
+    if existing.is_empty() {
+        return Err(KgError::Other(format!(
+            "no cron unit named '{name}' — see `kg cron list`"
+        )));
+    }
+    let _ = disable(name); // best-effort unload; files may never have been enabled
+    let mut deleted = Vec::new();
+    for p in existing {
+        std::fs::remove_file(&p).map_err(|e| KgError::Io {
+            path: p.display().to_string(),
+            source: e,
+        })?;
+        deleted.push(p);
+    }
+    Ok(deleted)
+}
+
 pub fn run_job(name: &str) -> Result<()> {
     shell(&platform_cmd("run", name))
 }
@@ -170,5 +199,38 @@ fn shell(argv: &[String]) -> Result<()> {
         Ok(())
     } else {
         Err(KgError::Other(format!("{argv:?} failed")))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn remove_deletes_unit_files_and_errors_when_absent() {
+        let tmp = tempfile::tempdir().unwrap();
+        // Route HOME/XDG so unit dirs land inside the tempdir on any platform.
+        std::env::set_var("HOME", tmp.path());
+        std::env::set_var("XDG_CONFIG_HOME", tmp.path().join(".config"));
+
+        let job = Job {
+            name: "rmtest".into(),
+            command: "kg dream".into(),
+            calendar: "03:00".into(),
+        };
+        let written = add(&job).unwrap();
+        assert!(!written.is_empty());
+        for f in &written {
+            assert!(f.exists());
+        }
+
+        let deleted = remove("rmtest").unwrap();
+        assert_eq!(deleted.len(), written.len());
+        for f in &deleted {
+            assert!(!f.exists());
+        }
+
+        let err = remove("rmtest").unwrap_err().to_string();
+        assert!(err.contains("rmtest"), "error should name the missing unit: {err}");
     }
 }

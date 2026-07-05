@@ -60,6 +60,16 @@ pub fn run(
                 |_| println!("disabled"),
             );
         }
+        "remove" => {
+            let files = manage::remove(&name.ok_or_else(|| anyhow::anyhow!("cron remove requires a name"))?)?;
+            emit(
+                "cron",
+                serde_json::json!({"removed": files.iter().map(|p| p.display().to_string()).collect::<Vec<_>>()}),
+                json,
+                start,
+                |d| println!("removed {} unit file(s)", d["removed"].as_array().map(|a| a.len()).unwrap_or(0)),
+            );
+        }
         "run" => {
             manage::run_job(&name.ok_or_else(|| anyhow::anyhow!("cron run requires a name"))?)?;
             emit(
