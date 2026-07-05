@@ -30,3 +30,19 @@ pub trait Embedder: Send + Sync {
         false
     }
 }
+
+/// Sparse embedding: (term_id, weight) pairs. term_id is i64 for SQLite affinity.
+pub type SparseVec = Vec<(i64, f32)>;
+
+/// Sparse (SPLADE-style) text embedder for lexical-expansion retrieval.
+pub trait SparseEmbedder: Send + Sync {
+    fn embed_sparse(&self, texts: &[String]) -> crate::Result<Vec<SparseVec>>;
+}
+
+/// Cross-encoder relevance scorer: reads query and document together.
+pub trait Reranker: Send + Sync {
+    /// Score each (id, text) doc for relevance to `query`.
+    /// Returns one score per doc, in the same order as `docs`.
+    fn rerank(&self, query: &str, docs: &[(String, String)]) -> crate::Result<Vec<f32>>;
+    fn model_name(&self) -> String;
+}

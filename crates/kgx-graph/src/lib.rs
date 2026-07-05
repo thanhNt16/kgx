@@ -8,6 +8,7 @@ pub mod links;
 pub mod migrate;
 pub mod pagerank;
 pub mod query;
+pub mod rerank;
 pub mod schema;
 pub mod vec;
 
