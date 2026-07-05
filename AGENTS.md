@@ -14,9 +14,12 @@ Use the `kg` CLI and the `kgx` MCP server when working in a KGX vault.
 | `kgx:ask` | Answer a question with citations |
 | `kgx:recall` | Retrieve an entity's graph neighborhood |
 | `kgx:dream` | Run consolidation + review approved diffs |
+| `kgx:refine` | Targeted dream: same passes, scoped subgraph, same review gate |
 | `kgx:review` | Review staged dream diffs |
 | `kgx:link` | Analyze and repair wikilinks |
+| `kgx:graph` | Export graph as HTML, Cytoscape, GraphML, Mermaid, DOT, or Obsidian Canvas |
 | `kgx:status` | Show vault and brain status |
+| `kgx:cron` | Manage scheduler jobs, including remove |
 | `kgx:init` | Scaffold a new vault |
 | `kgx:ship` | Create an OKF bundle for sharing |
 | `kgx:sync` | Pull and merge remote changes |
@@ -38,12 +41,14 @@ kg capture --from <file|-> --type doc
 
 ### kgx:extract
 Extract atomic facts, entities, and decisions from a captured source.
+With a real LLM provider, extraction classifies entities as person/object/location/event and emits typed relations; `KGX_LLM=mock` yields deterministic untyped output.
 ```
 kg extract --source <source_note_id> --intensity full
 ```
 
 ### kgx:index
 Build or rebuild the SQLite brain with embeddings and communities.
+Semantic search is on by default; set `KGX_EMBED=off` to disable vectors. The first `kg index` may download the embedding model.
 ```
 kg index --full --communities
 ```
@@ -73,6 +78,13 @@ kg dream --max-iterations 3
 kg review --approve all --ponytail-audit
 ```
 
+### kgx:refine
+Run targeted dream passes over a query, note, or tag scope; same passes, scoped subgraph, same review gate.
+```
+kg refine <query>|--note <id>|--tag <tag>
+kg review --approve all --ponytail-audit
+```
+
 ### kgx:review
 Review staged dream diffs without running consolidation.
 ```
@@ -85,10 +97,23 @@ Analyze note links and repair broken wikilinks.
 kg link [--fix]
 ```
 
+### kgx:graph
+Export the vault graph.
+```
+kg graph --format cytoscape|graphml
+```
+
 ### kgx:status
 Show vault structure, brain size, and index freshness.
 ```
 kg status [--json]
+```
+
+### kgx:cron
+Manage scheduled jobs.
+```
+kg cron list
+kg cron remove <name>
 ```
 
 ### kgx:init
@@ -114,8 +139,11 @@ kg sync
 - `kg extract --source <id> --intensity full`
 - `kg ask "<q>" --cite [--scope global]`
 - `kg dream --max-iterations 3`
+- `kg refine <query>|--note <id>|--tag <tag>`
 - `kg review --approve all --ponytail-audit`
 - `kg index --full --communities`
+- `kg graph --format cytoscape|graphml`
+- `kg cron remove <name>`
 
 ## Rules
 - `raw/` is immutable.

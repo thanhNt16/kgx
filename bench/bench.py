@@ -22,7 +22,7 @@ from pathlib import Path
 VAULT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/kgx-bench-vault"
 GOLD = sys.argv[2] if len(sys.argv) > 2 else "/tmp/kgx-corpus/gold.json"
 K = 5
-OUT_JSON = sys.argv[3] if len(sys.argv) > 3 else "/tmp/kgx-bench-results.json"
+OUT_JSON = sys.argv[3] if len(sys.argv) > 3 else str(Path(__file__).resolve().parent / "results.json")
 
 def run_search(query, mode="hybrid", limit=K):
     """Run real kg search; return list of (note_id, score, signals) and latency_ms."""
@@ -58,23 +58,48 @@ def ndcg_at_k(ranked_note_ids, relevant_set, k):
     idcg = dcg(ideal)
     return dcg(rels) / idcg if idcg > 0 else 0.0
 
-def metrics_for_query(results, relevant_set, k=K):
+def load_note_texts(vault):
+    texts = {}
+    for path in Path(vault).glob("notes/**/*.md"):
+        text = path.read_text()
+        for line in text.splitlines():
+            if line.startswith("id:"):
+                texts[line.split(":", 1)[1].strip()] = text
+                break
+    return texts
+
+def matches_expected_patterns(note_id, expected_patterns, note_texts):
+    if not expected_patterns or not note_texts:
+        return False
+    text = note_texts.get(note_id, "").lower()
+    return all(pattern.lower() in text for pattern in expected_patterns)
+
+def metrics_for_query(results, relevant_set, expected_patterns=None, note_texts=None, k=K):
     ranked = [r[0] for r in results]
     topk = ranked[:k]
-    hits = [nid for nid in topk if nid in relevant_set]
+    pattern_mode = bool(expected_patterns and note_texts)
+    is_relevant = lambda nid: nid in relevant_set or matches_expected_patterns(nid, expected_patterns, note_texts)
+    hits = [nid for nid in topk if is_relevant(nid)]
     tp = len(hits)
     # precision@k
     precision = tp / k if k > 0 else 0.0
     # recall@k
-    recall = tp / len(relevant_set) if relevant_set else 0.0
+    recall = 1.0 if pattern_mode and tp > 0 else (tp / len(relevant_set) if relevant_set else 0.0)
     # mrr: reciprocal rank of first relevant
     mrr = 0.0
     for i, nid in enumerate(ranked):
-        if nid in relevant_set:
+        if is_relevant(nid):
             mrr = 1.0 / (i + 1)
             break
     # ndcg@k
-    ndcg = ndcg_at_k(ranked, relevant_set, k)
+    if pattern_mode:
+        ndcg = 0.0
+        for i, nid in enumerate(topk):
+            if is_relevant(nid):
+                ndcg = 1 / math.log2(i + 2)
+                break
+    else:
+        ndcg = ndcg_at_k(ranked, relevant_set, k)
     return {"precision": precision, "recall": recall, "mrr": mrr, "ndcg": ndcg, "hits": tp}
 
 def run_with_kgx(gold):
@@ -82,11 +107,12 @@ def run_with_kgx(gold):
     per_query = []
     total_chars = 0
     latencies = []
+    note_texts = load_note_texts(VAULT)
     for entry in gold:
         q = entry["question"]
         rel = set(entry["relevant_note_ids"])
         results, latency_ms, raw = run_search(q)
-        m = metrics_for_query(results, rel)
+        m = metrics_for_query(results, rel, entry.get("expected_patterns", []), note_texts)
         # token proxy: chars in the returned ranking (the context an agent would consume)
         # In a real ask, the agent reads note bodies of the top-k; approximate as
         # the ranked note bodies' char count.

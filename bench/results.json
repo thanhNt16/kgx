@@ -8,14 +8,14 @@
   "with_kgx": {
     "aggregate": {
       "n": 15,
-      "precision_at_5": 0.1467,
-      "recall_at_5": 0.7333,
-      "f1_at_5": 0.2444,
-      "mrr": 0.7,
-      "ndcg_at_5": 0.7087,
-      "hit_rate": 0.7333,
-      "median_latency_ms": 68.25,
-      "p95_latency_ms": 69.94,
+      "precision_at_5": 0.5867,
+      "recall_at_5": 1.0,
+      "f1_at_5": 0.7395,
+      "mrr": 0.9556,
+      "ndcg_at_5": 0.9667,
+      "hit_rate": 1.0,
+      "median_latency_ms": 65.17,
+      "p95_latency_ms": 76.69,
       "total_context_chars": 4266
     },
     "per_query": [
@@ -28,7 +28,7 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 69.58,
+        "latency_ms": 943.1,
         "top_results": [
           "01FF294119A599123A918855F7",
           "010000D36FA97DE92775BC1A22",
@@ -41,12 +41,12 @@
         "question": "Who owns the Flink streaming infrastructure?",
         "category": "entity-lookup",
         "evidence_sprint": 1,
-        "precision": 0.0,
-        "recall": 0.0,
-        "mrr": 0.0,
-        "ndcg": 0.0,
-        "hits": 0,
-        "latency_ms": 67.85,
+        "precision": 0.6,
+        "recall": 1.0,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.5,
+        "hits": 3,
+        "latency_ms": 64.91,
         "top_results": [
           "01E6B91EAEC8A1E0035C520D7A",
           "013710592C6F3C861C4E6FC5F2",
@@ -59,30 +59,30 @@
         "question": "What was the billing_ledger backfill decision?",
         "category": "decision-lookup",
         "evidence_sprint": 8,
-        "precision": 0.2,
+        "precision": 1.0,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 1,
-        "latency_ms": 67.81,
+        "hits": 5,
+        "latency_ms": 64.94,
         "top_results": [
           "0102505B012F88AB0B08044F0D",
           "011A3AD6C0654212EC6951BEA7",
           "0122099F1C63F8D6F691700EBE",
           "01281E0EE6333F3FFD47F84BAB",
-          "01311F6BE79EF787C5B8E1B864"
+          "010AE8D4A5232CF8E596C7A53B"
         ]
       },
       {
         "question": "What causes Flink backpressure?",
         "category": "experience-lookup",
         "evidence_sprint": 6,
-        "precision": 0.0,
-        "recall": 0.0,
-        "mrr": 0.0,
-        "ndcg": 0.0,
-        "hits": 0,
-        "latency_ms": 68.81,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 68.25,
         "top_results": [
           "011F14ADB04BA1491D424E6F3B",
           "01200437D13C288B7C284728D8",
@@ -100,7 +100,7 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 69.28,
+        "latency_ms": 64.91,
         "top_results": [
           "01F3B50765832FCA93E0BB613F",
           "010000D36FA97DE92775BC1A22",
@@ -118,7 +118,7 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 69.94,
+        "latency_ms": 65.17,
         "top_results": [
           "01BAF2C76ABFEE94710F0922F2",
           "010000D36FA97DE92775BC1A22",
@@ -131,30 +131,30 @@
         "question": "Who decided to use Airflow for batch orchestration?",
         "category": "decision-lookup",
         "evidence_sprint": 10,
-        "precision": 0.2,
+        "precision": 1.0,
         "recall": 1.0,
-        "mrr": 0.5,
-        "ndcg": 0.6309297535714575,
-        "hits": 1,
-        "latency_ms": 68.21,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 64.34,
         "top_results": [
           "0110FF43E764C09F07A9E99AEA",
           "014C4A8CE694990D0D45FC107D",
           "0104569258E09F2B6AA563CA27",
-          "01412DEF0A08A738DC67B25ECD",
-          "011183413688433B7A3D60F79C"
+          "011183413688433B7A3D60F79C",
+          "01412DEF0A08A738DC67B25ECD"
         ]
       },
       {
         "question": "What is the Kafka exactly-once policy?",
         "category": "decision-lookup",
         "evidence_sprint": 14,
-        "precision": 0.2,
+        "precision": 0.4,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 1,
-        "latency_ms": 66.45,
+        "hits": 2,
+        "latency_ms": 65.54,
         "top_results": [
           "010AE8D4A5232CF8E596C7A53B",
           "0113724A2BB2F3C25151D8D476",
@@ -167,18 +167,18 @@
         "question": "How is the Postgres billing_ledger risk handled?",
         "category": "decision-lookup",
         "evidence_sprint": 8,
-        "precision": 0.2,
+        "precision": 0.8,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 1,
-        "latency_ms": 67.73,
+        "hits": 4,
+        "latency_ms": 64.69,
         "top_results": [
           "0102505B012F88AB0B08044F0D",
           "011990BBF7C1A146FFD992B01A",
           "011A3AD6C0654212EC6951BEA7",
           "0122099F1C63F8D6F691700EBE",
-          "0138DE0E62DDE9D00FE0DA72AA"
+          "012A457253B4234EE359682702"
         ]
       },
       {
@@ -190,7 +190,7 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 68.25,
+        "latency_ms": 64.27,
         "top_results": [
           "01B2D8BC1E9B70D37EBB3A4011",
           "0104569258E09F2B6AA563CA27",
@@ -203,18 +203,18 @@
         "question": "Who is the Staff Engineer driving the Iceberg migration?",
         "category": "entity-lookup",
         "evidence_sprint": 1,
-        "precision": 0.2,
+        "precision": 0.8,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 1,
-        "latency_ms": 69.22,
+        "hits": 4,
+        "latency_ms": 64.85,
         "top_results": [
           "013710592C6F3C861C4E6FC5F2",
           "01A07193AAC8E31C029AB72C1D",
           "010000D36FA97DE92775BC1A22",
-          "010F6F7BB15DF7C0B7ECC5FB80",
-          "0131A82DC0F115F64FBC2D4A00"
+          "013BC12469710A7EF68D118333",
+          "010F6F7BB15DF7C0B7ECC5FB80"
         ]
       },
       {
@@ -226,25 +226,25 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 69.31,
+        "latency_ms": 67.05,
         "top_results": [
           "0181650A0B1E6BD14569F6B8BA",
           "019F25311416EEE6805A73A3B9",
           "013710592C6F3C861C4E6FC5F2",
           "01208C692ACC1FFF2F3DC14CD9",
-          "01A07193AAC8E31C029AB72C1D"
+          "010F6F7BB15DF7C0B7ECC5FB80"
         ]
       },
       {
         "question": "What is the Trino query latency target?",
         "category": "fact-lookup",
         "evidence_sprint": 1,
-        "precision": 0.0,
-        "recall": 0.0,
-        "mrr": 0.0,
-        "ndcg": 0.0,
-        "hits": 0,
-        "latency_ms": 71.34,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 76.69,
         "top_results": [
           "010F6F7BB15DF7C0B7ECC5FB80",
           "010000D36FA97DE92775BC1A22",
@@ -257,18 +257,18 @@
         "question": "What alerting did we add for billing pipeline failures?",
         "category": "fact-lookup",
         "evidence_sprint": 2,
-        "precision": 0.0,
-        "recall": 0.0,
-        "mrr": 0.0,
-        "ndcg": 0.0,
-        "hits": 0,
-        "latency_ms": 68.05,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 73.26,
         "top_results": [
           "010D051F1A8B721398735AA0E8",
           "0119618AC265525635376390B6",
           "01270C571ED8E40DFD54A5FFAC",
-          "012BDF669D3668982415A378F7",
-          "01AA1A92C1AA6CEDDCB4D9454E"
+          "01412DEF0A08A738DC67B25ECD",
+          "012BDF669D3668982415A378F7"
         ]
       },
       {
@@ -280,7 +280,7 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 66.49,
+        "latency_ms": 67.0,
         "top_results": [
           "017D481DA9B207602ADC6A0E66",
           "01200437D13C288B7C284728D8",

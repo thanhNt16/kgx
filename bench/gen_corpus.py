@@ -37,6 +37,9 @@ SYSTEMS = {
     "airflow": "batch orchestrator",
     "s3": "object storage backing Iceberg",
 }
+SYSTEM_OWNERS = {
+    "flink": "cara-nguyen",
+}
 SPRINT_START = date(2025, 10, 6)  # Sprint 1 = Monday Oct 6 2025
 SPRINT_LEN = 14
 N_SPRINTS = 36
@@ -105,6 +108,9 @@ Owns: {('architecture decisions and the Iceberg migration' if role=='Staff Engin
 
 for i, (sys_name, desc) in enumerate(SYSTEMS.items(), 1):
     eid = ulid_for("system", i)
+    owner = SYSTEM_OWNERS.get(sys_name)
+    links = f'["[[{owner}]]"]' if owner else "[]"
+    owner_line = f"\nOwner: {owner.replace('-', ' ').title()}.\n" if owner else ""
     fm = f"""---
 type: entity
 id: {eid}
@@ -113,11 +119,11 @@ title: {sys_name}
 status: active
 valid_from: {sprint_date(1)}
 tags: [system, infrastructure]
-links: []
+links: {links}
 ---
 # {sys_name}
 
-{desc.capitalize()}.
+{desc.capitalize()}.{owner_line}
 """
     write(os.path.join(OUT, f"notes/entities/{sys_name}.md"), fm)
 

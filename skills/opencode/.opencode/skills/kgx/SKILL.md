@@ -5,7 +5,7 @@ description: Use when working with a KGX knowledge vault: capture sources, extra
 
 # KGX Knowledge Graph
 
-Use `kg` for Markdown vault work. The MCP server exposes the same six tools.
+Use `kg` for Markdown vault work. The MCP server exposes the same MCP tools.
 
 ## Composite Verbs (kgx:)
 
@@ -19,9 +19,12 @@ Use `kg` for Markdown vault work. The MCP server exposes the same six tools.
 | `kgx:ask` | Answer a question with citations |
 | `kgx:recall` | Retrieve an entity's graph neighborhood |
 | `kgx:dream` | Run consolidation + review approved diffs |
+| `kgx:refine` | Targeted dream: same passes, scoped subgraph, same review gate |
 | `kgx:review` | Review staged dream diffs |
 | `kgx:link` | Analyze and repair wikilinks |
+| `kgx:graph` | Export graph as HTML, Cytoscape, GraphML, Mermaid, DOT, or Obsidian Canvas |
 | `kgx:status` | Show vault and brain status |
+| `kgx:cron` | Manage scheduler jobs, including remove |
 | `kgx:init` | Scaffold a new vault |
 | `kgx:ship` | Create an OKF bundle for sharing |
 | `kgx:sync` | Pull and merge remote changes |
@@ -43,12 +46,14 @@ kg capture --from <file|-> --type <doc|transcript|article|code>
 
 ### kgx:extract
 Extract atomic facts, entities, and decisions from a captured source.
+With a real LLM provider, extraction classifies entities as person/object/location/event and emits typed relations; `KGX_LLM=mock` yields deterministic untyped output.
 ```
 kg extract --source <source_note_id> --intensity full
 ```
 
 ### kgx:index
 Build or rebuild the SQLite brain index with vector embeddings and community detection.
+Semantic search is on by default; set `KGX_EMBED=off` to disable vectors. The first `kg index` may download the embedding model.
 ```
 kg index --full --communities
 ```
@@ -78,6 +83,13 @@ kg dream --max-iterations 3
 kg review --approve all --ponytail-audit
 ```
 
+### kgx:refine
+Run targeted dream passes over a query, note, or tag scope; same passes, scoped subgraph, same review gate.
+```
+kg refine <query>|--note <id>|--tag <tag>
+kg review --approve all --ponytail-audit
+```
+
 ### kgx:review
 Review staged dream diffs without running consolidation.
 ```
@@ -90,10 +102,23 @@ Analyze note links and repair broken wikilinks.
 kg link [--fix]
 ```
 
+### kgx:graph
+Export the vault graph.
+```
+kg graph --format cytoscape|graphml
+```
+
 ### kgx:status
 Show vault structure, brain size, and index freshness.
 ```
 kg status [--json]
+```
+
+### kgx:cron
+Manage scheduled jobs.
+```
+kg cron list
+kg cron remove <name>
 ```
 
 ### kgx:init
@@ -119,7 +144,10 @@ kg sync
 - Extract: `kg extract --source <id> --intensity full`
 - Ask: `kg ask "<question>" --cite [--scope global]`
 - Consolidate: `kg dream --max-iterations 3`, then `kg review --approve all --ponytail-audit`
+- Refine: `kg refine <query>|--note <id>|--tag <tag>`, then review
 - Rebuild: `kg index --full --communities`
+- Graph: `kg graph --format cytoscape|graphml`
+- Cron: `kg cron remove <name>`
 
 ## Rules
 - Never edit `raw/` destructively.

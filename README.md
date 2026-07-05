@@ -136,7 +136,7 @@ This gives you the full toolset:
 | --- | --- |
 | CLI | `kg` is installed to `~/.local/bin` |
 | MCP server | Run with `kg mcp-server --transport stdio` from inside a vault |
-| Skills and hooks | `kg init --with-skills --with-rtk` writes Claude Code, Codex, Cursor, OpenCode, and shared hook files into the vault |
+| Skills and hooks | `kg init --with-skills --with-rtk` writes Claude Code, Codex, Cursor, OpenCode, ZCode, and shared hook files into the vault |
 
 ### Build from Source
 
@@ -346,8 +346,11 @@ Commands:
 - `kg extract --source <id> --intensity full`
 - `kg ask "<q>" --cite [--scope global]`
 - `kg dream --max-iterations 3`
+- `kg refine <query>|--note <id>|--tag <tag>`
 - `kg review --approve all --ponytail-audit`
 - `kg index --full --communities`
+- `kg graph --format cytoscape|graphml`
+- `kg cron remove <name>`
 
 Rules:
 - raw/ is immutable.
@@ -397,12 +400,16 @@ Actual output:
 
 Creates `notes/facts/`, `notes/entities/`, `notes/decisions/` files — each with `source:` provenance and `recorded_at:` timestamp.
 
+When a real LLM provider is configured, extraction classifies entities as `person`, `object`, `location`, or `event` (POLE) and emits typed relations. `KGX_LLM=mock` remains deterministic for tests and yields untyped output.
+
 ### 3. Build the brain
 
 ```bash
 # Full rebuild (deterministic — safe to repeat)
 kg index --full
 ```
+
+Semantic search is on by default. The first embedding-enabled `kg index` downloads the embedding model; set `KGX_EMBED=off` to disable vectors and run keyword-only.
 
 Actual output (17-note vault):
 ```json
@@ -412,7 +419,7 @@ Actual output (17-note vault):
 ### 4. Query
 
 ```bash
-# Raw hybrid search — 10 hits, 0ms, 3 signals (bm25 + vector + ppr)
+# Raw hybrid search by default — 10 hits, 0ms, 3 signals (bm25 + vector + ppr)
 kg search "postgres" --json
 ```
 
@@ -461,7 +468,18 @@ kg dream --max-iterations 3
 
 Changes are staged as `ProposedDiff` records — never applied automatically to `main`.
 
-### 6. Review and approve
+### 6. Refine a targeted subgraph
+
+```bash
+# Targeted dream: same passes, scoped subgraph, same review gate
+kg refine "postgres migration" --max-iterations 2
+kg refine --note 01FACT01POSTGRESPRIMARY00 --dry-run
+kg refine --tag reliability
+```
+
+`kg refine` stages `ProposedDiff` records into the same review flow as `kg dream`.
+
+### 7. Review and approve
 
 ```bash
 # Approve all soft diffs (hard blocks require manual resolution)
@@ -474,7 +492,7 @@ kg review --interactive
 kg review --ponytail-audit
 ```
 
-### 7. Check vault health
+### 8. Check vault health
 
 ```bash
 kg status --json
@@ -492,11 +510,17 @@ kg link --json
 {"ok":true,"command":"link","data":{"backlinks":10,"orphans":1,"phantoms":0},"elapsed_ms":0}
 ```
 
-### 8. Visualize
+### 9. Visualize
 
 ```bash
 # Self-contained D3 HTML
 kg graph --format html --json
+
+# Self-contained Cytoscape HTML
+kg graph --format cytoscape --json
+
+# GraphML for graph tooling
+kg graph --format graphml --json
 
 # Mermaid diagram
 kg graph --format mermaid --json
@@ -506,7 +530,7 @@ kg graph --format mermaid --json
 {"ok":true,"command":"graph","data":{"edges":28,"nodes":17,"out":"graph.html"},"elapsed_ms":1}
 ```
 
-### 9. Token accounting
+### 10. Token accounting
 
 ```bash
 kg tokens --json
@@ -519,17 +543,18 @@ kg tokens --json
 ],"by":"operation","since_days":30},"elapsed_ms":0}
 ```
 
-### 10. Schedule maintenance
+### 11. Schedule maintenance
 
 ```bash
 kg cron list    # positional subcommand, not --list
+kg cron remove dream-nightly
 ```
 
 ```json
 {"ok":true,"command":"cron","data":{"jobs":["sh.kgx.dream-nightly.plist"]},"elapsed_ms":0}
 ```
 
-### 11. Share (OKF bundles)
+### 12. Share (OKF bundles)
 
 ```bash
 # Export a portable OKF bundle
@@ -561,12 +586,13 @@ kg validate --okf --json
 | `kg recall` | Entity-centric neighborhood fetch | `--entity "Name"` |
 | `kg search` | Raw hybrid search (no synthesis) | `--type fact,entity`, `--mode`, `--limit` |
 | `kg dream` | 7-pass consolidation | `--max-iterations N`, `--only <set>`, `--dry-run`, `--intensity` |
+| `kg refine` | Targeted dream: same passes, scoped subgraph, same review gate | `<query>`, `--note <id>`, `--tag <tag>`, `--max-iterations N`, `--dry-run` |
 | `kg review` | Show/approve/reject staged diffs | `--approve <ids\|all>`, `--reject`, `--interactive`, `--ponytail-audit` |
-| `kg graph` | Export visualization | `--format html\|mermaid\|dot\|canvas`, `--out` |
+| `kg graph` | Export visualization | `--format html\|cytoscape\|graphml\|mermaid\|dot\|obsidian`, `--out` |
 | `kg validate` | Integrity + OKF checks | `--okf`, `--links`, `--frontmatter` |
 | `kg status` | Vault health snapshot | `--json`, `--verbose` |
 | `kg tokens` | Token usage analytics | `--since 7d\|30d`, `--by operation\|command\|day` |
-| `kg cron` | Manage systemd/launchd jobs | `list`, `enable\|disable <name>`, `run <name>` |
+| `kg cron` | Manage systemd/launchd jobs | `add <name>`, `list`, `enable\|disable <name>`, `remove <name>`, `run <name>` |
 | `kg ship` | Export OKF bundle | `--out path.tar.gz` |
 | `kg pull` | Import OKF bundle | `--namespace /subtree` |
 | `kg mcp-server` | Launch MCP stdio server | `--transport stdio` |
@@ -772,6 +798,19 @@ export KGX_OLLAMA_MODEL=llama3.1
 # Mock (for testing — no API calls, hermetic)
 export KGX_LLM=mock
 ```
+
+### Embeddings
+
+Semantic search is enabled by default. `kg index` uses the default embedding backend and may download the embedding model on first use.
+
+```bash
+# Disable vector embeddings and run keyword-only
+export KGX_EMBED=off
+```
+
+### Extraction Semantics
+
+With `KGX_LLM=claude`, `KGX_LLM=openai`, or `KGX_LLM=ollama`, `kg extract` classifies entities as `person`, `object`, `location`, or `event` and emits typed relations when the provider returns them. With `KGX_LLM=mock`, extraction remains deterministic and untyped for hermetic tests.
 
 ### Frontmatter: `type` field
 
