@@ -1,3 +1,7 @@
 [mcp_servers.kgx]
 command = "kg"
 args = ["mcp-server", "--transport", "stdio"]
+
+[mcp_servers.codebase-memory-mcp]
+command = "codebase-memory-mcp"
+args = []
