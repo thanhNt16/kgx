@@ -15,6 +15,7 @@ kgx-vault = { path = "../kgx-vault" }
 rusqlite = { version = "0.31", features = ["bundled", "blob"] }
 serde.workspace = true
 serde_json.workspace = true
+serde_yaml.workspace = true
 petgraph = "0.6"
 fastembed = { version = "4", optional = true, default-features = false, features = ["online", "ort-download-binaries"] }
 sqlite-vec = "0.1.6"

@@ -1,9 +1,10 @@
-pub const SCHEMA_VERSION: i32 = 1;
+pub const SCHEMA_VERSION: i32 = 2;
 
 pub const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS notes (
   id TEXT PRIMARY KEY, path TEXT NOT NULL, type TEXT NOT NULL, status TEXT NOT NULL,
-  valid_from TEXT, valid_to TEXT, recorded_at TEXT, tags TEXT, raw_text TEXT, embedding BLOB);
+  valid_from TEXT, valid_to TEXT, recorded_at TEXT, tags TEXT, raw_text TEXT, embedding BLOB,
+  entity_type TEXT);
 CREATE TABLE IF NOT EXISTS edges (
   src_id TEXT NOT NULL, dst_id TEXT NOT NULL, rel_type TEXT NOT NULL,
   valid_from TEXT, valid_to TEXT, PRIMARY KEY (src_id, dst_id, rel_type));

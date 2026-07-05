@@ -84,6 +84,28 @@ pub fn derive_edges(notes: &[Note]) -> Vec<Edge> {
                 }
             }
         }
+        if let Some(serde_yaml::Value::Sequence(rels)) = n.fm.extra.get("relations") {
+            for r in rels {
+                let target = r.get("target").and_then(|v| v.as_str());
+                let rel = r
+                    .get("rel")
+                    .and_then(|v| v.as_str())
+                    .and_then(RelType::parse);
+                if let (Some(t), Some(rt)) = (target, rel) {
+                    if let Some(dst) = resolve(t) {
+                        if dst != n.fm.id {
+                            edges.push(Edge {
+                                src_id: n.fm.id.clone(),
+                                dst_id: dst,
+                                rel_type: rt,
+                                valid_from: n.fm.valid_from.clone(),
+                                valid_to: n.fm.valid_to.clone(),
+                            });
+                        }
+                    }
+                }
+            }
+        }
     }
     edges.sort_by(|a, b| {
         (
@@ -180,8 +202,8 @@ pub fn build_full(
             .trim_matches('"')
             .to_string();
         tx.execute(
-            "INSERT INTO notes (id,path,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding)\
-             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10)",
+            "INSERT INTO notes (id,path,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding,entity_type)\
+             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)",
             params![
                 n.fm.id,
                 n.rel_path.display().to_string(),
@@ -192,7 +214,8 @@ pub fn build_full(
                 n.fm.recorded_at,
                 tags,
                 n.body,
-                f32_to_blob(emb)
+                f32_to_blob(emb),
+                n.fm.entity_type.as_deref()
             ],
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;
@@ -272,9 +295,9 @@ pub fn build_incremental(
             .trim_matches('"')
             .to_string();
         tx.execute(
-            "INSERT INTO notes (id,path,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding)\
-             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10)\
-             ON CONFLICT(id) DO UPDATE SET path=?2,type=?3,status=?4,valid_from=?5,valid_to=?6,recorded_at=?7,tags=?8,raw_text=?9,embedding=?10",
+            "INSERT INTO notes (id,path,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding,entity_type)\
+             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)\
+             ON CONFLICT(id) DO UPDATE SET path=?2,type=?3,status=?4,valid_from=?5,valid_to=?6,recorded_at=?7,tags=?8,raw_text=?9,embedding=?10,entity_type=?11",
             params![
                 n.fm.id,
                 n.rel_path.display().to_string(),
@@ -285,7 +308,8 @@ pub fn build_incremental(
                 n.fm.recorded_at,
                 tags,
                 n.body,
-                f32_to_blob(emb)
+                f32_to_blob(emb),
+                n.fm.entity_type.as_deref()
             ],
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;

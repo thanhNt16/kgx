@@ -42,5 +42,14 @@ pub fn ensure_schema(conn: &Connection) -> Result<i32> {
         .map_err(|e| KgError::Brain(e.to_string()))?;
     }
 
-    Ok(current.max(1))
+    if current < 2 {
+        let _ = conn.execute("ALTER TABLE notes ADD COLUMN entity_type TEXT", []);
+        conn.execute(
+            "INSERT OR IGNORE INTO schema_version (version, applied_at) VALUES (?1, ?2)",
+            rusqlite::params![2, kgx_core::util::now_iso()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    }
+
+    Ok(current.max(SCHEMA_VERSION))
 }
