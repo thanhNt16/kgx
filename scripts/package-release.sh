@@ -58,7 +58,11 @@ printf 'Next: cd <vault> && kg init --with-skills --with-rtk\n'
 printf 'MCP server command: kg mcp-server --transport stdio\n'
 
 if command -v claude >/dev/null 2>&1; then
-  claude mcp add --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio || true
+  claude mcp remove kgx 2>/dev/null || true
+  claude mcp add --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
+fi
+if command -v codex >/dev/null 2>&1; then
+  codex mcp remove kgx 2>/dev/null || true
 fi
 INSTALL
 chmod +x "$PKG_DIR/install.sh"
