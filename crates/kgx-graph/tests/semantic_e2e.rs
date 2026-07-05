@@ -21,29 +21,6 @@ fn cosine(a: &[f32], b: &[f32]) -> f32 {
     }
 }
 
-/// Load the fastembed model with a short retry loop. The first run in a fresh
-/// environment downloads ~40MB and we've seen a transient cold-start flake
-/// where the very first `load()` fails (download race / cache init) while
-/// subsequent calls succeed within milliseconds. Retrying a few times makes
-/// the opt-in test robust without masking genuine model-loading failures.
-fn load_fastembed() -> FastEmbedEmbedder {
-    let mut last_err = None;
-    for attempt in 0..5 {
-        match FastEmbedEmbedder::load() {
-            Ok(e) => return e,
-            Err(e) => {
-                eprintln!("fastembed load attempt {} failed: {}", attempt + 1, e);
-                last_err = Some(e);
-                std::thread::sleep(std::time::Duration::from_millis(500));
-            }
-        }
-    }
-    panic!(
-        "fastembed model failed to load after 5 attempts: {}",
-        last_err.unwrap_or_else(|| kgx_core::KgError::Other("unknown".into()))
-    )
-}
-
 #[test]
 fn fastembed_returns_semantic_neighbors_not_keyword_overlap() {
     let e = FastEmbedEmbedder::load().expect("fastembed model must download on first run");
