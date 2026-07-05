@@ -29,9 +29,11 @@ pub fn run(
         None
     };
     let reranker = kgx_llm::select::reranker_from_env();
+    let sparse = kgx_llm::select::sparse_from_env();
     let r = kgx_retrieval::Retrievers::new(embedder.as_ref())
         .with_llm(llm.as_deref())
-        .with_reranker(reranker.as_deref());
+        .with_reranker(reranker.as_deref())
+        .with_sparse(sparse.as_deref());
     let hits = search(
         &brain,
         &r,
