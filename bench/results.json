@@ -8,15 +8,15 @@
   "with_kgx": {
     "aggregate": {
       "n": 45,
-      "precision_at_5": 0.4844,
-      "recall_at_5": 0.9333,
-      "f1_at_5": 0.6378,
-      "mrr": 0.8563,
-      "ndcg_at_5": 0.8758,
-      "hit_rate": 0.9333,
-      "median_latency_ms": 538.55,
-      "p95_latency_ms": 566.44,
-      "total_context_chars": 15182
+      "precision_at_5": 0.5333,
+      "recall_at_5": 0.9556,
+      "f1_at_5": 0.6846,
+      "mrr": 0.833,
+      "ndcg_at_5": 0.8635,
+      "hit_rate": 0.9556,
+      "median_latency_ms": 273.21,
+      "p95_latency_ms": 288.98,
+      "total_context_chars": 13996
     },
     "per_query": [
       {
@@ -29,13 +29,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 519.28,
+        "latency_ms": 273.95,
         "top_results": [
           "01FF294119A599123A918855F7",
-          "01A07193AAC8E31C029AB72C1D",
-          "0111C058580FB608761FE4A103",
-          "016E6EBBCE4BD1D1392F97E2B6",
-          "01208C692ACC1FFF2F3DC14CD9"
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "011F259F4528A2DFC4354F1FB9",
+          "013A9AC84B4B999CAE65BCB541"
         ]
       },
       {
@@ -43,18 +43,18 @@
         "category": "entity-lookup",
         "cohort": "v1",
         "evidence_sprint": 1,
-        "precision": 0.2,
+        "precision": 0.8,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 1,
-        "latency_ms": 509.43,
+        "hits": 4,
+        "latency_ms": 272.97,
         "top_results": [
           "01E6B91EAEC8A1E0035C520D7A",
-          "01FF294119A599123A918855F7",
-          "0116318594F55407F71E159DFE",
-          "018F809E847FDA16E5EF64A052",
-          "013710592C6F3C861C4E6FC5F2"
+          "013710592C6F3C861C4E6FC5F2",
+          "011F14ADB04BA1491D424E6F3B",
+          "01200480D7F83803E7D5A211D6",
+          "010FFE5C09F6FBBD5160D529C8"
         ]
       },
       {
@@ -67,13 +67,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 548.7,
+        "latency_ms": 264.07,
         "top_results": [
           "0102505B012F88AB0B08044F0D",
-          "01692BA255F05770BC534E7F62",
-          "016207AAD19B95FFFC1F314897",
-          "015AABE91E0AE853B0F764D4AB",
-          "011A3AD6C0654212EC6951BEA7"
+          "011A3AD6C0654212EC6951BEA7",
+          "0122099F1C63F8D6F691700EBE",
+          "01281E0EE6333F3FFD47F84BAB",
+          "0138DE0E62DDE9D00FE0DA72AA"
         ]
       },
       {
@@ -86,13 +86,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 526.41,
+        "latency_ms": 266.62,
         "top_results": [
-          "01A6D1E97602794478F085588E",
+          "010FFE5C09F6FBBD5160D529C8",
+          "01200437D13C288B7C284728D8",
+          "011F14ADB04BA1491D424E6F3B",
           "01229D76496966BC6FA9DE6C9B",
-          "016516718145520FFD363C1B5C",
-          "01917467AA33A58DBC890F728D",
-          "01B99D21D282562E5C403C4BB7"
+          "0127B837AB75D99B1EC2C37875"
         ]
       },
       {
@@ -105,13 +105,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 522.71,
+        "latency_ms": 269.8,
         "top_results": [
           "01F3B50765832FCA93E0BB613F",
-          "01A1CD4294F9040C191B272827",
-          "019753EBB74F48FA3E2F81DEC5",
-          "016E6EBBCE4BD1D1392F97E2B6",
-          "0113724A2BB2F3C25151D8D476"
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "0113724A2BB2F3C25151D8D476",
+          "019753EBB74F48FA3E2F81DEC5"
         ]
       },
       {
@@ -121,16 +121,16 @@
         "evidence_sprint": 24,
         "precision": 0.2,
         "recall": 1.0,
-        "mrr": 1.0,
-        "ndcg": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
         "hits": 1,
-        "latency_ms": 537.51,
+        "latency_ms": 267.18,
         "top_results": [
-          "01BAF2C76ABFEE94710F0922F2",
           "01A07193AAC8E31C029AB72C1D",
-          "0110FF43E764C09F07A9E99AEA",
-          "01FF294119A599123A918855F7",
-          "016E6EBBCE4BD1D1392F97E2B6"
+          "01BAF2C76ABFEE94710F0922F2",
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "013A9AC84B4B999CAE65BCB541"
         ]
       },
       {
@@ -143,13 +143,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 580.8,
+        "latency_ms": 268.58,
         "top_results": [
           "014C4A8CE694990D0D45FC107D",
           "0110FF43E764C09F07A9E99AEA",
           "0181650A0B1E6BD14569F6B8BA",
-          "01DC44A48C1630519D62ADFEAC",
-          "01B989C6CBF5DD3BC1B8D94FA5"
+          "01412DEF0A08A738DC67B25ECD",
+          "0104569258E09F2B6AA563CA27"
         ]
       },
       {
@@ -162,13 +162,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 2,
-        "latency_ms": 554.37,
+        "latency_ms": 271.19,
         "top_results": [
           "010AE8D4A5232CF8E596C7A53B",
           "0113724A2BB2F3C25151D8D476",
           "0116318594F55407F71E159DFE",
-          "017D481DA9B207602ADC6A0E66",
-          "01917467AA33A58DBC890F728D"
+          "010FFE5C09F6FBBD5160D529C8",
+          "01208C692ACC1FFF2F3DC14CD9"
         ]
       },
       {
@@ -181,13 +181,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 4,
-        "latency_ms": 533.16,
+        "latency_ms": 267.02,
         "top_results": [
           "0102505B012F88AB0B08044F0D",
           "011990BBF7C1A146FFD992B01A",
-          "01416874939092C0FA2CB85509",
-          "0174F07320557EC8DB4EE8E269",
-          "010AE8D4A5232CF8E596C7A53B"
+          "011A3AD6C0654212EC6951BEA7",
+          "0122099F1C63F8D6F691700EBE",
+          "0138DE0E62DDE9D00FE0DA72AA"
         ]
       },
       {
@@ -200,13 +200,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 532.7,
+        "latency_ms": 268.96,
         "top_results": [
           "01B2D8BC1E9B70D37EBB3A4011",
-          "0110FF43E764C09F07A9E99AEA",
-          "013AB0D09946C0AF50046280D7",
-          "01DC44A48C1630519D62ADFEAC",
-          "015475AED9D61781E445805DD1"
+          "0104569258E09F2B6AA563CA27",
+          "01412DEF0A08A738DC67B25ECD",
+          "011183413688433B7A3D60F79C",
+          "0119618AC265525635376390B6"
         ]
       },
       {
@@ -214,18 +214,18 @@
         "category": "entity-lookup",
         "cohort": "v1",
         "evidence_sprint": 1,
-        "precision": 0.2,
+        "precision": 0.8,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 1,
-        "latency_ms": 566.44,
+        "hits": 4,
+        "latency_ms": 272.75,
         "top_results": [
           "013710592C6F3C861C4E6FC5F2",
-          "0129358C9F934A15680030333D",
-          "012E82934291B46DDCEAC3D7BF",
-          "01DFE72AF79D399A04F7991E20",
-          "013BE14DB2753D4F7F5A726BF9"
+          "010000D36FA97DE92775BC1A22",
+          "01A07193AAC8E31C029AB72C1D",
+          "01E30BB4419B1D69CB7131CA8B",
+          "013BC12469710A7EF68D118333"
         ]
       },
       {
@@ -238,13 +238,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 558.42,
+        "latency_ms": 266.96,
         "top_results": [
           "0181650A0B1E6BD14569F6B8BA",
           "019F25311416EEE6805A73A3B9",
-          "01A07193AAC8E31C029AB72C1D",
-          "0111C058580FB608761FE4A103",
-          "01208C692ACC1FFF2F3DC14CD9"
+          "01208C692ACC1FFF2F3DC14CD9",
+          "013710592C6F3C861C4E6FC5F2",
+          "0193143616403937B9FACD78F7"
         ]
       },
       {
@@ -257,13 +257,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 547.41,
+        "latency_ms": 284.18,
         "top_results": [
+          "011F259F4528A2DFC4354F1FB9",
           "010F6F7BB15DF7C0B7ECC5FB80",
-          "013A9AC84B4B999CAE65BCB541",
-          "018ED0CE919683A73EFB8B2CAE",
-          "01D553EDA910A18BBD9127AEEC",
-          "013CDC0EFD8F083E4F83628145"
+          "010000D36FA97DE92775BC1A22",
+          "0131A82DC0F115F64FBC2D4A00",
+          "013A9AC84B4B999CAE65BCB541"
         ]
       },
       {
@@ -276,13 +276,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 524.94,
+        "latency_ms": 272.38,
         "top_results": [
-          "013AB0D09946C0AF50046280D7",
-          "01D03F4D3CF9E6122AD94FC540",
-          "01A669E001787ECB1AA04105D1",
-          "012BDF669D3668982415A378F7",
-          "013EBC547FD6C6C09A041D531C"
+          "010D051F1A8B721398735AA0E8",
+          "0119618AC265525635376390B6",
+          "01270C571ED8E40DFD54A5FFAC",
+          "01412DEF0A08A738DC67B25ECD",
+          "013AB0D09946C0AF50046280D7"
         ]
       },
       {
@@ -295,13 +295,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 549.32,
+        "latency_ms": 284.34,
         "top_results": [
           "017D481DA9B207602ADC6A0E66",
-          "0116318594F55407F71E159DFE",
-          "0113724A2BB2F3C25151D8D476",
-          "01917467AA33A58DBC890F728D",
-          "01AC6C787E1F248783ABC7B29C"
+          "011F14ADB04BA1491D424E6F3B",
+          "010FFE5C09F6FBBD5160D529C8",
+          "01200437D13C288B7C284728D8",
+          "01200480D7F83803E7D5A211D6"
         ]
       },
       {
@@ -314,13 +314,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 3,
-        "latency_ms": 550.27,
+        "latency_ms": 273.99,
         "top_results": [
-          "019F25311416EEE6805A73A3B9",
           "0181650A0B1E6BD14569F6B8BA",
-          "0111C058580FB608761FE4A103",
           "014C4A8CE694990D0D45FC107D",
-          "01FF294119A599123A918855F7"
+          "019F25311416EEE6805A73A3B9",
+          "01208C692ACC1FFF2F3DC14CD9",
+          "010000D36FA97DE92775BC1A22"
         ]
       },
       {
@@ -328,18 +328,18 @@
         "category": "vocab-mismatch",
         "cohort": "v2",
         "evidence_sprint": 2,
-        "precision": 0.2,
+        "precision": 0.8,
         "recall": 1.0,
-        "mrr": 0.2,
-        "ndcg": 0.38685280723454163,
-        "hits": 1,
-        "latency_ms": 532.62,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 4,
+        "latency_ms": 275.26,
         "top_results": [
-          "01B2D8BC1E9B70D37EBB3A4011",
-          "01DC44A48C1630519D62ADFEAC",
-          "011A670A41DC59A0A85C28A27C",
-          "0104569258E09F2B6AA563CA27",
-          "013AB0D09946C0AF50046280D7"
+          "010D051F1A8B721398735AA0E8",
+          "01412DEF0A08A738DC67B25ECD",
+          "01AA1A92C1AA6CEDDCB4D9454E",
+          "0119618AC265525635376390B6",
+          "0104569258E09F2B6AA563CA27"
         ]
       },
       {
@@ -352,13 +352,13 @@
         "mrr": 0.0,
         "ndcg": 0.0,
         "hits": 0,
-        "latency_ms": 503.1,
+        "latency_ms": 292.5,
         "top_results": [
-          "0110FF43E764C09F07A9E99AEA",
           "01E6B91EAEC8A1E0035C520D7A",
-          "018519A0E1273BF43A2937AB0C",
-          "01DC44A48C1630519D62ADFEAC",
-          "01F04468126582355E42371A39"
+          "0104569258E09F2B6AA563CA27",
+          "011183413688433B7A3D60F79C",
+          "011670DF3CC76B7291A34B4925",
+          "011A670A41DC59A0A85C28A27C"
         ]
       },
       {
@@ -366,18 +366,18 @@
         "category": "vocab-mismatch",
         "cohort": "v2",
         "evidence_sprint": 1,
-        "precision": 0.0,
-        "recall": 0.0,
-        "mrr": 0.0,
-        "ndcg": 0.0,
-        "hits": 0,
-        "latency_ms": 558.05,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 0.2,
+        "ndcg": 0.38685280723454163,
+        "hits": 1,
+        "latency_ms": 274.0,
         "top_results": [
           "016E6EBBCE4BD1D1392F97E2B6",
           "01F8311669CD3BC296230387BC",
           "014C4A8CE694990D0D45FC107D",
-          "01208C692ACC1FFF2F3DC14CD9",
-          "0102505B012F88AB0B08044F0D"
+          "01F3B50765832FCA93E0BB613F",
+          "010F6F7BB15DF7C0B7ECC5FB80"
         ]
       },
       {
@@ -390,13 +390,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 547.07,
+        "latency_ms": 277.47,
         "top_results": [
           "0181650A0B1E6BD14569F6B8BA",
           "0102505B012F88AB0B08044F0D",
-          "011990BBF7C1A146FFD992B01A",
           "01BAF2C76ABFEE94710F0922F2",
-          "0110FF43E764C09F07A9E99AEA"
+          "011D006FD3E05938E46ACC249A",
+          "01309B77DB662FE9EA200B3980"
         ]
       },
       {
@@ -409,12 +409,12 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 2,
-        "latency_ms": 531.59,
+        "latency_ms": 289.0,
         "top_results": [
           "010AE8D4A5232CF8E596C7A53B",
+          "0113724A2BB2F3C25151D8D476",
           "0116318594F55407F71E159DFE",
           "01B2D8BC1E9B70D37EBB3A4011",
-          "0113724A2BB2F3C25151D8D476",
           "0102505B012F88AB0B08044F0D"
         ]
       },
@@ -428,13 +428,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 2,
-        "latency_ms": 517.77,
+        "latency_ms": 283.4,
         "top_results": [
           "019DC9EDA0C164949CF74AEFF0",
-          "01A1CD4294F9040C191B272827",
+          "01F3B50765832FCA93E0BB613F",
           "019753EBB74F48FA3E2F81DEC5",
           "0113724A2BB2F3C25151D8D476",
-          "01F3B50765832FCA93E0BB613F"
+          "01A1CD4294F9040C191B272827"
         ]
       },
       {
@@ -442,18 +442,18 @@
         "category": "vocab-mismatch",
         "cohort": "v2",
         "evidence_sprint": 10,
-        "precision": 0.6,
+        "precision": 0.8,
         "recall": 1.0,
-        "mrr": 0.5,
-        "ndcg": 0.6309297535714575,
-        "hits": 3,
-        "latency_ms": 536.58,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 4,
+        "latency_ms": 272.09,
         "top_results": [
-          "011990BBF7C1A146FFD992B01A",
           "014C4A8CE694990D0D45FC107D",
-          "018F809E847FDA16E5EF64A052",
-          "01F8311669CD3BC296230387BC",
-          "0110FF43E764C09F07A9E99AEA"
+          "0104569258E09F2B6AA563CA27",
+          "019753EBB74F48FA3E2F81DEC5",
+          "01A1CD4294F9040C191B272827",
+          "01208C692ACC1FFF2F3DC14CD9"
         ]
       },
       {
@@ -466,13 +466,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 544.71,
+        "latency_ms": 268.84,
         "top_results": [
           "01BAF2C76ABFEE94710F0922F2",
           "01F8311669CD3BC296230387BC",
           "01208C692ACC1FFF2F3DC14CD9",
-          "010AE8D4A5232CF8E596C7A53B",
-          "0110FF43E764C09F07A9E99AEA"
+          "018F809E847FDA16E5EF64A052",
+          "010AE8D4A5232CF8E596C7A53B"
         ]
       },
       {
@@ -485,13 +485,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 546.75,
+        "latency_ms": 276.52,
         "top_results": [
           "01B2D8BC1E9B70D37EBB3A4011",
-          "0110FF43E764C09F07A9E99AEA",
           "01C04B174DA31A788D23591299",
-          "01889FB81461946FAF71F0461F",
-          "01842697FF11B3D3FE0B8952E2"
+          "0104569258E09F2B6AA563CA27",
+          "011183413688433B7A3D60F79C",
+          "011670DF3CC76B7291A34B4925"
         ]
       },
       {
@@ -499,18 +499,18 @@
         "category": "multi-hop",
         "cohort": "v2",
         "evidence_sprint": 12,
-        "precision": 0.0,
-        "recall": 0.0,
-        "mrr": 0.0,
-        "ndcg": 0.0,
-        "hits": 0,
-        "latency_ms": 544.02,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 0.2,
+        "ndcg": 0.38685280723454163,
+        "hits": 1,
+        "latency_ms": 275.86,
         "top_results": [
-          "0174BE78E70A452DFB78315743",
+          "011A6883631302C924AB294445",
           "012820E043DA8AE8DAF0CCC654",
-          "01754D4C0BB420F46DDD0AE3E5",
-          "01D3C70F097E1747A8B55BF9EA",
-          "013880CC81A53A159AFB281ED2"
+          "013880CC81A53A159AFB281ED2",
+          "014C2C05FB126332AE27D18F86",
+          "0181650A0B1E6BD14569F6B8BA"
         ]
       },
       {
@@ -518,18 +518,18 @@
         "category": "multi-hop",
         "cohort": "v2",
         "evidence_sprint": 6,
-        "precision": 0.8,
-        "recall": 1.0,
-        "mrr": 0.5,
-        "ndcg": 0.6309297535714575,
-        "hits": 4,
-        "latency_ms": 523.85,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 267.6,
         "top_results": [
           "019DC9EDA0C164949CF74AEFF0",
-          "01917467AA33A58DBC890F728D",
-          "012EE5877BA9D9E43C307E06DC",
-          "01229D76496966BC6FA9DE6C9B",
-          "01AC6C787E1F248783ABC7B29C"
+          "01E6B91EAEC8A1E0035C520D7A",
+          "014469C89285C8BDC8081424C2",
+          "0146534F3DD4D98B3B856C03A4",
+          "0141335B27CE34D1B25C9F1E65"
         ]
       },
       {
@@ -537,18 +537,18 @@
         "category": "multi-hop",
         "cohort": "v2",
         "evidence_sprint": 13,
-        "precision": 0.4,
+        "precision": 1.0,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 2,
-        "latency_ms": 542.93,
+        "hits": 5,
+        "latency_ms": 269.75,
         "top_results": [
           "016E6EBBCE4BD1D1392F97E2B6",
-          "01A1CD4294F9040C191B272827",
-          "019753EBB74F48FA3E2F81DEC5",
-          "0111C058580FB608761FE4A103",
-          "01F8311669CD3BC296230387BC"
+          "01F8311669CD3BC296230387BC",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "010000D36FA97DE92775BC1A22",
+          "013A9AC84B4B999CAE65BCB541"
         ]
       },
       {
@@ -556,18 +556,18 @@
         "category": "multi-hop",
         "cohort": "v2",
         "evidence_sprint": 1,
-        "precision": 1.0,
+        "precision": 0.8,
         "recall": 1.0,
-        "mrr": 1.0,
-        "ndcg": 1.0,
-        "hits": 5,
-        "latency_ms": 507.52,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
+        "hits": 4,
+        "latency_ms": 281.13,
         "top_results": [
-          "01917467AA33A58DBC890F728D",
-          "01578782BD2A49460FFDC098F0",
-          "016516718145520FFD363C1B5C",
-          "01200480D7F83803E7D5A211D6",
-          "01B58D248369056F9B560FE356"
+          "0116318594F55407F71E159DFE",
+          "01200437D13C288B7C284728D8",
+          "011F14ADB04BA1491D424E6F3B",
+          "010FFE5C09F6FBBD5160D529C8",
+          "01578782BD2A49460FFDC098F0"
         ]
       },
       {
@@ -577,16 +577,16 @@
         "evidence_sprint": 1,
         "precision": 0.8,
         "recall": 1.0,
-        "mrr": 0.5,
-        "ndcg": 0.6309297535714575,
+        "mrr": 1.0,
+        "ndcg": 1.0,
         "hits": 4,
-        "latency_ms": 576.81,
+        "latency_ms": 276.3,
         "top_results": [
+          "0104569258E09F2B6AA563CA27",
+          "011183413688433B7A3D60F79C",
           "0110FF43E764C09F07A9E99AEA",
-          "019B25FE933F0912E28AB6A217",
-          "0172E19695498AAD35060A60BF",
-          "015475AED9D61781E445805DD1",
-          "018519A0E1273BF43A2937AB0C"
+          "01DC44A48C1630519D62ADFEAC",
+          "011A670A41DC59A0A85C28A27C"
         ]
       },
       {
@@ -594,18 +594,18 @@
         "category": "multi-hop",
         "cohort": "v2",
         "evidence_sprint": 8,
-        "precision": 0.6,
+        "precision": 0.4,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 3,
-        "latency_ms": 558.21,
+        "hits": 2,
+        "latency_ms": 276.83,
         "top_results": [
           "0102505B012F88AB0B08044F0D",
           "010AE8D4A5232CF8E596C7A53B",
           "011990BBF7C1A146FFD992B01A",
-          "016E6EBBCE4BD1D1392F97E2B6",
-          "01C04B174DA31A788D23591299"
+          "01FF294119A599123A918855F7",
+          "01A07193AAC8E31C029AB72C1D"
         ]
       },
       {
@@ -615,16 +615,16 @@
         "evidence_sprint": 1,
         "precision": 0.2,
         "recall": 1.0,
-        "mrr": 1.0,
-        "ndcg": 1.0,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.5,
         "hits": 1,
-        "latency_ms": 540.61,
+        "latency_ms": 271.95,
         "top_results": [
-          "018F809E847FDA16E5EF64A052",
-          "0111C058580FB608761FE4A103",
+          "013710592C6F3C861C4E6FC5F2",
           "01A07193AAC8E31C029AB72C1D",
-          "01FF294119A599123A918855F7",
-          "0110FF43E764C09F07A9E99AEA"
+          "018F809E847FDA16E5EF64A052",
+          "010000D36FA97DE92775BC1A22",
+          "013A9AC84B4B999CAE65BCB541"
         ]
       },
       {
@@ -637,12 +637,12 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 2,
-        "latency_ms": 554.15,
+        "latency_ms": 278.09,
         "top_results": [
-          "016E6EBBCE4BD1D1392F97E2B6",
-          "013710592C6F3C861C4E6FC5F2",
           "01F8311669CD3BC296230387BC",
-          "0174BE78E70A452DFB78315743",
+          "013710592C6F3C861C4E6FC5F2",
+          "011A6883631302C924AB294445",
+          "016E6EBBCE4BD1D1392F97E2B6",
           "012820E043DA8AE8DAF0CCC654"
         ]
       },
@@ -656,13 +656,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 512.26,
+        "latency_ms": 276.7,
         "top_results": [
-          "013AB0D09946C0AF50046280D7",
-          "013B6025945B9F912A809F394A",
+          "0119618AC265525635376390B6",
+          "010D051F1A8B721398735AA0E8",
           "012BDF669D3668982415A378F7",
-          "013EBC547FD6C6C09A041D531C",
-          "0196C466EF74F03C404D9D744F"
+          "01270C571ED8E40DFD54A5FFAC",
+          "01BFE1906DBCB58B3E1DCDB23A"
         ]
       },
       {
@@ -675,13 +675,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 516.81,
+        "latency_ms": 288.98,
         "top_results": [
-          "014B7B7208BFAA43DB5D0AC928",
-          "01BE3E4C9B151FA9768D2A3130",
-          "01E31D83C121540BC288B6B3A3",
-          "017D72D90FACDB98F1DFBBA02B",
-          "01B272F9E8E54B0DF525937E50"
+          "010BD3876433AFDAE13BB5F0DE",
+          "012C4DB223081D34350AC5827D",
+          "01247E7E5D05BEE57781F48DFE",
+          "012F8CF9A8C497E4EC084CAAF7",
+          "011D77EBB09FD54D17E3E000B5"
         ]
       },
       {
@@ -691,16 +691,16 @@
         "evidence_sprint": 12,
         "precision": 0.2,
         "recall": 1.0,
-        "mrr": 0.3333333333333333,
-        "ndcg": 0.5,
+        "mrr": 0.25,
+        "ndcg": 0.43067655807339306,
         "hits": 1,
-        "latency_ms": 540.66,
+        "latency_ms": 291.04,
         "top_results": [
           "014C4A8CE694990D0D45FC107D",
           "0110FF43E764C09F07A9E99AEA",
+          "011A6883631302C924AB294445",
           "0181650A0B1E6BD14569F6B8BA",
-          "012820E043DA8AE8DAF0CCC654",
-          "0174BE78E70A452DFB78315743"
+          "012820E043DA8AE8DAF0CCC654"
         ]
       },
       {
@@ -713,13 +713,13 @@
         "mrr": 0.5,
         "ndcg": 0.6309297535714575,
         "hits": 1,
-        "latency_ms": 543.08,
+        "latency_ms": 273.21,
         "top_results": [
           "0102505B012F88AB0B08044F0D",
           "010AE8D4A5232CF8E596C7A53B",
-          "012A457253B4234EE359682702",
-          "011A3AD6C0654212EC6951BEA7",
-          "01C190DC90F70CFCF5DC1D4234"
+          "011A6883631302C924AB294445",
+          "01FF294119A599123A918855F7",
+          "012820E043DA8AE8DAF0CCC654"
         ]
       },
       {
@@ -732,13 +732,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 517.97,
+        "latency_ms": 272.81,
         "top_results": [
-          "014B7B7208BFAA43DB5D0AC928",
-          "017F8E271162270E7FE46700D4",
-          "015DB99CC590C90EFB9A48B03C",
-          "0197018C515608720C4EEFCD52",
-          "01F5F6AA08590AAB18047893C6"
+          "010BD3876433AFDAE13BB5F0DE",
+          "012C4DB223081D34350AC5827D",
+          "01247E7E5D05BEE57781F48DFE",
+          "011D77EBB09FD54D17E3E000B5",
+          "012F8CF9A8C497E4EC084CAAF7"
         ]
       },
       {
@@ -751,13 +751,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 5,
-        "latency_ms": 528.61,
+        "latency_ms": 284.56,
         "top_results": [
-          "011183413688433B7A3D60F79C",
           "0104569258E09F2B6AA563CA27",
-          "019BBC600ECA463794A9E1C4A5",
-          "01B989C6CBF5DD3BC1B8D94FA5",
-          "019B25FE933F0912E28AB6A217"
+          "011A670A41DC59A0A85C28A27C",
+          "011183413688433B7A3D60F79C",
+          "014EA555ADE26E3E106CA2FC51",
+          "011670DF3CC76B7291A34B4925"
         ]
       },
       {
@@ -765,18 +765,18 @@
         "category": "temporal",
         "cohort": "v2",
         "evidence_sprint": 24,
-        "precision": 0.6,
+        "precision": 1.0,
         "recall": 1.0,
         "mrr": 1.0,
         "ndcg": 1.0,
-        "hits": 3,
-        "latency_ms": 537.91,
+        "hits": 5,
+        "latency_ms": 276.54,
         "top_results": [
-          "013DD3D6514E0FF0383F8A8854",
-          "016E6EBBCE4BD1D1392F97E2B6",
-          "013A9AC84B4B999CAE65BCB541",
-          "0111C058580FB608761FE4A103",
-          "0131A82DC0F115F64FBC2D4A00"
+          "010000D36FA97DE92775BC1A22",
+          "0131A82DC0F115F64FBC2D4A00",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "013BC12469710A7EF68D118333",
+          "013A9AC84B4B999CAE65BCB541"
         ]
       },
       {
@@ -789,13 +789,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 578.36,
+        "latency_ms": 270.4,
         "top_results": [
           "019FF7DA223B2F60AD2499BFED",
           "013710592C6F3C861C4E6FC5F2",
-          "0174BE78E70A452DFB78315743",
-          "01D3C70F097E1747A8B55BF9EA",
-          "012820E043DA8AE8DAF0CCC654"
+          "01208C692ACC1FFF2F3DC14CD9",
+          "01A07193AAC8E31C029AB72C1D",
+          "010F6F7BB15DF7C0B7ECC5FB80"
         ]
       },
       {
@@ -805,16 +805,16 @@
         "evidence_sprint": 1,
         "precision": 0.4,
         "recall": 1.0,
-        "mrr": 1.0,
-        "ndcg": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
         "hits": 2,
-        "latency_ms": 538.55,
+        "latency_ms": 269.23,
         "top_results": [
-          "019DC9EDA0C164949CF74AEFF0",
-          "018F809E847FDA16E5EF64A052",
           "013710592C6F3C861C4E6FC5F2",
+          "019DC9EDA0C164949CF74AEFF0",
+          "019FF7DA223B2F60AD2499BFED",
           "017D481DA9B207602ADC6A0E66",
-          "019FF7DA223B2F60AD2499BFED"
+          "018F809E847FDA16E5EF64A052"
         ]
       },
       {
@@ -824,16 +824,16 @@
         "evidence_sprint": 1,
         "precision": 0.8,
         "recall": 1.0,
-        "mrr": 1.0,
-        "ndcg": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
         "hits": 4,
-        "latency_ms": 524.02,
+        "latency_ms": 273.49,
         "top_results": [
-          "018F809E847FDA16E5EF64A052",
           "0111C058580FB608761FE4A103",
-          "015DB99CC590C90EFB9A48B03C",
-          "01E31D83C121540BC288B6B3A3",
-          "017F8E271162270E7FE46700D4"
+          "018F809E847FDA16E5EF64A052",
+          "011D77EBB09FD54D17E3E000B5",
+          "012C4DB223081D34350AC5827D",
+          "014B7B7208BFAA43DB5D0AC928"
         ]
       },
       {
@@ -846,13 +846,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 1,
-        "latency_ms": 548.27,
+        "latency_ms": 270.61,
         "top_results": [
           "0181650A0B1E6BD14569F6B8BA",
           "019F25311416EEE6805A73A3B9",
-          "013710592C6F3C861C4E6FC5F2",
-          "01FF294119A599123A918855F7",
-          "0129358C9F934A15680030333D"
+          "011D006FD3E05938E46ACC249A",
+          "012165F5F424ACCCB3A028BC69",
+          "0102505B012F88AB0B08044F0D"
         ]
       },
       {
@@ -865,13 +865,13 @@
         "mrr": 1.0,
         "ndcg": 1.0,
         "hits": 2,
-        "latency_ms": 535.48,
+        "latency_ms": 266.04,
         "top_results": [
           "010AE8D4A5232CF8E596C7A53B",
-          "0113724A2BB2F3C25151D8D476",
           "0116318594F55407F71E159DFE",
-          "01917467AA33A58DBC890F728D",
-          "01229D76496966BC6FA9DE6C9B"
+          "0113724A2BB2F3C25151D8D476",
+          "010FFE5C09F6FBBD5160D529C8",
+          "01200437D13C288B7C284728D8"
         ]
       }
     ],
@@ -889,7 +889,7 @@
       "experience-lookup": {
         "n": 4,
         "recall_at_5": 1.0,
-        "mrr": 1.0
+        "mrr": 0.875
       },
       "incident-lookup": {
         "n": 1,
@@ -903,23 +903,23 @@
       },
       "vocab-mismatch": {
         "n": 10,
-        "recall_at_5": 0.8,
-        "mrr": 0.67
+        "recall_at_5": 0.9,
+        "mrr": 0.82
       },
       "multi-hop": {
         "n": 10,
         "recall_at_5": 0.9,
-        "mrr": 0.8
+        "mrr": 0.7033
       },
       "temporal": {
         "n": 5,
         "recall_at_5": 1.0,
-        "mrr": 0.7667
+        "mrr": 0.75
       },
       "entity-relation": {
         "n": 5,
         "recall_at_5": 1.0,
-        "mrr": 1.0
+        "mrr": 0.8
       }
     },
     "gates": {
@@ -933,7 +933,7 @@
         },
         {
           "gate": "vocab-mismatch",
-          "value": 0.8,
+          "value": 0.9,
           "floor": 0.7,
           "pass": true
         },
@@ -957,7 +957,7 @@
         },
         {
           "gate": "p95_latency_ms",
-          "value": 566.44,
+          "value": 288.98,
           "floor": 200.0,
           "pass": false
         }
