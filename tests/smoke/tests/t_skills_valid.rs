@@ -7,12 +7,16 @@ fn native_skill_packages_reference_same_mcp_tools() {
         root.join("skills/cursor/.cursor/rules/kgx.mdc"),
         root.join("skills/opencode/.opencode/skills/kgx/SKILL.md"),
     ];
+    // Tools must match the real MCP tool names exposed by crates/kgx-mcp/src/tools/mod.rs
     let tools = [
-        "search_notes",
+        "nl_query_memory",
+        "query_memory",
+        "deep_search_memory",
         "get_note",
+        "ingest_conversation",
+        "ingest_file",
+        "ingest_url",
         "upsert_note",
-        "ask_question",
-        "capture_raw",
         "dream_step",
     ];
     for file in files {

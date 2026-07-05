@@ -1,0 +1,12 @@
+{
+  "team_size": 4,
+  "sprints": 36,
+  "duration_months": 18,
+  "notes_total": 220,
+  "entities": 12,
+  "facts": 144,
+  "decisions": 18,
+  "superseded_facts": 6,
+  "gold_questions": 15,
+  "seed": 20260119
+}

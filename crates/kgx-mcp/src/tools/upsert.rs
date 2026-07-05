@@ -33,11 +33,45 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
         .map(|n| n.rel_path.clone())
         .unwrap_or_else(|| note_rel_path(note_type, title));
 
+    let source = args["source"]
+        .as_str()
+        .filter(|s| !s.trim().is_empty())
+        .map(ToString::to_string);
+    let confidence = args["confidence"].as_str().map(parse_confidence);
+    let links: Vec<String> = args["links"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|v| v.as_str())
+        .map(ToString::to_string)
+        .collect();
+    let tags: Vec<String> = args["tags"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|v| v.as_str())
+        .map(ToString::to_string)
+        .collect();
+
     let fm = if let Some(existing) = existing {
         Frontmatter {
             r#type: note_type,
             id,
             title: title.to_string(),
+            source: source.or(existing.fm.source),
+            confidence: confidence.unwrap_or(existing.fm.confidence),
+            links: if links.is_empty() {
+                existing.fm.links
+            } else {
+                links
+            },
+            tags: if tags.is_empty() {
+                existing.fm.tags
+            } else {
+                tags
+            },
             created_by: CreatedBy::Agent,
             created_via: CreatedVia::Mcp,
             ..existing.fm
@@ -53,11 +87,11 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
             recorded_at: Some(kgx_core::util::now_iso()),
             supersedes: vec![],
             superseded_by: None,
-            source: None,
-            confidence: Confidence::Medium,
-            sources_count: 0,
-            tags: vec![],
-            links: vec![],
+            sources_count: if source.is_some() { 1 } else { 0 },
+            source,
+            confidence: confidence.unwrap_or(Confidence::Medium),
+            tags,
+            links,
             entity_type: None,
             aliases: vec![],
             created_by: CreatedBy::Agent,
@@ -73,6 +107,14 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
     };
     kgx_vault::write::write_note(root, &note)?;
     Ok(json!({"status": "ok", "id": note.fm.id, "path": note.rel_path.display().to_string()}))
+}
+
+fn parse_confidence(value: &str) -> Confidence {
+    match value {
+        "high" => Confidence::High,
+        "low" => Confidence::Low,
+        _ => Confidence::Medium,
+    }
 }
 
 fn parse_note_type(value: &str) -> Result<NoteType> {

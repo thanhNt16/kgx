@@ -49,7 +49,16 @@ pub fn bm25_search(brain: &Brain, query: &str, limit: usize) -> Result<Vec<(Stri
     if tokens.is_empty() {
         return Ok(vec![]);
     }
-    let fts_query = tokens.join(" OR ");
+    // Quote each token as an FTS5 phrase ("token"). This neutralizes FTS5
+    // reserved keywords (AND/OR/NOT/NEAR) and bare operators (*, ", :, etc.)
+    // that appear in natural-language note bodies passed as queries by the
+    // dream passes (orphan_repair, open_questions). Without quoting, a body
+    // containing the word "AND" yields `tok1 OR AND OR tok2` → fts5 syntax error.
+    let fts_query = tokens
+        .iter()
+        .map(|t| format!("\"{}\"", t.replace('"', "")))
+        .collect::<Vec<_>>()
+        .join(" OR ");
     run_fts5_query(brain, &fts_query, limit)
 }
 

@@ -100,7 +100,7 @@ kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <pa
 ### kgx:ship
 Create a portable OKF bundle.
 ```
-kg ship --version <semver> --name "<name>"
+kg ship --out <bundle.okf.tar.gz>
 ```
 
 ### kgx:sync

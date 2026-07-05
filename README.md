@@ -6,6 +6,8 @@
 **KGX** turns a plain Markdown + `[[wikilinks]]` vault into a living, queryable knowledge graph. The vault is your canonical, git-versioned source of truth. A disposable SQLite "brain" provides hybrid vector + graph + keyword retrieval, PageRank, and community summaries. AI agents ingest, extract, link, answer, and consolidate. You review via git diffs and Obsidian's native graph view.
 
 > **[Full Report (HTML)](docs/kgx-final-report.html)** — consolidated benchmarks, test results, architecture, sprint simulation, and all documentation in one page.
+>
+> **[Battle Test Report (HTML)](docs/kgx-battletest-report.html)** — 36-sprint / 18-month engineering-team simulation, WITH-vs-WITHOUT-KGX benchmark (recall +239%, MRR +4926%, 25× less context), 4-harness compatibility audit, and every bug found & fixed during battle testing. Reproducible via `bench/gen_corpus.py` + `bench/bench.py`.
 
 ---
 

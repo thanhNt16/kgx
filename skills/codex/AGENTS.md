@@ -100,7 +100,7 @@ kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <pa
 ### kgx:ship
 Create a portable OKF bundle.
 ```
-kg ship --version <semver> --name "<name>"
+kg ship --out <bundle.okf.tar.gz>
 ```
 
 ### kgx:sync
@@ -122,4 +122,4 @@ kg sync
 - Supersede or archive; never delete notes.
 - Cite note ids.
 
-MCP tools: search_notes, get_note, upsert_note, ask_question, capture_raw, dream_step.
+MCP tools: nl_query_memory, query_memory, deep_search_memory, get_note, ingest_conversation, ingest_file, ingest_url, upsert_note, dream_step.

@@ -44,3 +44,22 @@ fn neighbors_one_hop() {
     let n = neighbors(&b, pg, 1).unwrap();
     assert!(!n.is_empty());
 }
+
+#[test]
+fn bm25_handles_fts5_reserved_keywords_in_query() {
+    // Regression: a note body or natural-language query containing FTS5
+    // reserved keywords (AND/OR/NOT/NEAR) used to crash with
+    // "fts5: syntax error near \"AND\"". Each token must be quoted so the
+    // keyword is treated as a literal search term.
+    let b = built();
+    // Query containing every FTS5 boolean keyword as plain English words.
+    for q in [
+        "primary AND secondary",
+        "billing OR finance",
+        "datastore NOT cache",
+        "near real-time",
+    ] {
+        let hits = bm25_search(&b, q, 5);
+        assert!(hits.is_ok(), "query {:?} should not error: {:?}", q, hits);
+    }
+}

@@ -1,0 +1,504 @@
+{
+  "config": {
+    "vault": "/tmp/kgx-bench-vault",
+    "gold": "/tmp/kgx-corpus/gold.json",
+    "k": 5,
+    "questions": 15
+  },
+  "with_kgx": {
+    "aggregate": {
+      "n": 15,
+      "precision_at_5": 0.1333,
+      "recall_at_5": 0.6667,
+      "f1_at_5": 0.2222,
+      "mrr": 0.6333,
+      "ndcg_at_5": 0.6421,
+      "hit_rate": 0.6667,
+      "median_latency_ms": 5.33,
+      "p95_latency_ms": 5.67,
+      "total_context_chars": 3502
+    },
+    "per_query": [
+      {
+        "question": "Why did we choose Apache Iceberg over Delta Lake?",
+        "category": "decision-lookup",
+        "evidence_sprint": 2,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 6.21,
+        "top_results": [
+          "01FF294119A599123A918855F7",
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "011F259F4528A2DFC4354F1FB9",
+          "01488DCBDFE0756DBC75D8B915"
+        ]
+      },
+      {
+        "question": "Who owns the Flink streaming infrastructure?",
+        "category": "entity-lookup",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 5.48,
+        "top_results": [
+          "01E6B91EAEC8A1E0035C520D7A",
+          "01A07193AAC8E31C029AB72C1D",
+          "013710592C6F3C861C4E6FC5F2",
+          "01208C692ACC1FFF2F3DC14CD9",
+          "0110FF43E764C09F07A9E99AEA"
+        ]
+      },
+      {
+        "question": "What was the billing_ledger backfill decision?",
+        "category": "decision-lookup",
+        "evidence_sprint": 8,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.49,
+        "top_results": [
+          "0102505B012F88AB0B08044F0D",
+          "011A3AD6C0654212EC6951BEA7",
+          "0150B22E8DD98CCA4ACA346616",
+          "0122099F1C63F8D6F691700EBE",
+          "01281E0EE6333F3FFD47F84BAB"
+        ]
+      },
+      {
+        "question": "What causes Flink backpressure?",
+        "category": "experience-lookup",
+        "evidence_sprint": 6,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 5.33,
+        "top_results": [
+          "010FFE5C09F6FBBD5160D529C8",
+          "011F14ADB04BA1491D424E6F3B",
+          "01200437D13C288B7C284728D8",
+          "015C89495396BB09C8A949F1A5",
+          "01200480D7F83803E7D5A211D6"
+        ]
+      },
+      {
+        "question": "How was the Trino OOM incident resolved?",
+        "category": "incident-lookup",
+        "evidence_sprint": 13,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.5,
+        "top_results": [
+          "01F3B50765832FCA93E0BB613F",
+          "013DD3D6514E0FF0383F8A8854",
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "01208C692ACC1FFF2F3DC14CD9"
+        ]
+      },
+      {
+        "question": "What is the Iceberg compaction strategy?",
+        "category": "experience-lookup",
+        "evidence_sprint": 24,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 5.63,
+        "top_results": [
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "011F259F4528A2DFC4354F1FB9",
+          "0131A82DC0F115F64FBC2D4A00",
+          "013A9AC84B4B999CAE65BCB541"
+        ]
+      },
+      {
+        "question": "Who decided to use Airflow for batch orchestration?",
+        "category": "decision-lookup",
+        "evidence_sprint": 10,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
+        "hits": 1,
+        "latency_ms": 5.56,
+        "top_results": [
+          "0181650A0B1E6BD14569F6B8BA",
+          "014C4A8CE694990D0D45FC107D",
+          "0110FF43E764C09F07A9E99AEA",
+          "010AE8D4A5232CF8E596C7A53B",
+          "013EBC547FD6C6C09A041D531C"
+        ]
+      },
+      {
+        "question": "What is the Kafka exactly-once policy?",
+        "category": "decision-lookup",
+        "evidence_sprint": 14,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.24,
+        "top_results": [
+          "010AE8D4A5232CF8E596C7A53B",
+          "0113724A2BB2F3C25151D8D476",
+          "01208C692ACC1FFF2F3DC14CD9",
+          "013A2E7B727C72A3C5700094C1",
+          "0140D1F768CCAE1B2C2AF8193C"
+        ]
+      },
+      {
+        "question": "How is the Postgres billing_ledger risk handled?",
+        "category": "decision-lookup",
+        "evidence_sprint": 8,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.67,
+        "top_results": [
+          "0102505B012F88AB0B08044F0D",
+          "011990BBF7C1A146FFD992B01A",
+          "01432E9178BDE59AE7B11A45B7",
+          "011A3AD6C0654212EC6951BEA7",
+          "0122099F1C63F8D6F691700EBE"
+        ]
+      },
+      {
+        "question": "What did we learn about Airflow DAG idempotency?",
+        "category": "experience-lookup",
+        "evidence_sprint": 12,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.24,
+        "top_results": [
+          "01B2D8BC1E9B70D37EBB3A4011",
+          "0104569258E09F2B6AA563CA27",
+          "011183413688433B7A3D60F79C",
+          "011670DF3CC76B7291A34B4925",
+          "011A670A41DC59A0A85C28A27C"
+        ]
+      },
+      {
+        "question": "Who is the Staff Engineer driving the Iceberg migration?",
+        "category": "entity-lookup",
+        "evidence_sprint": 1,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.21,
+        "top_results": [
+          "013710592C6F3C861C4E6FC5F2",
+          "0131A82DC0F115F64FBC2D4A00",
+          "010000D36FA97DE92775BC1A22",
+          "0102505B012F88AB0B08044F0D",
+          "0142D02B2E39D494B1F90CE141"
+        ]
+      },
+      {
+        "question": "What is the S3 storage lifecycle policy?",
+        "category": "decision-lookup",
+        "evidence_sprint": 12,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 4.63,
+        "top_results": [
+          "0181650A0B1E6BD14569F6B8BA",
+          "0131A82DC0F115F64FBC2D4A00",
+          "01208C692ACC1FFF2F3DC14CD9",
+          "010000D36FA97DE92775BC1A22",
+          "0102505B012F88AB0B08044F0D"
+        ]
+      },
+      {
+        "question": "What is the Trino query latency target?",
+        "category": "fact-lookup",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 4.88,
+        "top_results": [
+          "010000D36FA97DE92775BC1A22",
+          "010F6F7BB15DF7C0B7ECC5FB80",
+          "011F259F4528A2DFC4354F1FB9",
+          "0131A82DC0F115F64FBC2D4A00",
+          "016552A630FF551F7F9DB6C717"
+        ]
+      },
+      {
+        "question": "What alerting did we add for billing pipeline failures?",
+        "category": "fact-lookup",
+        "evidence_sprint": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 5.0,
+        "top_results": [
+          "010D051F1A8B721398735AA0E8",
+          "0119618AC265525635376390B6",
+          "01270C571ED8E40DFD54A5FFAC",
+          "012BDF669D3668982415A378F7",
+          "013AB0D09946C0AF50046280D7"
+        ]
+      },
+      {
+        "question": "How was the Kafka consumer lag alerting improved?",
+        "category": "experience-lookup",
+        "evidence_sprint": 30,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 5.01,
+        "top_results": [
+          "017D481DA9B207602ADC6A0E66",
+          "010FFE5C09F6FBBD5160D529C8",
+          "011F14ADB04BA1491D424E6F3B",
+          "01578782BD2A49460FFDC098F0",
+          "01200437D13C288B7C284728D8"
+        ]
+      }
+    ]
+  },
+  "without_kgx": {
+    "aggregate": {
+      "n": 15,
+      "precision_at_5": 0.1182,
+      "recall_at_5": 0.1969,
+      "f1_at_5": 0.1477,
+      "mrr": 0.0126,
+      "ndcg_at_5": 0.1379,
+      "hit_rate": 0.1333,
+      "total_context_chars": 87861,
+      "median_latency_ms": 0
+    },
+    "per_query": [
+      {
+        "question": "Why did we choose Apache Iceberg over Delta Lake?",
+        "category": "decision-lookup",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.1048,
+        "recall": 0.1747,
+        "mrr": 0.0087,
+        "ndcg": 0.1223,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who owns the Flink streaming infrastructure?",
+        "category": "entity-lookup",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.3588,
+        "recall": 0.5979,
+        "mrr": 0.0299,
+        "ndcg": 0.4186,
+        "hits": 1,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What was the billing_ledger backfill decision?",
+        "category": "decision-lookup",
+        "evidence_sprint": 8,
+        "sprints_ago": 28,
+        "precision": 0.1339,
+        "recall": 0.2232,
+        "mrr": 0.0112,
+        "ndcg": 0.1562,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What causes Flink backpressure?",
+        "category": "experience-lookup",
+        "evidence_sprint": 6,
+        "sprints_ago": 30,
+        "precision": 0.0052,
+        "recall": 0.0086,
+        "mrr": 0.0004,
+        "ndcg": 0.006,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How was the Trino OOM incident resolved?",
+        "category": "incident-lookup",
+        "evidence_sprint": 13,
+        "sprints_ago": 23,
+        "precision": 0.0266,
+        "recall": 0.0443,
+        "mrr": 0.0022,
+        "ndcg": 0.031,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the Iceberg compaction strategy?",
+        "category": "experience-lookup",
+        "evidence_sprint": 24,
+        "sprints_ago": 12,
+        "precision": 0.0518,
+        "recall": 0.0863,
+        "mrr": 0.0173,
+        "ndcg": 0.0604,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who decided to use Airflow for batch orchestration?",
+        "category": "decision-lookup",
+        "evidence_sprint": 10,
+        "sprints_ago": 26,
+        "precision": 0.1453,
+        "recall": 0.2422,
+        "mrr": 0.0121,
+        "ndcg": 0.1695,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the Kafka exactly-once policy?",
+        "category": "decision-lookup",
+        "evidence_sprint": 14,
+        "sprints_ago": 22,
+        "precision": 0.1711,
+        "recall": 0.2851,
+        "mrr": 0.0143,
+        "ndcg": 0.1996,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How is the Postgres billing_ledger risk handled?",
+        "category": "decision-lookup",
+        "evidence_sprint": 8,
+        "sprints_ago": 28,
+        "precision": 0.1339,
+        "recall": 0.2232,
+        "mrr": 0.0112,
+        "ndcg": 0.1562,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What did we learn about Airflow DAG idempotency?",
+        "category": "experience-lookup",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0112,
+        "recall": 0.0186,
+        "mrr": 0.0009,
+        "ndcg": 0.013,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who is the Staff Engineer driving the Iceberg migration?",
+        "category": "entity-lookup",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.3588,
+        "recall": 0.5979,
+        "mrr": 0.0299,
+        "ndcg": 0.4186,
+        "hits": 1,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the S3 storage lifecycle policy?",
+        "category": "decision-lookup",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.1577,
+        "recall": 0.2628,
+        "mrr": 0.0131,
+        "ndcg": 0.184,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the Trino query latency target?",
+        "category": "fact-lookup",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0009,
+        "recall": 0.0015,
+        "mrr": 0.0001,
+        "ndcg": 0.0011,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What alerting did we add for billing pipeline failures?",
+        "category": "fact-lookup",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.0011,
+        "recall": 0.0018,
+        "mrr": 0.0001,
+        "ndcg": 0.0013,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How was the Kafka consumer lag alerting improved?",
+        "category": "experience-lookup",
+        "evidence_sprint": 30,
+        "sprints_ago": 6,
+        "precision": 0.1115,
+        "recall": 0.1858,
+        "mrr": 0.0372,
+        "ndcg": 0.13,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      }
+    ]
+  }
+}
