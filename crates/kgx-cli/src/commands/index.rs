@@ -34,6 +34,20 @@ pub fn run(
             (s, all)
         };
 
+    // Sparse (SPLADE) postings: post-build step.
+    if let Some(sparse) = kgx_llm::select::sparse_from_env() {
+        let target: Vec<&Note> = if rebuild_vectors || (incremental && !full) {
+            notes.iter().filter(|n| embedded_ids.contains(&n.fm.id)).collect()
+        } else {
+            notes.iter().collect()
+        };
+        kgx_graph::sparse::index_sparse(&brain, &target, sparse.as_ref())?;
+    }
+    // Warm the reranker cache at index time.
+    if embedder.is_semantic() {
+        let _ = kgx_llm::select::reranker_from_env();
+    }
+
     if do_pagerank {
         pagerank::compute(&mut brain, 0.85, 30)?;
     }
