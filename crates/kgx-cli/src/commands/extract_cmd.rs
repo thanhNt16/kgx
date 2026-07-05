@@ -2,6 +2,7 @@
 use std::time::Instant;
 
 use crate::output::emit;
+use kgx_core::NoteType;
 use kgx_extract::{extract, Intensity};
 
 pub fn run(
@@ -27,26 +28,36 @@ pub fn run(
     let provider = kgx_llm::select::provider_from_env()?;
     let rt = tokio::runtime::Runtime::new()?;
     let res = rt.block_on(extract(provider.as_ref(), &src, inten))?;
+    let notes_to_write: Vec<_> = res
+        .notes
+        .iter()
+        .filter(|n| n.fm.r#type != NoteType::Entity || !root.join(&n.rel_path).exists())
+        .collect();
     if dry_run {
+        let would_create: Vec<_> = notes_to_write
+            .iter()
+            .map(|n| n.rel_path.display().to_string())
+            .collect();
         emit(
             "extract",
             serde_json::json!({
                 "dry_run": true,
-                "would_create": res.notes.iter().map(|n| n.rel_path.display().to_string()).collect::<Vec<_>>()
+                "would_create": would_create
             }),
             json,
             start,
             |_| {
-                for n in &res.notes {
+                for n in &notes_to_write {
                     println!("+ {}", n.rel_path.display());
                 }
             },
         );
         return Ok(());
     }
-    for n in &res.notes {
+    for n in &notes_to_write {
         kgx_vault::write::write_note(&root, n)?;
     }
+    let created = notes_to_write.len();
     kgx_tokens::record::append(
         &root.join(".kg"),
         &kgx_tokens::TokenRecord {
@@ -62,10 +73,10 @@ pub fn run(
     )?;
     emit(
         "extract",
-        serde_json::json!({"created": res.notes.len()}),
+        serde_json::json!({"created": created}),
         json,
         start,
-        |_| println!("extracted {} notes", res.notes.len()),
+        |_| println!("extracted {created} notes"),
     );
     Ok(())
 }

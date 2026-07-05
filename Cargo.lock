@@ -1656,12 +1656,14 @@ dependencies = [
 name = "kgx-extract"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "kgx-core",
  "kgx-llm",
  "kgx-ponytail",
  "kgx-vault",
  "serde",
  "serde_json",
+ "serde_yaml",
  "tokio",
 ]
 
