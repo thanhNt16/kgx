@@ -414,13 +414,14 @@ titles_index = scan_note_ids()
 if not titles_index:
     print("WARNING: no notes scanned for gold set", file=sys.stderr)
 
-def g(question, *title_keywords, patterns=None, category="?", sprint=1, limit=1):
+def g(question, *title_keywords, patterns=None, category="?", sprint=1, limit=1, cohort="v1"):
     return {
         "question": question,
         "relevant_note_ids": find_ids(titles_index, *title_keywords, limit=limit),
         "expected_patterns": patterns or [title_keywords[0]],
         "category": category,
         "evidence_sprint": sprint,
+        "cohort": cohort,
     }
 
 gold = [
@@ -439,6 +440,42 @@ gold = [
     g("What is the Trino query latency target?", "trino catalog", patterns=["320"], category="fact-lookup", sprint=1),
     g("What alerting did we add for billing pipeline failures?", "pagerduty", patterns=["pagerduty"], category="fact-lookup", sprint=2),
     g("How was the Kafka consumer lag alerting improved?", "consumer lag", patterns=["window", "flap"], category="experience-lookup", sprint=30),
+]
+def g2(question, *kw, **kwargs):
+    kwargs.setdefault("cohort", "v2")
+    return g(question, *kw, **kwargs)
+
+gold += [
+    g2("Which storage layer did the lakehouse standardize on?", "iceberg", "table", category="vocab-mismatch", sprint=2),
+    g2("How do we page the on-call when invoicing jobs break?", "pagerduty", category="vocab-mismatch", sprint=2),
+    g2("What slows down our stream processing jobs?", "backpressure", category="vocab-mismatch", sprint=6),
+    g2("How quickly must analyst ad-hoc queries come back?", "trino catalog", category="vocab-mismatch", sprint=1),
+    g2("Where do old files get archived to cut costs?", "glacier", category="vocab-mismatch", sprint=12),
+    g2("How do we prevent duplicate charges flowing through the event bus?", "exactly", category="vocab-mismatch", sprint=14),
+    g2("Who handles paging and incident response?", "cara", category="vocab-mismatch", sprint=1),
+    g2("What tool did we standardize scheduled data jobs on?", "airflow", "batch", category="vocab-mismatch", sprint=10),
+    g2("Why do we merge small data files overnight?", "compaction", category="vocab-mismatch", sprint=24),
+    g2("What guards against double-charging customers when jobs retry?", "idempotency", category="vocab-mismatch", sprint=12),
+    g2("Which storage-tiering decision did the Platform Lead record?", "glacier", category="multi-hop", sprint=12),
+    g2("What did the Senior SRE learn about stream stability?", "backpressure", category="multi-hop", sprint=6),
+    g2("Which incident hit the federated query engine?", "trino", "oom", category="multi-hop", sprint=13),
+    g2("What checkpoint tuning touched the event bus topic?", "checkpoint", "60s", category="multi-hop", sprint=1),
+    g2("What work moved the page_views job onto the batch orchestrator?", "page_views", category="multi-hop", sprint=1),
+    g2("Which ADR protects the legacy OLTP billing table during cutover?", "backfill", "billing", category="multi-hop", sprint=8),
+    g2("Who owns the ETL pipelines that feed the warehouse?", "david", category="multi-hop", sprint=1),
+    g2("Which decision came from the architecture owner about federated queries?", "trino", "federated", category="multi-hop", sprint=6),
+    g2("What alerting routes to the platform on-call rotation?", "pagerduty", category="multi-hop", sprint=2),
+    g2("Which partition layout did the ETL engineer land for events?", "partition spec", category="multi-hop", sprint=1),
+    g2("What decision replaced the Airflow batch orchestration ADR?", "glacier", category="temporal", sprint=12),
+    g2("Which ADR revised the billing backfill approach?", "exactly", category="temporal", sprint=14),
+    g2("What is the current partition spec guidance for the events table?", "partition spec", category="temporal", sprint=20, limit=2),
+    g2("Which early cron-to-Airflow migration fact is now superseded?", "page_views", category="temporal", sprint=22, limit=2),
+    g2("When did the original Trino catalog fact become stale?", "trino catalog", category="temporal", sprint=24, limit=2),
+    g2("Who is the Platform Lead?", "bob", category="entity-relation", sprint=1),
+    g2("Who owns SLOs and alerting?", "cara", category="entity-relation", sprint=1),
+    g2("Who runs the Spark and Airflow ETL pipelines?", "david", category="entity-relation", sprint=1),
+    g2("Who decided to tier storage to Glacier?", "glacier", category="entity-relation", sprint=12),
+    g2("Who introduced the exactly-once Kafka connector policy?", "exactly", category="entity-relation", sprint=14),
 ]
 # drop any gold entry with no resolved ids (keeps the benchmark honest)
 gold = [e for e in gold if e["relevant_note_ids"]]
