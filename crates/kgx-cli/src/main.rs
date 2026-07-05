@@ -18,6 +18,7 @@ mod commands {
     pub mod project;
     pub mod pull;
     pub mod recall;
+    pub mod refine_cmd;
     pub mod review;
     pub mod search;
     pub mod serve;
@@ -93,6 +94,13 @@ fn main() -> anyhow::Result<()> {
             only,
             dry_run,
         } => commands::dream_cmd::run(cli.json, max_iterations, only, dry_run),
+        Commands::Refine {
+            query,
+            note,
+            tag,
+            max_iterations,
+            dry_run,
+        } => commands::refine_cmd::run(cli.json, query, note, tag, max_iterations, dry_run),
         Commands::Review {
             approve,
             reject,

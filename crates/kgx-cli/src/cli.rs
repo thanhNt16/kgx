@@ -115,6 +115,19 @@ pub enum Commands {
         #[arg(long)]
         dry_run: bool,
     },
+    /// Refine a targeted subgraph: run dream passes scoped to a query/note/tag
+    Refine {
+        /// Retrieval query selecting the notes to refine
+        query: Option<String>,
+        #[arg(long)]
+        note: Option<String>,
+        #[arg(long)]
+        tag: Option<String>,
+        #[arg(long, default_value = "1")]
+        max_iterations: u32,
+        #[arg(long)]
+        dry_run: bool,
+    },
     /// Review staged dream diffs
     Review {
         #[arg(long)]
