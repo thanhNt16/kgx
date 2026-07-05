@@ -188,8 +188,10 @@ pub fn search(
             }
         }
     }
+    let mut query_emb: Option<Vec<f32>> = None;
     if matches!(opts.mode, Mode::Semantic | Mode::Hybrid) && r.embedder.is_semantic() {
         let q = r.embedder.embed(&[query.to_string()])?.remove(0);
+        query_emb = Some(q.clone());
         let vec = vector_search(brain, &q, 50)?;
         for (id, _) in &vec {
             signals_for
@@ -202,7 +204,7 @@ pub fn search(
     }
     let mut fused = fuse_multi_k(&rankings, &ks);
     if opts.expand_ppr && !fused.is_empty() && kgx_graph::query::has_edges(brain)? {
-        let seeds: Vec<(String, f32)> = if !bm25_weighted_seeds.is_empty() {
+        let mut seeds: Vec<(String, f32)> = if !bm25_weighted_seeds.is_empty() {
             bm25_weighted_seeds
         } else {
             fused
@@ -212,6 +214,11 @@ pub fn search(
                 .map(|(i, (id, _))| (id.clone(), 1.0 / (i + 1) as f32))
                 .collect()
         };
+        if let Some(q) = &query_emb {
+            if let Ok(scored) = kgx_graph::knn::entity_scores(brain, q) {
+                seeds.extend(crate::ppr::select_entity_seeds(&scored, 0.60, 5));
+            }
+        }
         let ppr = personalized(brain, &seeds, 0.85, 20)?;
         for (id, _) in ppr.iter().take(15) {
             signals_for

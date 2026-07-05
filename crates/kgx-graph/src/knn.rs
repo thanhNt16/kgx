@@ -1,7 +1,7 @@
 use crate::{embed::blob_to_f32, vec, Brain};
 use kgx_core::{KgError, Result};
 
-fn cosine(a: &[f32], b: &[f32]) -> f32 {
+pub fn cosine(a: &[f32], b: &[f32]) -> f32 {
     let dot: f32 = a.iter().zip(b).map(|(x, y)| x * y).sum();
     let na: f32 = a.iter().map(|x| x * x).sum::<f32>().sqrt();
     let nb: f32 = b.iter().map(|x| x * x).sum::<f32>().sqrt();
@@ -42,9 +42,48 @@ fn brute_force_search(
     Ok(scored)
 }
 
+/// Cosine similarity of the query against all entity-note embeddings.
+/// Used for HippoRAG-style PPR seeding; sorted descending.
+pub fn entity_scores(brain: &Brain, query_emb: &[f32]) -> Result<Vec<(String, f32)>> {
+    let mut stmt = brain
+        .conn()
+        .prepare("SELECT id, embedding FROM notes WHERE type='entity' AND embedding IS NOT NULL")
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    let rows = stmt
+        .query_map([], |r| {
+            let id: String = r.get(0)?;
+            let blob: Vec<u8> = r.get(1)?;
+            Ok((id, blob))
+        })
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    let mut scored: Vec<(String, f32)> = Vec::new();
+    for row in rows {
+        let (id, blob) = row.map_err(|e| KgError::Brain(e.to_string()))?;
+        scored.push((id, cosine(query_emb, &blob_to_f32(&blob))));
+    }
+    scored.sort_by(|a, b| {
+        b.1.partial_cmp(&a.1)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then(a.0.cmp(&b.0))
+    });
+    Ok(scored)
+}
+
 pub fn vector_search(brain: &Brain, query_emb: &[f32], limit: usize) -> Result<Vec<(String, f32)>> {
     if vec::vec0_exists(brain.conn()) {
         return vec::knn_search(brain.conn(), query_emb, limit);
     }
     brute_force_search(brain, query_emb, limit)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cosine_basics() {
+        assert!((cosine(&[1.0, 0.0], &[1.0, 0.0]) - 1.0).abs() < 1e-6);
+        assert!(cosine(&[1.0, 0.0], &[0.0, 1.0]).abs() < 1e-6);
+        assert_eq!(cosine(&[0.0, 0.0], &[1.0, 0.0]), 0.0);
+    }
 }

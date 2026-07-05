@@ -241,3 +241,45 @@ pub fn personalized_scoped(
     });
     Ok(out)
 }
+
+/// HippoRAG-style seed selection: entities whose embedding cosine to the
+/// query is >= `threshold`, capped, weighted at half the BM25 harmonic
+/// scale (0.5/(i+1)).
+pub fn select_entity_seeds(
+    scored: &[(String, f32)],
+    threshold: f32,
+    cap: usize,
+) -> Vec<(String, f32)> {
+    scored
+        .iter()
+        .filter(|(_, s)| *s >= threshold)
+        .take(cap)
+        .enumerate()
+        .map(|(i, (id, _))| (id.clone(), 0.5 / (i + 1) as f32))
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn entity_seeds_filter_cap_and_weight() {
+        let scored = vec![
+            ("e1".to_string(), 0.9),
+            ("e2".to_string(), 0.7),
+            ("e3".to_string(), 0.59),
+        ];
+        let seeds = select_entity_seeds(&scored, 0.60, 5);
+        assert_eq!(seeds.len(), 2);
+        assert_eq!(seeds[0], ("e1".to_string(), 0.5));
+        assert_eq!(seeds[1], ("e2".to_string(), 0.25));
+    }
+
+    #[test]
+    fn entity_seeds_respect_cap() {
+        let scored: Vec<(String, f32)> =
+            (0..10).map(|i| (format!("e{i}"), 0.9)).collect();
+        assert_eq!(select_entity_seeds(&scored, 0.60, 5).len(), 5);
+    }
+}
