@@ -799,14 +799,23 @@ export KGX_OLLAMA_MODEL=llama3.1
 export KGX_LLM=mock
 ```
 
-### Embeddings
+### Embeddings & Retrieval Pipeline
 
-Semantic search is enabled by default. `kg index` uses the default embedding backend and may download the embedding model on first use.
+`kg search` runs a four-stage local pipeline: BM25 + LIKE + tags + dense
+vector + SPLADE sparse candidates → reciprocal-rank fusion → personalized
+PageRank over the note graph (seeded by BM25 hits and query-matched
+entities) → local cross-encoder rerank. All models are local ONNX
+(fastembed), downloaded once and cached; no LLM tokens are spent per query.
 
-```bash
-# Disable vector embeddings and run keyword-only
-export KGX_EMBED=off
-```
+| Env var | Values | Default |
+|---|---|---|
+| `KGX_EMBED` | `fastembed` / `minilm` / `mock` / `off` | `fastembed` |
+| `KGX_SPARSE` | on / `off` / `mock` | on |
+| `KGX_RERANK` | on / `off` / `mock` | on |
+| `KGX_RERANK_MODEL` | `jina-turbo` / `bge-base` | `jina-turbo` |
+| `KGX_RERANK_TOPK` | integer | `30` |
+
+`kg status` prints the active stages (`retrieval: bm25+like+tags+dense+sparse | ppr | rerank(jina-turbo)`).
 
 ### Extraction Semantics
 
