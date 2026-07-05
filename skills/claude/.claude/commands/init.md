@@ -1,0 +1,15 @@
+---
+name: kgx:init
+description: Scaffold a new KGX vault with templates and skills
+disable-model-invocation: true
+---
+
+Scaffold a new KGX vault.
+
+1. Ask the user for:
+   - Vault path (default: current directory or choose)
+   - Template: research, code, pkm, or team
+   - Whether to include skills (`--with-skills`)
+   - Whether to include RTK (`--with-rtk`)
+2. Run `kg init [--template <type>] [--with-skills] [--with-rtk] [--vault <path>]` via Bash
+3. Show the created directory structure

@@ -57,6 +57,18 @@ printf 'Installed skill templates: %s\n' "$SHARE_DIR/skills"
 printf 'Next: cd <vault> && kg init --with-skills --with-rtk\n'
 printf 'MCP server command: kg mcp-server --transport stdio\n'
 
+# Install Claude Code global skills + commands
+if [ -d "$PKG_DIR/skills/claude" ]; then
+  CLAUDE_DIR="$HOME/.claude"
+  mkdir -p "$CLAUDE_DIR/skills/kgx" "$CLAUDE_DIR/commands"
+  cp "$PKG_DIR/skills/claude/.claude/skills/kgx/SKILL.md" "$CLAUDE_DIR/skills/kgx/SKILL.md"
+  for tmpl in "$PKG_DIR/skills/claude/.claude/commands/"*.md; do
+    verb=$(basename "$tmpl" .md)
+    cp "$tmpl" "$CLAUDE_DIR/commands/kgx:${verb}.md"
+  done
+  printf 'Installed KGX skills+commands to ~/.claude/\n'
+fi
+
 if command -v claude >/dev/null 2>&1; then
   claude mcp remove kgx 2>/dev/null || true
   claude mcp add --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
