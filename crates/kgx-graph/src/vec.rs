@@ -13,7 +13,9 @@ pub fn register_global() {
                 *mut *const std::os::raw::c_char,
                 *const rusqlite::ffi::sqlite3_api_routines,
             ) -> i32,
-        >(sqlite_vec::sqlite3_vec_init as *const ())));
+        >(
+            sqlite_vec::sqlite3_vec_init as *const ()
+        )));
     }
 }
 
