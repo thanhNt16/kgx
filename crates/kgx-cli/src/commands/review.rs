@@ -45,6 +45,51 @@ fn review_log_line(diff: &ProposedDiff, action: &str) -> String {
     .to_string()
 }
 
+/// Walk `staged` one diff at a time, prompting the operator for an
+/// approve/reject/skip/quit choice. Returns `(approve_ids, reject_ids)`.
+/// `q` or EOF stops early leaving the remaining diffs untouched.
+pub(crate) fn interactive_choices(
+    staged: &[ProposedDiff],
+    input: &mut dyn std::io::BufRead,
+    out: &mut dyn std::io::Write,
+) -> std::io::Result<(BTreeSet<String>, BTreeSet<String>)> {
+    let mut approve = BTreeSet::new();
+    let mut reject = BTreeSet::new();
+    let total = staged.len();
+    for (i, d) in staged.iter().enumerate() {
+        let sev = format!("{:?}", d.severity).to_lowercase();
+        let files: Vec<&str> = d.files.iter().map(|f| f.rel_path.as_str()).collect();
+        writeln!(
+            out,
+            "[{}/{}] {} · {:?} · severity={}\n  {}\n  files: {}",
+            i + 1,
+            total,
+            d.pass,
+            d.kind,
+            sev,
+            d.rationale,
+            files.join(", ")
+        )?;
+        write!(out, "  [a]pprove / [r]eject / [s]kip / [q]uit > ")?;
+        out.flush()?;
+        let mut line = String::new();
+        if input.read_line(&mut line)? == 0 {
+            break; // EOF = quit
+        }
+        match line.trim().to_ascii_lowercase().as_str() {
+            "a" => {
+                approve.insert(d.id.clone());
+            }
+            "r" => {
+                reject.insert(d.id.clone());
+            }
+            "q" => break,
+            _ => {} // skip
+        }
+    }
+    Ok((approve, reject))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -102,6 +147,25 @@ mod tests {
             Action::Keep
         ));
     }
+
+    #[test]
+    fn interactive_collects_choices_and_quits_early() {
+        let staged = vec![
+            diff("A", Severity::Soft),
+            diff("B", Severity::Soft),
+            diff("C", Severity::Hard),
+            diff("D", Severity::Soft),
+        ];
+        // approve A, reject B, skip C, quit before D
+        let mut input = std::io::Cursor::new(b"a\nr\ns\nq\n".to_vec());
+        let mut out = Vec::new();
+        let (approve, reject) = interactive_choices(&staged, &mut input, &mut out).unwrap();
+        assert_eq!(approve, ["A".to_string()].into());
+        assert_eq!(reject, ["B".to_string()].into());
+        let shown = String::from_utf8(out).unwrap();
+        assert!(shown.contains("[1/4]"));
+        assert!(shown.contains("hard"), "severity must be shown");
+    }
 }
 
 pub fn run(
@@ -111,16 +175,31 @@ pub fn run(
     interactive: bool,
     ponytail_audit: bool,
 ) -> anyhow::Result<()> {
-    if interactive {
+    let start = Instant::now();
+    let root = std::env::current_dir()?;
+    let staged_path = root.join(".kg/staged_diffs.json");
+
+    let (approve, reject) = if interactive {
         use std::io::IsTerminal;
         if !std::io::stdin().is_terminal() {
             anyhow::bail!("--interactive requires a terminal (stdin is not a TTY)");
         }
-        // Interactive TUI not yet implemented; fall through to non-interactive
-    }
-    let start = Instant::now();
-    let root = std::env::current_dir()?;
-    let staged_path = root.join(".kg/staged_diffs.json");
+        let staged_now: Vec<ProposedDiff> = if staged_path.exists() {
+            serde_json::from_str(&std::fs::read_to_string(&staged_path)?)?
+        } else {
+            vec![]
+        };
+        let mut stdin = std::io::stdin().lock();
+        let mut stdout = std::io::stdout();
+        let (a, r) = interactive_choices(&staged_now, &mut stdin, &mut stdout)?;
+        (
+            Some(a.into_iter().collect::<Vec<_>>().join(",")),
+            Some(r.into_iter().collect::<Vec<_>>().join(",")),
+        )
+    } else {
+        (approve, reject)
+    };
+
     let staged: Vec<ProposedDiff> = if staged_path.exists() {
         serde_json::from_str(&std::fs::read_to_string(&staged_path)?)?
     } else {
