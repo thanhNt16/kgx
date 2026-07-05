@@ -10,6 +10,7 @@ pub struct StatusSnapshot {
     pub pending_diffs: usize,
     pub last_index: Option<String>,
     pub last_dream: Option<String>,
+    pub embedder: String,
 }
 
 pub fn snapshot() -> anyhow::Result<StatusSnapshot> {
@@ -41,6 +42,7 @@ pub fn snapshot() -> anyhow::Result<StatusSnapshot> {
         pending_diffs,
         last_index: meta["last_index"].as_str().map(ToOwned::to_owned),
         last_dream: meta["last_dream"].as_str().map(ToOwned::to_owned),
+        embedder: kgx_llm::select::embedder_label(),
     })
 }
 
@@ -49,9 +51,17 @@ pub fn run(json: bool, _verbose: bool) -> anyhow::Result<()> {
     let snap = snapshot()?;
     emit("status", snap, json, start, |s| {
         println!(
-            "nodes={} edges={} orphans={} pending={}",
-            s.nodes, s.edges, s.orphans, s.pending_diffs
+            "nodes={} edges={} orphans={} pending={} embedder={}",
+            s.nodes, s.edges, s.orphans, s.pending_diffs, s.embedder
         )
     });
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn embedder_label_is_never_empty() {
+        assert!(!kgx_llm::select::embedder_label().is_empty());
+    }
 }
