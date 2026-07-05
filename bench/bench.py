@@ -122,6 +122,7 @@ def run_with_kgx(gold):
         per_query.append({
             "question": q,
             "category": entry.get("category", "?"),
+            "cohort": entry.get("cohort", "v1"),
             "evidence_sprint": entry.get("evidence_sprint", 0),
             **m,
             "latency_ms": round(latency_ms, 2),
@@ -199,9 +200,71 @@ def run_without_kgx(gold):
     agg["median_latency_ms"] = 0  # human time, not measured here
     return {"aggregate": agg, "per_query": per_query}
 
+FLOORS = {
+    "v1_recall_at_5": 0.85,
+    "vocab-mismatch": 0.70,
+    "multi-hop": 0.60,
+    "temporal": 0.60,
+    "entity-relation": 0.70,
+    "p95_latency_ms": 200.0,
+}
+
+def by_category(per_query):
+    cats = {}
+    for q in per_query:
+        cats.setdefault(q["category"], []).append(q)
+    return {
+        c: {
+            "n": len(qs),
+            "recall_at_5": round(sum(q["recall"] for q in qs) / len(qs), 4),
+            "mrr": round(sum(q["mrr"] for q in qs) / len(qs), 4),
+        }
+        for c, qs in cats.items()
+    }
+
+def check_gates(with_kgx):
+    per_query = with_kgx["per_query"]
+    cats = by_category(per_query)
+    v1 = [q for q in per_query if q.get("cohort", "v1") == "v1"]
+    checks = []
+    v1_recall = sum(q["recall"] for q in v1) / len(v1) if v1 else 0.0
+    checks.append({"gate": "v1_recall_at_5", "value": round(v1_recall, 4),
+                   "floor": FLOORS["v1_recall_at_5"], "pass": v1_recall >= FLOORS["v1_recall_at_5"]})
+    for cat in ("vocab-mismatch", "multi-hop", "temporal", "entity-relation"):
+        if cat in cats:
+            v = cats[cat]["recall_at_5"]
+            checks.append({"gate": cat, "value": v, "floor": FLOORS[cat], "pass": v >= FLOORS[cat]})
+    p95 = with_kgx["aggregate"].get("p95_latency_ms", 0)
+    checks.append({"gate": "p95_latency_ms", "value": p95,
+                   "floor": FLOORS["p95_latency_ms"], "pass": p95 < FLOORS["p95_latency_ms"]})
+    return {"passed": all(c["pass"] for c in checks), "checks": checks}
+
 def main():
+    # Parse flags before positional args
+    want_category = None
+    want_gates = False
+    if "--category" in sys.argv:
+        i = sys.argv.index("--category")
+        want_category = sys.argv[i + 1]
+        del sys.argv[i:i+2]
+    if "--gates" in sys.argv:
+        i = sys.argv.index("--gates")
+        want_gates = True
+        del sys.argv[i]
+
+    # Re-read args (positional are now clean)
+    global VAULT, GOLD, OUT_JSON
+    if len(sys.argv) > 1:
+        VAULT = sys.argv[1]
+    if len(sys.argv) > 2:
+        GOLD = sys.argv[2]
+    if len(sys.argv) > 3:
+        OUT_JSON = sys.argv[3]
+
     with open(GOLD) as f:
         gold = json.load(f)
+    if want_category:
+        gold = [e for e in gold if e.get("category") == want_category]
     print(f"# KGX Benchmark — vault={VAULT}  gold={len(gold)} questions  k={K}")
     print()
     with_kgx = run_with_kgx(gold)
@@ -229,6 +292,23 @@ def main():
               f"{q['precision']:>6.2f} {q['recall']:>6.2f} {q['mrr']:>6.2f} {q['ndcg']:>6.2f} "
               f"{q['latency_ms']:>7.1f}  {q['question'][:50]}")
     print()
+
+    with_kgx["by_category"] = by_category(with_kgx["per_query"])
+    with_kgx["gates"] = check_gates(with_kgx)
+    print()
+    print("## Per-category recall@5")
+    print(f"{'category':<22} {'n':>4} {'recall@5':>10} {'mrr':>8}")
+    print("-" * 46)
+    for c, v in sorted(with_kgx["by_category"].items()):
+        print(f"{c:<22} {v['n']:>4} {v['recall_at_5']:>10.4f} {v['mrr']:>8.4f}")
+    print()
+    print("## Gates")
+    for c in with_kgx["gates"]["checks"]:
+        status = "PASS" if c["pass"] else "FAIL"
+        print(f"  {c['gate']:<22} {c['value']:>8.4f}  ≥ {str(c['floor']):>7}  {status}")
+    print(f"  {'>> overall':<22} {'':>8} {'':>8}  {'PASS' if with_kgx['gates']['passed'] else 'FAIL'}")
+    if want_gates and not with_kgx["gates"]["passed"]:
+        sys.exit(1)
 
     results = {
         "config": {"vault": VAULT, "gold": GOLD, "k": K, "questions": len(gold)},
