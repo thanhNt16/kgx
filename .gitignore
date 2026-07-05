@@ -9,10 +9,7 @@ graph.html
 raw/
 notes/
 log.md
-/.claude/*
-!/.claude/commands/
-!/.claude/settings.json
-!/.claude/skills/
+/.claude/
 .kgx/
 
 # Build/experiment artifacts
