@@ -231,6 +231,9 @@ mod tests {
         }
 
         let err = remove("rmtest").unwrap_err().to_string();
-        assert!(err.contains("rmtest"), "error should name the missing unit: {err}");
+        assert!(
+            err.contains("rmtest"),
+            "error should name the missing unit: {err}"
+        );
     }
 }

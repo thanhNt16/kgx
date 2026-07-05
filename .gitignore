@@ -17,3 +17,5 @@ log.md
 .cellockai/
 .codex/
 .cursor/
+.codebase-memory/
+token.json

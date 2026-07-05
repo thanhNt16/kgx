@@ -61,7 +61,11 @@ pub fn embed_choice(var: Option<&str>, semantic_built: bool, candle_built: bool)
 /// Human-readable label for `kg status` / warnings.
 pub fn embedder_label() -> String {
     let var = std::env::var("KGX_EMBED").ok();
-    match embed_choice(var.as_deref(), cfg!(feature = "semantic"), cfg!(feature = "candle")) {
+    match embed_choice(
+        var.as_deref(),
+        cfg!(feature = "semantic"),
+        cfg!(feature = "candle"),
+    ) {
         EmbedChoice::FastEmbed => "fastembed (semantic)".into(),
         EmbedChoice::MiniLm => "minilm (semantic)".into(),
         EmbedChoice::Off => "off (keyword-only, explicit)".into(),
@@ -71,7 +75,11 @@ pub fn embedder_label() -> String {
 
 pub fn embedder_from_env() -> Box<dyn Embedder> {
     let var = std::env::var("KGX_EMBED").ok();
-    let choice = embed_choice(var.as_deref(), cfg!(feature = "semantic"), cfg!(feature = "candle"));
+    let choice = embed_choice(
+        var.as_deref(),
+        cfg!(feature = "semantic"),
+        cfg!(feature = "candle"),
+    );
     match choice {
         #[cfg(feature = "candle")]
         EmbedChoice::MiniLm => match kgx_graph::embed::MiniLmEmbedder::load() {
@@ -123,10 +131,19 @@ mod tests {
 
     #[test]
     fn embed_choice_explicit_backends() {
-        assert_eq!(embed_choice(Some("fastembed"), true, false), EmbedChoice::FastEmbed);
-        assert_eq!(embed_choice(Some("minilm"), true, true), EmbedChoice::MiniLm);
+        assert_eq!(
+            embed_choice(Some("fastembed"), true, false),
+            EmbedChoice::FastEmbed
+        );
+        assert_eq!(
+            embed_choice(Some("minilm"), true, true),
+            EmbedChoice::MiniLm
+        );
         // requesting a backend that isn't compiled in falls back to mock
-        assert_eq!(embed_choice(Some("fastembed"), false, false), EmbedChoice::Mock);
+        assert_eq!(
+            embed_choice(Some("fastembed"), false, false),
+            EmbedChoice::Mock
+        );
         assert_eq!(embed_choice(Some("minilm"), true, false), EmbedChoice::Mock);
     }
 }

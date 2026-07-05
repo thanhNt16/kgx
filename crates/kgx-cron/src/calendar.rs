@@ -44,7 +44,13 @@ pub fn parse_calendar(s: &str) -> Result<Schedule> {
     match s.to_ascii_lowercase().as_str() {
         "hourly" => return Ok(Schedule::Hourly { minute: 0 }),
         "daily" => return Ok(Schedule::Daily { hour: 0, minute: 0 }),
-        "weekly" => return Ok(Schedule::Weekly { weekday: 1, hour: 0, minute: 0 }),
+        "weekly" => {
+            return Ok(Schedule::Weekly {
+                weekday: 1,
+                hour: 0,
+                minute: 0,
+            })
+        }
         _ => {}
     }
     // "HH:MM"
@@ -62,7 +68,11 @@ pub fn parse_calendar(s: &str) -> Result<Schedule> {
         if let Some(wd) = weekday_num(day) {
             if let Some(rest) = rest.trim().strip_prefix("*-*-*") {
                 if let Some((h, m)) = parse_hms(rest.trim()) {
-                    return Ok(Schedule::Weekly { weekday: wd, hour: h, minute: m });
+                    return Ok(Schedule::Weekly {
+                        weekday: wd,
+                        hour: h,
+                        minute: m,
+                    });
                 }
             }
         }
@@ -78,18 +88,37 @@ mod tests {
 
     #[test]
     fn parses_keywords() {
-        assert_eq!(parse_calendar("hourly").unwrap(), Schedule::Hourly { minute: 0 });
-        assert_eq!(parse_calendar("daily").unwrap(), Schedule::Daily { hour: 0, minute: 0 });
+        assert_eq!(
+            parse_calendar("hourly").unwrap(),
+            Schedule::Hourly { minute: 0 }
+        );
+        assert_eq!(
+            parse_calendar("daily").unwrap(),
+            Schedule::Daily { hour: 0, minute: 0 }
+        );
         assert_eq!(
             parse_calendar("weekly").unwrap(),
-            Schedule::Weekly { weekday: 1, hour: 0, minute: 0 }
+            Schedule::Weekly {
+                weekday: 1,
+                hour: 0,
+                minute: 0
+            }
         );
     }
 
     #[test]
     fn parses_hh_mm() {
-        assert_eq!(parse_calendar("03:00").unwrap(), Schedule::Daily { hour: 3, minute: 0 });
-        assert_eq!(parse_calendar("23:59").unwrap(), Schedule::Daily { hour: 23, minute: 59 });
+        assert_eq!(
+            parse_calendar("03:00").unwrap(),
+            Schedule::Daily { hour: 3, minute: 0 }
+        );
+        assert_eq!(
+            parse_calendar("23:59").unwrap(),
+            Schedule::Daily {
+                hour: 23,
+                minute: 59
+            }
+        );
     }
 
     #[test]
@@ -104,11 +133,19 @@ mod tests {
     fn parses_systemd_weekday() {
         assert_eq!(
             parse_calendar("Mon *-*-* 09:30:00").unwrap(),
-            Schedule::Weekly { weekday: 1, hour: 9, minute: 30 }
+            Schedule::Weekly {
+                weekday: 1,
+                hour: 9,
+                minute: 30
+            }
         );
         assert_eq!(
             parse_calendar("sun *-*-* 00:00:00").unwrap(),
-            Schedule::Weekly { weekday: 0, hour: 0, minute: 0 }
+            Schedule::Weekly {
+                weekday: 0,
+                hour: 0,
+                minute: 0
+            }
         );
     }
 
