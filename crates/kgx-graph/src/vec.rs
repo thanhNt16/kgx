@@ -6,9 +6,14 @@ use rusqlite::Connection;
 /// Must be called once before any Brain connections are opened.
 pub fn register_global() {
     unsafe {
-        rusqlite::ffi::sqlite3_auto_extension(Some(std::mem::transmute(
-            sqlite_vec::sqlite3_vec_init as *const (),
-        )));
+        rusqlite::ffi::sqlite3_auto_extension(Some(std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                *mut rusqlite::ffi::sqlite3,
+                *mut *const std::os::raw::c_char,
+                *const rusqlite::ffi::sqlite3_api_routines,
+            ) -> i32,
+        >(sqlite_vec::sqlite3_vec_init as *const ())));
     }
 }
 
