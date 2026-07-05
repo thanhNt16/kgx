@@ -160,20 +160,62 @@ fn write_skills(root: &std::path::Path) -> anyhow::Result<()> {
 
 fn write_commands(root: &std::path::Path) -> anyhow::Result<()> {
     const CMDS: &[(&str, &str)] = &[
-        ("ask", include_str!("../../../../skills/claude/.claude/commands/ask.md")),
-        ("capture", include_str!("../../../../skills/claude/.claude/commands/capture.md")),
-        ("dream", include_str!("../../../../skills/claude/.claude/commands/dream.md")),
-        ("extract", include_str!("../../../../skills/claude/.claude/commands/extract.md")),
-        ("index", include_str!("../../../../skills/claude/.claude/commands/index.md")),
-        ("ingest", include_str!("../../../../skills/claude/.claude/commands/ingest.md")),
-        ("init", include_str!("../../../../skills/claude/.claude/commands/init.md")),
-        ("link", include_str!("../../../../skills/claude/.claude/commands/link.md")),
-        ("recall", include_str!("../../../../skills/claude/.claude/commands/recall.md")),
-        ("review", include_str!("../../../../skills/claude/.claude/commands/review.md")),
-        ("search", include_str!("../../../../skills/claude/.claude/commands/search.md")),
-        ("ship", include_str!("../../../../skills/claude/.claude/commands/ship.md")),
-        ("status", include_str!("../../../../skills/claude/.claude/commands/status.md")),
-        ("sync", include_str!("../../../../skills/claude/.claude/commands/sync.md")),
+        (
+            "ask",
+            include_str!("../../../../skills/claude/.claude/commands/ask.md"),
+        ),
+        (
+            "capture",
+            include_str!("../../../../skills/claude/.claude/commands/capture.md"),
+        ),
+        (
+            "dream",
+            include_str!("../../../../skills/claude/.claude/commands/dream.md"),
+        ),
+        (
+            "extract",
+            include_str!("../../../../skills/claude/.claude/commands/extract.md"),
+        ),
+        (
+            "index",
+            include_str!("../../../../skills/claude/.claude/commands/index.md"),
+        ),
+        (
+            "ingest",
+            include_str!("../../../../skills/claude/.claude/commands/ingest.md"),
+        ),
+        (
+            "init",
+            include_str!("../../../../skills/claude/.claude/commands/init.md"),
+        ),
+        (
+            "link",
+            include_str!("../../../../skills/claude/.claude/commands/link.md"),
+        ),
+        (
+            "recall",
+            include_str!("../../../../skills/claude/.claude/commands/recall.md"),
+        ),
+        (
+            "review",
+            include_str!("../../../../skills/claude/.claude/commands/review.md"),
+        ),
+        (
+            "search",
+            include_str!("../../../../skills/claude/.claude/commands/search.md"),
+        ),
+        (
+            "ship",
+            include_str!("../../../../skills/claude/.claude/commands/ship.md"),
+        ),
+        (
+            "status",
+            include_str!("../../../../skills/claude/.claude/commands/status.md"),
+        ),
+        (
+            "sync",
+            include_str!("../../../../skills/claude/.claude/commands/sync.md"),
+        ),
     ];
     let cmds_dir = root.join(".claude/commands");
     std::fs::create_dir_all(&cmds_dir)?;
