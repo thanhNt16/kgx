@@ -1,6 +1,7 @@
 ---
 name: kgx
 description: Use when working with a KGX knowledge vault: capture sources, extract atomic facts, ask graph questions, run dream consolidation, and review staged diffs.
+disable-model-invocation: true
 ---
 
 # KGX Knowledge Graph
