@@ -23,25 +23,34 @@ fn shell_exec(cmd: &str) -> String {
     format!("/bin/sh -lc '{}'", cmd.replace('\'', "'\\''"))
 }
 
-pub fn render_launchd(j: &Job) -> String {
-    let (h, m) = j.calendar.split_once(':').unwrap_or(("3", "0"));
-    let hour = h.trim_start_matches('0');
-    let minute = m.trim_start_matches('0');
-    let hour = if hour.is_empty() { "0" } else { hour };
-    let minute = if minute.is_empty() { "0" } else { minute };
-    format!(
+use crate::calendar::{parse_calendar, Schedule};
+use kgx_core::Result;
+
+pub fn render_launchd(j: &Job) -> Result<String> {
+    let sched = parse_calendar(&j.calendar)?;
+    let interval = match sched {
+        Schedule::Hourly { minute } => {
+            format!("<dict><key>Minute</key><integer>{minute}</integer></dict>")
+        }
+        Schedule::Daily { hour, minute } => format!(
+            "<dict><key>Hour</key><integer>{hour}</integer><key>Minute</key><integer>{minute}</integer></dict>"
+        ),
+        Schedule::Weekly { weekday, hour, minute } => format!(
+            "<dict><key>Weekday</key><integer>{weekday}</integer><key>Hour</key><integer>{hour}</integer><key>Minute</key><integer>{minute}</integer></dict>"
+        ),
+    };
+    Ok(format!(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n\
 <plist version=\"1.0\"><dict>\n\
   <key>Label</key><string>sh.kgx.{name}</string>\n\
   <key>ProgramArguments</key><array><string>/bin/sh</string><string>-lc</string><string>{cmd}</string></array>\n\
-  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>{h}</integer><key>Minute</key><integer>{m}</integer></dict>\n\
+  <key>StartCalendarInterval</key>{interval}\n\
 </dict></plist>\n",
         name = j.name,
         cmd = j.command,
-        h = hour,
-        m = minute,
-    )
+        interval = interval,
+    ))
 }
 
 #[cfg(test)]
@@ -61,14 +70,68 @@ mod tests {
     }
 
     #[test]
-    fn launchd_plist_has_calendar_interval() {
+    fn launchd_plist_daily_hh_mm() {
         let j = Job {
             name: "dream-nightly".into(),
             command: "kg dream".into(),
             calendar: "03:00".into(),
         };
-        let plist = render_launchd(&j);
+        let plist = render_launchd(&j).unwrap();
         assert!(plist.contains("StartCalendarInterval"));
-        assert!(plist.contains("<integer>3</integer>"));
+        assert!(plist.contains("<key>Hour</key><integer>3</integer>"));
+        assert!(plist.contains("<key>Minute</key><integer>0</integer>"));
+    }
+
+    #[test]
+    fn launchd_plist_hourly_has_no_hour_key() {
+        let j = Job {
+            name: "gc".into(),
+            command: "kg index".into(),
+            calendar: "hourly".into(),
+        };
+        let plist = render_launchd(&j).unwrap();
+        assert!(plist.contains("<key>Minute</key><integer>0</integer>"));
+        assert!(
+            !plist.contains("<key>Hour</key>"),
+            "hourly must omit Hour so launchd fires every hour"
+        );
+    }
+
+    #[test]
+    fn launchd_plist_weekly_has_weekday() {
+        let j = Job {
+            name: "wk".into(),
+            command: "kg dream".into(),
+            calendar: "Mon *-*-* 09:30:00".into(),
+        };
+        let plist = render_launchd(&j).unwrap();
+        assert!(plist.contains("<key>Weekday</key><integer>1</integer>"));
+        assert!(plist.contains("<key>Hour</key><integer>9</integer>"));
+        assert!(plist.contains("<key>Minute</key><integer>30</integer>"));
+    }
+
+    #[test]
+    fn launchd_rejects_unsupported_instead_of_malformed_plist() {
+        let j = Job {
+            name: "bad".into(),
+            command: "kg dream".into(),
+            calendar: "*/5 * * * *".into(),
+        };
+        assert!(render_launchd(&j).is_err());
+    }
+
+    #[test]
+    fn systemd_syntax_no_longer_renders_malformed_launchd_hour() {
+        let j = Job {
+            name: "sysd".into(),
+            command: "kg dream".into(),
+            calendar: "*-*-* 03:00:00".into(),
+        };
+        let plist = render_launchd(&j).unwrap();
+        assert!(plist.contains("<key>Hour</key><integer>3</integer>"));
+        assert!(
+            !plist.contains("*-*-*"),
+            "raw systemd tokens must never leak into a plist"
+        );
     }
 }

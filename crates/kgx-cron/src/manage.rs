@@ -40,6 +40,8 @@ fn launchd_dir() -> PathBuf {
 }
 
 pub fn add(job: &Job) -> Result<Vec<PathBuf>> {
+    // Validate the calendar on every platform before writing any file.
+    crate::calendar::parse_calendar(&job.calendar)?;
     match Platform::detect() {
         Platform::Linux => {
             let d = systemd_dir();
@@ -67,7 +69,7 @@ pub fn add(job: &Job) -> Result<Vec<PathBuf>> {
                 source: e,
             })?;
             let p = d.join(format!("sh.kgx.{}.plist", job.name));
-            std::fs::write(&p, render_launchd(job)).map_err(|e| KgError::Io {
+            std::fs::write(&p, render_launchd(job)?).map_err(|e| KgError::Io {
                 path: p.display().to_string(),
                 source: e,
             })?;
