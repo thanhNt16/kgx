@@ -90,84 +90,6 @@ pub(crate) fn interactive_choices(
     Ok((approve, reject))
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use kgx_core::diff::DiffKind;
-
-    fn diff(id: &str, sev: Severity) -> ProposedDiff {
-        ProposedDiff {
-            id: id.into(),
-            pass: "dedup".into(),
-            kind: DiffKind::Merge,
-            severity: sev,
-            rationale: "t".into(),
-            files: vec![],
-        }
-    }
-
-    #[test]
-    fn reject_ids_win_over_approve_all() {
-        let d = diff("A", Severity::Soft);
-        let rej: BTreeSet<String> = ["A".to_string()].into();
-        assert!(matches!(
-            resolve_action(&d, true, &BTreeSet::new(), false, &rej),
-            Action::Reject
-        ));
-    }
-
-    #[test]
-    fn approve_all_skips_hard_but_explicit_id_applies() {
-        let d = diff("H", Severity::Hard);
-        assert!(matches!(
-            resolve_action(&d, true, &BTreeSet::new(), false, &BTreeSet::new()),
-            Action::Keep
-        ));
-        let ids: BTreeSet<String> = ["H".to_string()].into();
-        assert!(matches!(
-            resolve_action(&d, false, &ids, false, &BTreeSet::new()),
-            Action::Apply
-        ));
-    }
-
-    #[test]
-    fn reject_all_rejects_everything_including_hard() {
-        let d = diff("H", Severity::Hard);
-        assert!(matches!(
-            resolve_action(&d, false, &BTreeSet::new(), true, &BTreeSet::new()),
-            Action::Reject
-        ));
-    }
-
-    #[test]
-    fn untouched_diffs_are_kept() {
-        let d = diff("X", Severity::Soft);
-        assert!(matches!(
-            resolve_action(&d, false, &BTreeSet::new(), false, &BTreeSet::new()),
-            Action::Keep
-        ));
-    }
-
-    #[test]
-    fn interactive_collects_choices_and_quits_early() {
-        let staged = vec![
-            diff("A", Severity::Soft),
-            diff("B", Severity::Soft),
-            diff("C", Severity::Hard),
-            diff("D", Severity::Soft),
-        ];
-        // approve A, reject B, skip C, quit before D
-        let mut input = std::io::Cursor::new(b"a\nr\ns\nq\n".to_vec());
-        let mut out = Vec::new();
-        let (approve, reject) = interactive_choices(&staged, &mut input, &mut out).unwrap();
-        assert_eq!(approve, ["A".to_string()].into());
-        assert_eq!(reject, ["B".to_string()].into());
-        let shown = String::from_utf8(out).unwrap();
-        assert!(shown.contains("[1/4]"));
-        assert!(shown.contains("hard"), "severity must be shown");
-    }
-}
-
 pub fn run(
     json: bool,
     approve: Option<String>,
@@ -283,4 +205,82 @@ pub fn run(
         },
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use kgx_core::diff::DiffKind;
+
+    fn diff(id: &str, sev: Severity) -> ProposedDiff {
+        ProposedDiff {
+            id: id.into(),
+            pass: "dedup".into(),
+            kind: DiffKind::Merge,
+            severity: sev,
+            rationale: "t".into(),
+            files: vec![],
+        }
+    }
+
+    #[test]
+    fn reject_ids_win_over_approve_all() {
+        let d = diff("A", Severity::Soft);
+        let rej: BTreeSet<String> = ["A".to_string()].into();
+        assert!(matches!(
+            resolve_action(&d, true, &BTreeSet::new(), false, &rej),
+            Action::Reject
+        ));
+    }
+
+    #[test]
+    fn approve_all_skips_hard_but_explicit_id_applies() {
+        let d = diff("H", Severity::Hard);
+        assert!(matches!(
+            resolve_action(&d, true, &BTreeSet::new(), false, &BTreeSet::new()),
+            Action::Keep
+        ));
+        let ids: BTreeSet<String> = ["H".to_string()].into();
+        assert!(matches!(
+            resolve_action(&d, false, &ids, false, &BTreeSet::new()),
+            Action::Apply
+        ));
+    }
+
+    #[test]
+    fn reject_all_rejects_everything_including_hard() {
+        let d = diff("H", Severity::Hard);
+        assert!(matches!(
+            resolve_action(&d, false, &BTreeSet::new(), true, &BTreeSet::new()),
+            Action::Reject
+        ));
+    }
+
+    #[test]
+    fn untouched_diffs_are_kept() {
+        let d = diff("X", Severity::Soft);
+        assert!(matches!(
+            resolve_action(&d, false, &BTreeSet::new(), false, &BTreeSet::new()),
+            Action::Keep
+        ));
+    }
+
+    #[test]
+    fn interactive_collects_choices_and_quits_early() {
+        let staged = vec![
+            diff("A", Severity::Soft),
+            diff("B", Severity::Soft),
+            diff("C", Severity::Hard),
+            diff("D", Severity::Soft),
+        ];
+        // approve A, reject B, skip C, quit before D
+        let mut input = std::io::Cursor::new(b"a\nr\ns\nq\n".to_vec());
+        let mut out = Vec::new();
+        let (approve, reject) = interactive_choices(&staged, &mut input, &mut out).unwrap();
+        assert_eq!(approve, ["A".to_string()].into());
+        assert_eq!(reject, ["B".to_string()].into());
+        let shown = String::from_utf8(out).unwrap();
+        assert!(shown.contains("[1/4]"));
+        assert!(shown.contains("hard"), "severity must be shown");
+    }
 }
