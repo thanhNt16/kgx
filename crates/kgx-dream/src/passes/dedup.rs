@@ -8,18 +8,6 @@ use kgx_vault::write::render_note;
 
 const COSINE_THRESHOLD: f32 = 0.92;
 
-/// Compute cosine similarity between two vectors.
-fn cosine(a: &[f32], b: &[f32]) -> f32 {
-    let dot: f32 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
-    let na: f32 = a.iter().map(|x| x * x).sum::<f32>().sqrt();
-    let nb: f32 = b.iter().map(|x| x * x).sum::<f32>().sqrt();
-    if na < 1e-9 || nb < 1e-9 {
-        0.0
-    } else {
-        dot / (na * nb)
-    }
-}
-
 /// Find near-duplicate notes (cosine > threshold), ask LLM MERGE,
 /// keep canonical (lowest ULID), archive duplicate. ADD-only bias.
 pub async fn run(ctx: &DreamContext<'_>) -> Result<Vec<ProposedDiff>> {
@@ -48,7 +36,7 @@ pub async fn run(ctx: &DreamContext<'_>) -> Result<Vec<ProposedDiff>> {
             if merged.contains(&j) {
                 continue;
             }
-            let sim = cosine(&embeddings[i], &embeddings[j]);
+            let sim = super::cosine(&embeddings[i], &embeddings[j]);
             if sim < COSINE_THRESHOLD {
                 continue;
             }

@@ -1648,6 +1648,7 @@ dependencies = [
  "kgx-vault",
  "serde",
  "serde_json",
+ "serde_yaml",
  "tempfile",
  "tokio",
 ]
