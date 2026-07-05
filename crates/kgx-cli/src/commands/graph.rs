@@ -1,6 +1,6 @@
 use crate::output::emit;
 use kgx_graph::Brain;
-use kgx_viz::{dot, html, mermaid, model::from_brain};
+use kgx_viz::{cytoscape, dot, graphml, html, mermaid, model::from_brain};
 use std::{path::PathBuf, time::Instant};
 
 pub fn run(
@@ -15,15 +15,19 @@ pub fn run(
     let model = from_brain(&brain, filter.as_deref())?;
     let content = match format {
         "html" => html::render(&model),
+        "cytoscape" => cytoscape::render(&model),
+        "graphml" => graphml::render(&model),
         "mermaid" => mermaid::render(&model),
         "dot" => dot::render(&model),
         "obsidian" => obsidian_canvas(&model)?,
-        other => anyhow::bail!("unknown graph format: {other}"),
+        other => anyhow::bail!(
+            "unknown graph format: {other} (supported: html, cytoscape, graphml, mermaid, dot, obsidian)"
+        ),
     };
-    let ext = if format == "obsidian" {
-        "canvas"
-    } else {
-        format
+    let ext = match format {
+        "obsidian" => "canvas",
+        "cytoscape" => "html",
+        f => f,
     };
     let out = out.unwrap_or_else(|| root.join(format!("graph.{ext}")));
     std::fs::write(&out, content)?;
