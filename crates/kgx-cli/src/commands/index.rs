@@ -37,7 +37,10 @@ pub fn run(
     // Sparse (SPLADE) postings: post-build step.
     if let Some(sparse) = kgx_llm::select::sparse_from_env() {
         let target: Vec<&Note> = if rebuild_vectors || (incremental && !full) {
-            notes.iter().filter(|n| embedded_ids.contains(&n.fm.id)).collect()
+            notes
+                .iter()
+                .filter(|n| embedded_ids.contains(&n.fm.id))
+                .collect()
         } else {
             notes.iter().collect()
         };

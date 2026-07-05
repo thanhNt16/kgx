@@ -6,7 +6,11 @@ fn fixture_brain(dir: &std::path::Path) -> Brain {
     let notes_dir = dir.join("notes");
     std::fs::create_dir_all(&notes_dir).unwrap();
     for (slug, title, body) in [
-        ("a", "flink checkpoint tuning", "flink checkpoint interval set to 60s. See [[flink deployment]]"),
+        (
+            "a",
+            "flink checkpoint tuning",
+            "flink checkpoint interval set to 60s. See [[flink deployment]]",
+        ),
         ("b", "flink deployment", "flink runs on kubernetes"),
         ("c", "s3 lifecycle", "tier to glacier after 90 days"),
     ] {
@@ -68,7 +72,9 @@ fn no_reranker_means_no_rerank_signal() {
         },
     )
     .unwrap();
-    assert!(hits.iter().all(|h| !h.signals.contains(&"rerank".to_string())));
+    assert!(hits
+        .iter()
+        .all(|h| !h.signals.contains(&"rerank".to_string())));
 }
 
 #[test]
@@ -93,7 +99,8 @@ fn sparse_ranking_contributes_signal() {
     )
     .unwrap();
     assert!(
-        hits.iter().any(|h| h.signals.contains(&"sparse".to_string())),
+        hits.iter()
+            .any(|h| h.signals.contains(&"sparse".to_string())),
         "sparse signal expected: {hits:?}"
     );
 }

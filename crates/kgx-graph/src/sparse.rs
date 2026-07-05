@@ -3,11 +3,7 @@ use kgx_core::llm::{SparseEmbedder, SparseVec};
 use kgx_core::{KgError, Note, Result};
 use std::collections::HashMap;
 
-pub fn replace_sparse(
-    conn: &rusqlite::Connection,
-    note_id: &str,
-    sv: &SparseVec,
-) -> Result<()> {
+pub fn replace_sparse(conn: &rusqlite::Connection, note_id: &str, sv: &SparseVec) -> Result<()> {
     conn.execute(
         "DELETE FROM sparse_postings WHERE note_id=?1",
         rusqlite::params![note_id],
@@ -62,11 +58,7 @@ pub fn sparse_search(
 }
 
 /// Embed and store sparse postings for `notes`. Returns notes indexed.
-pub fn index_sparse(
-    brain: &Brain,
-    notes: &[&Note],
-    sparse: &dyn SparseEmbedder,
-) -> Result<usize> {
+pub fn index_sparse(brain: &Brain, notes: &[&Note], sparse: &dyn SparseEmbedder) -> Result<usize> {
     if notes.is_empty() {
         return Ok(0);
     }
@@ -109,7 +101,9 @@ mod tests {
         let (brain, _dir) = brain_with_temp();
         replace_sparse(brain.conn(), "X", &vec![(1, 1.0)]).unwrap();
         replace_sparse(brain.conn(), "X", &vec![(9, 1.0)]).unwrap();
-        assert!(sparse_search(&brain, &vec![(1, 1.0)], 10).unwrap().is_empty());
+        assert!(sparse_search(&brain, &vec![(1, 1.0)], 10)
+            .unwrap()
+            .is_empty());
         assert_eq!(sparse_search(&brain, &vec![(9, 1.0)], 10).unwrap().len(), 1);
     }
 }

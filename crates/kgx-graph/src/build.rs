@@ -322,8 +322,11 @@ pub fn build_incremental(
         .map_err(|e| KgError::Brain(e.to_string()))?;
         tx.execute("DELETE FROM edges WHERE src_id=?1", params![n.fm.id])
             .map_err(|e| KgError::Brain(e.to_string()))?;
-        tx.execute("DELETE FROM sparse_postings WHERE note_id=?1", params![n.fm.id])
-            .map_err(|e| KgError::Brain(e.to_string()))?;
+        tx.execute(
+            "DELETE FROM sparse_postings WHERE note_id=?1",
+            params![n.fm.id],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
     }
     let all_edges = derive_edges(notes);
     for e in all_edges

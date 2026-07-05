@@ -278,8 +278,7 @@ mod tests {
 
     #[test]
     fn entity_seeds_respect_cap() {
-        let scored: Vec<(String, f32)> =
-            (0..10).map(|i| (format!("e{i}"), 0.9)).collect();
+        let scored: Vec<(String, f32)> = (0..10).map(|i| (format!("e{i}"), 0.9)).collect();
         assert_eq!(select_entity_seeds(&scored, 0.60, 5).len(), 5);
     }
 }
