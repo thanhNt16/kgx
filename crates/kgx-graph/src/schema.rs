@@ -1,4 +1,4 @@
-pub const SCHEMA_VERSION: i32 = 2;
+pub const SCHEMA_VERSION: i32 = 3;
 
 pub const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS notes (
@@ -18,4 +18,8 @@ CREATE TABLE IF NOT EXISTS schema_version (version INTEGER PRIMARY KEY, applied_
 CREATE INDEX IF NOT EXISTS idx_edges_src ON edges(src_id);
 CREATE INDEX IF NOT EXISTS idx_edges_dst ON edges(dst_id);
 CREATE INDEX IF NOT EXISTS idx_notes_type ON notes(type);
+CREATE TABLE IF NOT EXISTS sparse_postings (
+  term_id INTEGER NOT NULL, note_id TEXT NOT NULL, weight REAL NOT NULL,
+  PRIMARY KEY (term_id, note_id));
+CREATE INDEX IF NOT EXISTS idx_sparse_note ON sparse_postings(note_id);
 "#;

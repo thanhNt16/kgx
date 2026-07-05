@@ -10,6 +10,7 @@ pub mod pagerank;
 pub mod query;
 pub mod rerank;
 pub mod schema;
+pub mod sparse;
 pub mod vec;
 
 pub use brain::Brain;

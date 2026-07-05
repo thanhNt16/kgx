@@ -177,8 +177,8 @@ pub fn build_full(
         .map_err(|e| KgError::Brain(e.to_string()))?;
     tx.execute_batch(
         "DELETE FROM notes; DELETE FROM edges; DELETE FROM notes_fts; \
-             DELETE FROM pagerank; DELETE FROM communities; DELETE FROM community_summaries; \
-             DELETE FROM notes_vec;",
+              DELETE FROM pagerank; DELETE FROM communities; DELETE FROM community_summaries; \
+              DELETE FROM notes_vec; DELETE FROM sparse_postings;",
     )
     .map_err(|e| KgError::Brain(e.to_string()))?;
     let texts: Vec<String> = notes
@@ -321,6 +321,8 @@ pub fn build_incremental(
         )
         .map_err(|e| KgError::Brain(e.to_string()))?;
         tx.execute("DELETE FROM edges WHERE src_id=?1", params![n.fm.id])
+            .map_err(|e| KgError::Brain(e.to_string()))?;
+        tx.execute("DELETE FROM sparse_postings WHERE note_id=?1", params![n.fm.id])
             .map_err(|e| KgError::Brain(e.to_string()))?;
     }
     let all_edges = derive_edges(notes);
