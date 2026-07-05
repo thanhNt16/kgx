@@ -11,6 +11,7 @@ pub struct StatusSnapshot {
     pub last_index: Option<String>,
     pub last_dream: Option<String>,
     pub embedder: String,
+    pub retrieval: String,
 }
 
 pub fn snapshot() -> anyhow::Result<StatusSnapshot> {
@@ -43,6 +44,7 @@ pub fn snapshot() -> anyhow::Result<StatusSnapshot> {
         last_index: meta["last_index"].as_str().map(ToOwned::to_owned),
         last_dream: meta["last_dream"].as_str().map(ToOwned::to_owned),
         embedder: kgx_llm::select::embedder_label(),
+        retrieval: kgx_llm::select::retrieval_label(),
     })
 }
 
@@ -51,8 +53,8 @@ pub fn run(json: bool, _verbose: bool) -> anyhow::Result<()> {
     let snap = snapshot()?;
     emit("status", snap, json, start, |s| {
         println!(
-            "nodes={} edges={} orphans={} pending={} embedder={}",
-            s.nodes, s.edges, s.orphans, s.pending_diffs, s.embedder
+            "nodes={} edges={} orphans={} pending={} embedder={}\nretrieval: {}",
+            s.nodes, s.edges, s.orphans, s.pending_diffs, s.embedder, s.retrieval
         )
     });
     Ok(())
@@ -63,5 +65,12 @@ mod tests {
     #[test]
     fn embedder_label_is_never_empty() {
         assert!(!kgx_llm::select::embedder_label().is_empty());
+    }
+
+    #[test]
+    fn retrieval_label_lists_stages() {
+        let label = kgx_llm::select::retrieval_label();
+        assert!(label.contains("bm25"), "always-on keyword stage: {label}");
+        assert!(label.contains("ppr"), "graph stage always listed: {label}");
     }
 }

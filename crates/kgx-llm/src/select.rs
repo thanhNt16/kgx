@@ -113,6 +113,28 @@ pub fn rerank_topk_from_env() -> usize {
         .unwrap_or(30)
 }
 
+/// One-line summary of active retrieval stages for `kg status`.
+pub fn retrieval_label() -> String {
+    let mut candidates = String::from("bm25+like+tags");
+    let var = std::env::var("KGX_EMBED").ok();
+    if matches!(
+        embed_choice(var.as_deref(), cfg!(feature = "semantic"), cfg!(feature = "candle")),
+        EmbedChoice::FastEmbed | EmbedChoice::MiniLm
+    ) {
+        candidates.push_str("+dense");
+    }
+    let rerank = {
+        let var = std::env::var("KGX_RERANK").ok();
+        let model = std::env::var("KGX_RERANK_MODEL").ok();
+        match rerank_choice(var.as_deref(), model.as_deref(), cfg!(feature = "semantic")) {
+            RerankChoice::Off => String::from("rerank(off)"),
+            RerankChoice::Mock => String::from("rerank(mock)"),
+            RerankChoice::FastEmbed(m) => format!("rerank({m})"),
+        }
+    };
+    format!("{candidates} | ppr | {rerank}")
+}
+
 /// Human-readable label for `kg status` / warnings.
 pub fn embedder_label() -> String {
     let var = std::env::var("KGX_EMBED").ok();
