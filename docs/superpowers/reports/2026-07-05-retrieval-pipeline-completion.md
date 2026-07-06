@@ -116,3 +116,49 @@ c944c83 feat(sparse): sparse_postings inverted index (schema v3) with dot-produc
 3. **The 2 zero-recall v2 questions** can be fixed by lowering the entity-seed
    threshold to 0.50 (task 13 tuning guidance) or by adding explicit BM25
    surface area in the note bodies
+
+---
+
+## 10k-node scale test
+
+Vault grown to **10,371 nodes / 19,940 edges** (50× the original) to check
+scaling behavior. Indexed with KGX_SPARSE=mock (FastEmbed SPLADE too slow for
+10k — ~60+ min on CPU). Same 45-question gold set.
+
+| Metric | 220-node | 10k-node | Δ |
+|--------|----------|----------|---|
+| recall@5 | 0.7333 | **0.2000** | −73% |
+| mrr | 0.6667 | **0.1452** | −78% |
+| p95 latency | 68.8ms | **308.9ms** | +349% |
+| median latency | 65.6ms | **291.4ms** | +344% |
+
+### Key finding: recall collapses at scale, latency holds
+
+Latency stays ~300ms because it's inference-bound (same ONNX model time per
+query regardless of index size). But recall drops from 0.73 to 0.20 — the
+dense embeddings have 50× more similar-looking notes competing for top-5
+fusion slots.
+
+### Per-category recall breakdown (10k)
+
+| Category | n | recall@5 | mrr |
+|----------|---|----------|-----|
+| entity-lookup | 2 | **1.0000** | 0.6000 |
+| fact-lookup | 2 | 0.5000 | 0.2500 |
+| entity-relation | 5 | 0.4000 | 0.3000 |
+| decision-lookup | 6 | 0.1667 | 0.1667 |
+| multi-hop | 10 | 0.2000 | 0.1333 |
+| vocab-mismatch | 10 | 0.1000 | 0.1000 |
+| experience-lookup | 4 | 0.0000 | 0.0000 |
+| incident-lookup | 1 | 0.0000 | 0.0000 |
+| temporal | 5 | 0.0000 | 0.0000 |
+
+Entity-lookup holds up perfectly (1.000). Everything else degrades heavily.
+
+### Investigation candidates
+
+1. **Rerank on** — cross-encoder might compensate for embedding noise at scale
+2. **Real SPLADE** — FastEmbed SPLADE (~60 min to index) could help vocab-mismatch
+3. **Fusion tuning** — per-signal k from 5→20, or adjust RRF weights
+4. **PPR tuning** — graph is 45× denser; PPR thresholds tuned for 220 nodes may
+   not generalize

@@ -1,0 +1,1567 @@
+{
+  "config": {
+    "vault": "/tmp/kgx-large-10k-vault",
+    "gold": "/tmp/kgx-corpus/gold.json",
+    "k": 5,
+    "questions": 45
+  },
+  "with_kgx": {
+    "aggregate": {
+      "n": 45,
+      "precision_at_5": 0.1244,
+      "recall_at_5": 0.2,
+      "f1_at_5": 0.1534,
+      "mrr": 0.1452,
+      "ndcg_at_5": 0.1589,
+      "hit_rate": 0.2,
+      "median_latency_ms": 291.36,
+      "p95_latency_ms": 308.86,
+      "total_context_chars": 10900
+    },
+    "per_query": [
+      {
+        "question": "Why did we choose Apache Iceberg over Delta Lake?",
+        "category": "decision-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 294.27,
+        "top_results": [
+          "01ABCAD6C3B7707DBE126303A8",
+          "01030F3F530E33B32D08876D34",
+          "01010845D2C0EE3726DE3CD467",
+          "0103670E9C5D51DEA90A202FCF",
+          "010143C1374B148E0310FE9E90"
+        ]
+      },
+      {
+        "question": "Who owns the Flink streaming infrastructure?",
+        "category": "entity-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 1,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 1,
+        "latency_ms": 292.75,
+        "top_results": [
+          "0194284434B838E97193D047AF",
+          "012FD179D8AA86B83CCCAED7A5",
+          "013329E646A2D7C05AEADAD557",
+          "015533D8F2B5B7266FF1EBB373",
+          "01C10BB7C433AE420D829E4D42"
+        ]
+      },
+      {
+        "question": "What was the billing_ledger backfill decision?",
+        "category": "decision-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 306.96,
+        "top_results": [
+          "010D09455D55B0327AC3BFFCF5",
+          "015BF22A51C12EF07F7494C19E",
+          "01C43F3C9B8788036355087D37",
+          "01BD8CD80AF27B0A736749723F",
+          "0155D9CAAF337E830DA21EB543"
+        ]
+      },
+      {
+        "question": "What causes Flink backpressure?",
+        "category": "experience-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 6,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 278.05,
+        "top_results": [
+          "01007A7DA95C1BF9ADA3437384",
+          "0101444039D2CFED0C3A16148F",
+          "01018A249E3C4EDDDD962B0D54",
+          "01038096F066786D59027BF3A8",
+          "01043278E1BDF6190CDCBF5D9B"
+        ]
+      },
+      {
+        "question": "How was the Trino OOM incident resolved?",
+        "category": "incident-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 13,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 289.54,
+        "top_results": [
+          "0100907AB1243802A4AF77E5C0",
+          "010129222CCD8807CBB5E11E78",
+          "01012F3F4A9D11BD86EDF6D36A",
+          "0102FA332060232F683940CA24",
+          "01035C012D1424A03279832E2A"
+        ]
+      },
+      {
+        "question": "What is the Iceberg compaction strategy?",
+        "category": "experience-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 24,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 304.74,
+        "top_results": [
+          "01320324B561C8780ED83673B3",
+          "016E1DB9E151C1AC9C8EBC3FBD",
+          "0172658575A7E1719017E61619",
+          "01D5A6637C59593AC645CEB878",
+          "01010845D2C0EE3726DE3CD467"
+        ]
+      },
+      {
+        "question": "Who decided to use Airflow for batch orchestration?",
+        "category": "decision-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 10,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 295.45,
+        "top_results": [
+          "0106A60C6507FE4FF746F460B0",
+          "015AB9E8309C37DCCCB138B456",
+          "015ED7EBB44E57B02D3D364B4F",
+          "0172B8A6961BBE767DC5F6E1EB",
+          "01BA455AC200536683D0CBFBD4"
+        ]
+      },
+      {
+        "question": "What is the Kafka exactly-once policy?",
+        "category": "decision-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 290.24,
+        "top_results": [
+          "010143C1374B148E0310FE9E90",
+          "0102DE8A24D1A75C23E2607F77",
+          "01055239D267C0AE1751A76B55",
+          "01061D50A3C6028D82EDD42743",
+          "010636640104DBB822C9A2229F"
+        ]
+      },
+      {
+        "question": "How is the Postgres billing_ledger risk handled?",
+        "category": "decision-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 289.2,
+        "top_results": [
+          "01B180B409F0E86F9DD4EE0020",
+          "010D09455D55B0327AC3BFFCF5",
+          "0155D9CAAF337E830DA21EB543",
+          "015BF22A51C12EF07F7494C19E",
+          "01BD8CD80AF27B0A736749723F"
+        ]
+      },
+      {
+        "question": "What did we learn about Airflow DAG idempotency?",
+        "category": "experience-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 12,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 282.64,
+        "top_results": [
+          "014C7FDBDE9ED10DA128391BAF",
+          "01A9B99756EA47C4ECE9F12DED",
+          "01A4D8CAC596FE5C7C8A816AA5",
+          "01E3CDB96779CF22D58897DDA2",
+          "011AF5DD88F332EBC094A062E3"
+        ]
+      },
+      {
+        "question": "Who is the Staff Engineer driving the Iceberg migration?",
+        "category": "entity-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 1,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 0.2,
+        "ndcg": 0.38685280723454163,
+        "hits": 1,
+        "latency_ms": 290.06,
+        "top_results": [
+          "010C8B43F8AF525529666D3E9E",
+          "01140D3285A325059128CE279F",
+          "01144161957564733D8C6B862C",
+          "011D8CBE216DDAFEFF6DE8841F",
+          "013A1021E47FB4967D7501F2E1"
+        ]
+      },
+      {
+        "question": "What is the S3 storage lifecycle policy?",
+        "category": "decision-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 12,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 303.81,
+        "top_results": [
+          "01CC36C661D36DBAA193534BDA",
+          "013A9F3652503B15AD3ED1A442",
+          "017CE05579009C4ABBD93D49A9",
+          "01A370CF34B2AD3EC8BFDD20B1",
+          "01B58F341FD90DF4AD04645A83"
+        ]
+      },
+      {
+        "question": "What is the Trino query latency target?",
+        "category": "fact-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 1,
+        "precision": 0.2,
+        "recall": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
+        "hits": 1,
+        "latency_ms": 289.99,
+        "top_results": [
+          "0105BC266EA57117330F0090F3",
+          "0102FA332060232F683940CA24",
+          "0106B23F0CFA38EFB4EA3F5783",
+          "01071D843F672B8B2273333FD9",
+          "0106ABD654306CD2EACDAF4545"
+        ]
+      },
+      {
+        "question": "What alerting did we add for billing pipeline failures?",
+        "category": "fact-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 293.94,
+        "top_results": [
+          "01B180B409F0E86F9DD4EE0020",
+          "010D09455D55B0327AC3BFFCF5",
+          "0155D9CAAF337E830DA21EB543",
+          "015BF22A51C12EF07F7494C19E",
+          "01BD8CD80AF27B0A736749723F"
+        ]
+      },
+      {
+        "question": "How was the Kafka consumer lag alerting improved?",
+        "category": "experience-lookup",
+        "cohort": "v1",
+        "evidence_sprint": 30,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 295.97,
+        "top_results": [
+          "0100A19A35DADAAA61F65EFEE5",
+          "0100DAA41FA494B3848A3F21BD",
+          "0100E69322B0A79151DE9A46F4",
+          "010111804AF55D4FBA6A039A69",
+          "0101F4A4804FDD32EA239B44EE"
+        ]
+      },
+      {
+        "question": "Which storage layer did the lakehouse standardize on?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 291.97,
+        "top_results": [
+          "01019FAAC4D7908BA22EFADBF9",
+          "0101EF54EDCC05EBC0AC9B562E",
+          "01074D86EFBF65E3C3B61A4EE5",
+          "010456C82EF9B2F0016D7E5FF7",
+          "01CC36C661D36DBAA193534BDA"
+        ]
+      },
+      {
+        "question": "How do we page the on-call when invoicing jobs break?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 323.76,
+        "top_results": [
+          "010015DD77D08BA5DC095ECB9C",
+          "0100482A8DBF172CA114F87C69",
+          "010038F7C4DEE621F90C4CC6AA",
+          "0100924793EEBB513E0CA18687",
+          "0100C064567C9B4A42FB9E2476"
+        ]
+      },
+      {
+        "question": "What slows down our stream processing jobs?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 6,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 283.6,
+        "top_results": [
+          "012FD179D8AA86B83CCCAED7A5",
+          "013329E646A2D7C05AEADAD557",
+          "015533D8F2B5B7266FF1EBB373",
+          "01C10BB7C433AE420D829E4D42",
+          "01E9E7666CDDB6157F7D954563"
+        ]
+      },
+      {
+        "question": "How quickly must analyst ad-hoc queries come back?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 284.48,
+        "top_results": [
+          "0125E6DF26C45A34DF942D6B22",
+          "016D1FC4E9EB5BCFA26593A8F8",
+          "01AC72B8E268F62B3DE42F6E43",
+          "01C684B46682DD1DF8A0087229",
+          "01D0CDD802C75B9ABAACB6A741"
+        ]
+      },
+      {
+        "question": "Where do old files get archived to cut costs?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 12,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 290.42,
+        "top_results": [
+          "014A971E92B111BDB81EA81688",
+          "011733CB1A35C21500861356D1",
+          "013D70C2066A69961466D4B403",
+          "014E203B173B02F16798D4EDD3",
+          "01003D60412735E00FBCACD2F1"
+        ]
+      },
+      {
+        "question": "How do we prevent duplicate charges flowing through the event bus?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 298.36,
+        "top_results": [
+          "01901095EC1E29548D17882C0E",
+          "01B3905F5B766F1261C636BC7C",
+          "01BF110D70E5A90EF210E1B705",
+          "01CEEE1B3BE49781146D9E8E26",
+          "01FDE9CCB748BF0F9BB9249FC7"
+        ]
+      },
+      {
+        "question": "Who handles paging and incident response?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 316.36,
+        "top_results": [
+          "0100704D1BD2EB74E6C3BFF631",
+          "010073E185B141B0F125214E30",
+          "01029183B26C7AF6B5F7F6CC66",
+          "01049866AD45B32962961CD059",
+          "01055431C237941F9D57E8411E"
+        ]
+      },
+      {
+        "question": "What tool did we standardize scheduled data jobs on?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 10,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 297.61,
+        "top_results": [
+          "0100924793EEBB513E0CA18687",
+          "01033BC2E2ABCD5D8D8FD84F64",
+          "010398EBA92D5BF2F5BF3FE915",
+          "010841B3A3E3BA720B8254A7C5",
+          "01098D4EB39EEA2CEF63E10014"
+        ]
+      },
+      {
+        "question": "Why do we merge small data files overnight?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 24,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 285.7,
+        "top_results": [
+          "010038F7C4DEE621F90C4CC6AA",
+          "0100924793EEBB513E0CA18687",
+          "01033BC2E2ABCD5D8D8FD84F64",
+          "01034F10350DE6D4D163206B49",
+          "010398EBA92D5BF2F5BF3FE915"
+        ]
+      },
+      {
+        "question": "What guards against double-charging customers when jobs retry?",
+        "category": "vocab-mismatch",
+        "cohort": "v2",
+        "evidence_sprint": 12,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 266.42,
+        "top_results": [
+          "0116F85938064B1D98BBAB29DB",
+          "0121B3AAFC0274A676CAD7CC10",
+          "018F031AFCD79BE39773025B86",
+          "01FD0C23CB8445C5F1476675A1",
+          "0180E940DAE46386C14C950120"
+        ]
+      },
+      {
+        "question": "Which storage-tiering decision did the Platform Lead record?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 12,
+        "precision": 0.6,
+        "recall": 1.0,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.5,
+        "hits": 3,
+        "latency_ms": 276.0,
+        "top_results": [
+          "013A9F3652503B15AD3ED1A442",
+          "017CE05579009C4ABBD93D49A9",
+          "0127C888119F666093D90231EC",
+          "012DEAC797C638A25CA3DDBCAD",
+          "0168C5E93B03CC2326D5DBB9CC"
+        ]
+      },
+      {
+        "question": "What did the Senior SRE learn about stream stability?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 6,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 292.54,
+        "top_results": [
+          "0121FB5D2ED147F39D8DDE2853",
+          "0155375D19DD4AD08CDEF68E9B",
+          "01A3A661176B6A3273E6B1A812",
+          "01F61CF0D55A682CC6DADD97FB",
+          "011AF5DD88F332EBC094A062E3"
+        ]
+      },
+      {
+        "question": "Which incident hit the federated query engine?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 13,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 285.98,
+        "top_results": [
+          "010C8B43F8AF525529666D3E9E",
+          "01140D3285A325059128CE279F",
+          "01144161957564733D8C6B862C",
+          "011D8CBE216DDAFEFF6DE8841F",
+          "013A1021E47FB4967D7501F2E1"
+        ]
+      },
+      {
+        "question": "What checkpoint tuning touched the event bus topic?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 290.24,
+        "top_results": [
+          "01901095EC1E29548D17882C0E",
+          "01B3905F5B766F1261C636BC7C",
+          "01BF110D70E5A90EF210E1B705",
+          "01CEEE1B3BE49781146D9E8E26",
+          "01FDE9CCB748BF0F9BB9249FC7"
+        ]
+      },
+      {
+        "question": "What work moved the page_views job onto the batch orchestrator?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 291.36,
+        "top_results": [
+          "0106A60C6507FE4FF746F460B0",
+          "015AB9E8309C37DCCCB138B456",
+          "015ED7EBB44E57B02D3D364B4F",
+          "0172B8A6961BBE767DC5F6E1EB",
+          "01BA455AC200536683D0CBFBD4"
+        ]
+      },
+      {
+        "question": "Which ADR protects the legacy OLTP billing table during cutover?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 291.11,
+        "top_results": [
+          "010D09455D55B0327AC3BFFCF5",
+          "01320324B561C8780ED83673B3",
+          "016E1DB9E151C1AC9C8EBC3FBD",
+          "0172658575A7E1719017E61619",
+          "01D5A6637C59593AC645CEB878"
+        ]
+      },
+      {
+        "question": "Who owns the ETL pipelines that feed the warehouse?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 289.0,
+        "top_results": [
+          "017CA05BC3977675C84D042A48",
+          "01C171F2FF2AA7256E077E4AB3",
+          "017F76AFBF414AC61E0C56458D",
+          "01C77FDE77500F4FA7A444A216",
+          "01FD0598A4F167E0E0A5FECDDA"
+        ]
+      },
+      {
+        "question": "Which decision came from the architecture owner about federated queries?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 6,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 284.32,
+        "top_results": [
+          "0125E6DF26C45A34DF942D6B22",
+          "016D1FC4E9EB5BCFA26593A8F8",
+          "01AC72B8E268F62B3DE42F6E43",
+          "01C684B46682DD1DF8A0087229",
+          "01D0CDD802C75B9ABAACB6A741"
+        ]
+      },
+      {
+        "question": "What alerting routes to the platform on-call rotation?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 306.81,
+        "top_results": [
+          "0100C064567C9B4A42FB9E2476",
+          "010015DD77D08BA5DC095ECB9C",
+          "010038F7C4DEE621F90C4CC6AA",
+          "0100482A8DBF172CA114F87C69",
+          "0100924793EEBB513E0CA18687"
+        ]
+      },
+      {
+        "question": "Which partition layout did the ETL engineer land for events?",
+        "category": "multi-hop",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 294.11,
+        "top_results": [
+          "010C8B43F8AF525529666D3E9E",
+          "01140D3285A325059128CE279F",
+          "01001960705C6DBCCA3D483FD5",
+          "01144161957564733D8C6B862C",
+          "011D8CBE216DDAFEFF6DE8841F"
+        ]
+      },
+      {
+        "question": "What decision replaced the Airflow batch orchestration ADR?",
+        "category": "temporal",
+        "cohort": "v2",
+        "evidence_sprint": 12,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 278.72,
+        "top_results": [
+          "0106A60C6507FE4FF746F460B0",
+          "015AB9E8309C37DCCCB138B456",
+          "015ED7EBB44E57B02D3D364B4F",
+          "01BA455AC200536683D0CBFBD4",
+          "0172B8A6961BBE767DC5F6E1EB"
+        ]
+      },
+      {
+        "question": "Which ADR revised the billing backfill approach?",
+        "category": "temporal",
+        "cohort": "v2",
+        "evidence_sprint": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 278.94,
+        "top_results": [
+          "010D09455D55B0327AC3BFFCF5",
+          "0155D9CAAF337E830DA21EB543",
+          "015BF22A51C12EF07F7494C19E",
+          "01C43F3C9B8788036355087D37",
+          "01BD8CD80AF27B0A736749723F"
+        ]
+      },
+      {
+        "question": "What is the current partition spec guidance for the events table?",
+        "category": "temporal",
+        "cohort": "v2",
+        "evidence_sprint": 20,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 286.97,
+        "top_results": [
+          "01320324B561C8780ED83673B3",
+          "016E1DB9E151C1AC9C8EBC3FBD",
+          "0100097415C458E0DEE2EDD038",
+          "0172658575A7E1719017E61619",
+          "010015DD77D08BA5DC095ECB9C"
+        ]
+      },
+      {
+        "question": "Which early cron-to-Airflow migration fact is now superseded?",
+        "category": "temporal",
+        "cohort": "v2",
+        "evidence_sprint": 22,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 278.22,
+        "top_results": [
+          "0168EBFBC069AECE85BFBD6DCD",
+          "018B2E2FC42EEBA650EC2B5381",
+          "01375F007F282A814E34A7A3B4",
+          "013777364CDFDE259270E75237",
+          "01E91B1D9F908DCD165BFD10BB"
+        ]
+      },
+      {
+        "question": "When did the original Trino catalog fact become stale?",
+        "category": "temporal",
+        "cohort": "v2",
+        "evidence_sprint": 24,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 298.4,
+        "top_results": [
+          "0100907AB1243802A4AF77E5C0",
+          "010129222CCD8807CBB5E11E78",
+          "01012F3F4A9D11BD86EDF6D36A",
+          "0102FA332060232F683940CA24",
+          "01035C012D1424A03279832E2A"
+        ]
+      },
+      {
+        "question": "Who is the Platform Lead?",
+        "category": "entity-relation",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 308.86,
+        "top_results": [
+          "010015DD77D08BA5DC095ECB9C",
+          "0100482A8DBF172CA114F87C69",
+          "0100C064567C9B4A42FB9E2476",
+          "010038F7C4DEE621F90C4CC6AA",
+          "01D256AF64BA523D6B00BAF298"
+        ]
+      },
+      {
+        "question": "Who owns SLOs and alerting?",
+        "category": "entity-relation",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.4,
+        "recall": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
+        "hits": 2,
+        "latency_ms": 310.93,
+        "top_results": [
+          "010015DD77D08BA5DC095ECB9C",
+          "010038F7C4DEE621F90C4CC6AA",
+          "0100482A8DBF172CA114F87C69",
+          "0100924793EEBB513E0CA18687",
+          "0100C064567C9B4A42FB9E2476"
+        ]
+      },
+      {
+        "question": "Who runs the Spark and Airflow ETL pipelines?",
+        "category": "entity-relation",
+        "cohort": "v2",
+        "evidence_sprint": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 295.46,
+        "top_results": [
+          "01001960705C6DBCCA3D483FD5",
+          "01002BE49E4648C3296E1C3624",
+          "017CA05BC3977675C84D042A48",
+          "017F76AFBF414AC61E0C56458D",
+          "01C171F2FF2AA7256E077E4AB3"
+        ]
+      },
+      {
+        "question": "Who decided to tier storage to Glacier?",
+        "category": "entity-relation",
+        "cohort": "v2",
+        "evidence_sprint": 12,
+        "precision": 1.0,
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hits": 5,
+        "latency_ms": 303.82,
+        "top_results": [
+          "010CDB1162438C46AE02AA0AD6",
+          "0127C888119F666093D90231EC",
+          "012DEAC797C638A25CA3DDBCAD",
+          "0168C5E93B03CC2326D5DBB9CC",
+          "0180C2188F39BD2AB398DAED94"
+        ]
+      },
+      {
+        "question": "Who introduced the exactly-once Kafka connector policy?",
+        "category": "entity-relation",
+        "cohort": "v2",
+        "evidence_sprint": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hits": 0,
+        "latency_ms": 293.27,
+        "top_results": [
+          "010143C1374B148E0310FE9E90",
+          "0102DE8A24D1A75C23E2607F77",
+          "01055239D267C0AE1751A76B55",
+          "01061D50A3C6028D82EDD42743",
+          "010636640104DBB822C9A2229F"
+        ]
+      }
+    ],
+    "by_category": {
+      "decision-lookup": {
+        "n": 6,
+        "recall_at_5": 0.1667,
+        "mrr": 0.1667
+      },
+      "entity-lookup": {
+        "n": 2,
+        "recall_at_5": 1.0,
+        "mrr": 0.6
+      },
+      "experience-lookup": {
+        "n": 4,
+        "recall_at_5": 0.0,
+        "mrr": 0.0
+      },
+      "incident-lookup": {
+        "n": 1,
+        "recall_at_5": 0.0,
+        "mrr": 0.0
+      },
+      "fact-lookup": {
+        "n": 2,
+        "recall_at_5": 0.5,
+        "mrr": 0.25
+      },
+      "vocab-mismatch": {
+        "n": 10,
+        "recall_at_5": 0.1,
+        "mrr": 0.1
+      },
+      "multi-hop": {
+        "n": 10,
+        "recall_at_5": 0.2,
+        "mrr": 0.1333
+      },
+      "temporal": {
+        "n": 5,
+        "recall_at_5": 0.0,
+        "mrr": 0.0
+      },
+      "entity-relation": {
+        "n": 5,
+        "recall_at_5": 0.4,
+        "mrr": 0.3
+      }
+    },
+    "gates": {
+      "passed": false,
+      "checks": [
+        {
+          "gate": "v1_recall_at_5",
+          "value": 0.2667,
+          "floor": 0.85,
+          "pass": false
+        },
+        {
+          "gate": "vocab-mismatch",
+          "value": 0.1,
+          "floor": 0.7,
+          "pass": false
+        },
+        {
+          "gate": "multi-hop",
+          "value": 0.2,
+          "floor": 0.6,
+          "pass": false
+        },
+        {
+          "gate": "temporal",
+          "value": 0.0,
+          "floor": 0.6,
+          "pass": false
+        },
+        {
+          "gate": "entity-relation",
+          "value": 0.4,
+          "floor": 0.7,
+          "pass": false
+        },
+        {
+          "gate": "p95_latency_ms",
+          "value": 308.86,
+          "floor": 200.0,
+          "pass": false
+        }
+      ]
+    }
+  },
+  "without_kgx": {
+    "aggregate": {
+      "n": 45,
+      "precision_at_5": 0.0548,
+      "recall_at_5": 0.0914,
+      "f1_at_5": 0.0685,
+      "mrr": 0.0071,
+      "ndcg_at_5": 0.064,
+      "hit_rate": 0.0444,
+      "total_context_chars": 420075,
+      "median_latency_ms": 0
+    },
+    "per_query": [
+      {
+        "question": "Why did we choose Apache Iceberg over Delta Lake?",
+        "category": "decision-lookup",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.1048,
+        "recall": 0.1747,
+        "mrr": 0.0087,
+        "ndcg": 0.1223,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who owns the Flink streaming infrastructure?",
+        "category": "entity-lookup",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.3588,
+        "recall": 0.5979,
+        "mrr": 0.0299,
+        "ndcg": 0.4186,
+        "hits": 1,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What was the billing_ledger backfill decision?",
+        "category": "decision-lookup",
+        "evidence_sprint": 8,
+        "sprints_ago": 28,
+        "precision": 0.1339,
+        "recall": 0.2232,
+        "mrr": 0.0112,
+        "ndcg": 0.1562,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What causes Flink backpressure?",
+        "category": "experience-lookup",
+        "evidence_sprint": 6,
+        "sprints_ago": 30,
+        "precision": 0.0052,
+        "recall": 0.0086,
+        "mrr": 0.0004,
+        "ndcg": 0.006,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How was the Trino OOM incident resolved?",
+        "category": "incident-lookup",
+        "evidence_sprint": 13,
+        "sprints_ago": 23,
+        "precision": 0.0266,
+        "recall": 0.0443,
+        "mrr": 0.0022,
+        "ndcg": 0.031,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the Iceberg compaction strategy?",
+        "category": "experience-lookup",
+        "evidence_sprint": 24,
+        "sprints_ago": 12,
+        "precision": 0.0518,
+        "recall": 0.0863,
+        "mrr": 0.0173,
+        "ndcg": 0.0604,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who decided to use Airflow for batch orchestration?",
+        "category": "decision-lookup",
+        "evidence_sprint": 10,
+        "sprints_ago": 26,
+        "precision": 0.1453,
+        "recall": 0.2422,
+        "mrr": 0.0121,
+        "ndcg": 0.1695,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the Kafka exactly-once policy?",
+        "category": "decision-lookup",
+        "evidence_sprint": 14,
+        "sprints_ago": 22,
+        "precision": 0.1711,
+        "recall": 0.2851,
+        "mrr": 0.0143,
+        "ndcg": 0.1996,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How is the Postgres billing_ledger risk handled?",
+        "category": "decision-lookup",
+        "evidence_sprint": 8,
+        "sprints_ago": 28,
+        "precision": 0.1339,
+        "recall": 0.2232,
+        "mrr": 0.0112,
+        "ndcg": 0.1562,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What did we learn about Airflow DAG idempotency?",
+        "category": "experience-lookup",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0112,
+        "recall": 0.0186,
+        "mrr": 0.0009,
+        "ndcg": 0.013,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who is the Staff Engineer driving the Iceberg migration?",
+        "category": "entity-lookup",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.3588,
+        "recall": 0.5979,
+        "mrr": 0.0299,
+        "ndcg": 0.4186,
+        "hits": 1,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the S3 storage lifecycle policy?",
+        "category": "decision-lookup",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.1577,
+        "recall": 0.2628,
+        "mrr": 0.0131,
+        "ndcg": 0.184,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the Trino query latency target?",
+        "category": "fact-lookup",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0009,
+        "recall": 0.0015,
+        "mrr": 0.0001,
+        "ndcg": 0.0011,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What alerting did we add for billing pipeline failures?",
+        "category": "fact-lookup",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.0011,
+        "recall": 0.0018,
+        "mrr": 0.0001,
+        "ndcg": 0.0013,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How was the Kafka consumer lag alerting improved?",
+        "category": "experience-lookup",
+        "evidence_sprint": 30,
+        "sprints_ago": 6,
+        "precision": 0.1115,
+        "recall": 0.1858,
+        "mrr": 0.0372,
+        "ndcg": 0.13,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which storage layer did the lakehouse standardize on?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.0083,
+        "recall": 0.0139,
+        "mrr": 0.0007,
+        "ndcg": 0.0097,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How do we page the on-call when invoicing jobs break?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.0083,
+        "recall": 0.0139,
+        "mrr": 0.0007,
+        "ndcg": 0.0097,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What slows down our stream processing jobs?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 6,
+        "sprints_ago": 30,
+        "precision": 0.0127,
+        "recall": 0.0212,
+        "mrr": 0.0011,
+        "ndcg": 0.0148,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How quickly must analyst ad-hoc queries come back?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Where do old files get archived to cut costs?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0239,
+        "recall": 0.0399,
+        "mrr": 0.002,
+        "ndcg": 0.0279,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "How do we prevent duplicate charges flowing through the event bus?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 14,
+        "sprints_ago": 22,
+        "precision": 0.0295,
+        "recall": 0.0492,
+        "mrr": 0.0025,
+        "ndcg": 0.0345,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who handles paging and incident response?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What tool did we standardize scheduled data jobs on?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 10,
+        "sprints_ago": 26,
+        "precision": 0.0194,
+        "recall": 0.0323,
+        "mrr": 0.0016,
+        "ndcg": 0.0226,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Why do we merge small data files overnight?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 24,
+        "sprints_ago": 12,
+        "precision": 0.0847,
+        "recall": 0.1412,
+        "mrr": 0.0282,
+        "ndcg": 0.0989,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What guards against double-charging customers when jobs retry?",
+        "category": "vocab-mismatch",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0239,
+        "recall": 0.0399,
+        "mrr": 0.002,
+        "ndcg": 0.0279,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which storage-tiering decision did the Platform Lead record?",
+        "category": "multi-hop",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0239,
+        "recall": 0.0399,
+        "mrr": 0.002,
+        "ndcg": 0.0279,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What did the Senior SRE learn about stream stability?",
+        "category": "multi-hop",
+        "evidence_sprint": 6,
+        "sprints_ago": 30,
+        "precision": 0.0127,
+        "recall": 0.0212,
+        "mrr": 0.0011,
+        "ndcg": 0.0148,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which incident hit the federated query engine?",
+        "category": "multi-hop",
+        "evidence_sprint": 13,
+        "sprints_ago": 23,
+        "precision": 0.0266,
+        "recall": 0.0443,
+        "mrr": 0.0022,
+        "ndcg": 0.031,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What checkpoint tuning touched the event bus topic?",
+        "category": "multi-hop",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What work moved the page_views job onto the batch orchestrator?",
+        "category": "multi-hop",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which ADR protects the legacy OLTP billing table during cutover?",
+        "category": "multi-hop",
+        "evidence_sprint": 8,
+        "sprints_ago": 28,
+        "precision": 0.0157,
+        "recall": 0.0262,
+        "mrr": 0.0013,
+        "ndcg": 0.0183,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who owns the ETL pipelines that feed the warehouse?",
+        "category": "multi-hop",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which decision came from the architecture owner about federated queries?",
+        "category": "multi-hop",
+        "evidence_sprint": 6,
+        "sprints_ago": 30,
+        "precision": 0.0127,
+        "recall": 0.0212,
+        "mrr": 0.0011,
+        "ndcg": 0.0148,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What alerting routes to the platform on-call rotation?",
+        "category": "multi-hop",
+        "evidence_sprint": 2,
+        "sprints_ago": 34,
+        "precision": 0.0083,
+        "recall": 0.0139,
+        "mrr": 0.0007,
+        "ndcg": 0.0097,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which partition layout did the ETL engineer land for events?",
+        "category": "multi-hop",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What decision replaced the Airflow batch orchestration ADR?",
+        "category": "temporal",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0239,
+        "recall": 0.0399,
+        "mrr": 0.002,
+        "ndcg": 0.0279,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which ADR revised the billing backfill approach?",
+        "category": "temporal",
+        "evidence_sprint": 14,
+        "sprints_ago": 22,
+        "precision": 0.0295,
+        "recall": 0.0492,
+        "mrr": 0.0025,
+        "ndcg": 0.0345,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "What is the current partition spec guidance for the events table?",
+        "category": "temporal",
+        "evidence_sprint": 20,
+        "sprints_ago": 16,
+        "precision": 0.0556,
+        "recall": 0.0927,
+        "mrr": 0.0185,
+        "ndcg": 0.0649,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Which early cron-to-Airflow migration fact is now superseded?",
+        "category": "temporal",
+        "evidence_sprint": 22,
+        "sprints_ago": 14,
+        "precision": 0.0686,
+        "recall": 0.1144,
+        "mrr": 0.0229,
+        "ndcg": 0.0801,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "When did the original Trino catalog fact become stale?",
+        "category": "temporal",
+        "evidence_sprint": 24,
+        "sprints_ago": 12,
+        "precision": 0.0847,
+        "recall": 0.1412,
+        "mrr": 0.0282,
+        "ndcg": 0.0989,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who is the Platform Lead?",
+        "category": "entity-relation",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who owns SLOs and alerting?",
+        "category": "entity-relation",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who runs the Spark and Airflow ETL pipelines?",
+        "category": "entity-relation",
+        "evidence_sprint": 1,
+        "sprints_ago": 35,
+        "precision": 0.0075,
+        "recall": 0.0125,
+        "mrr": 0.0006,
+        "ndcg": 0.0088,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who decided to tier storage to Glacier?",
+        "category": "entity-relation",
+        "evidence_sprint": 12,
+        "sprints_ago": 24,
+        "precision": 0.0239,
+        "recall": 0.0399,
+        "mrr": 0.002,
+        "ndcg": 0.0279,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      },
+      {
+        "question": "Who introduced the exactly-once Kafka connector policy?",
+        "category": "entity-relation",
+        "evidence_sprint": 14,
+        "sprints_ago": 22,
+        "precision": 0.0295,
+        "recall": 0.0492,
+        "mrr": 0.0025,
+        "ndcg": 0.0345,
+        "hits": 0,
+        "latency_ms": 0,
+        "top_results": []
+      }
+    ]
+  }
+}
