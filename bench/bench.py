@@ -74,6 +74,24 @@ def matches_expected_patterns(note_id, expected_patterns, note_texts):
     text = note_texts.get(note_id, "").lower()
     return all(pattern.lower() in text for pattern in expected_patterns)
 
+def unreachable_gold_entries(gold, note_texts):
+    missing = []
+    for entry in gold:
+        relevant = entry.get("relevant_note_ids", [])
+        expected_patterns = entry.get("expected_patterns", [])
+        has_relevant_id = any(nid in note_texts for nid in relevant)
+        has_pattern_match = bool(expected_patterns) and any(
+            matches_expected_patterns(nid, expected_patterns, note_texts)
+            for nid in note_texts
+        )
+        if not has_relevant_id and not has_pattern_match:
+            missing.append({
+                "question": entry["question"],
+                "relevant_note_ids": relevant,
+                "expected_patterns": expected_patterns,
+            })
+    return missing
+
 def metrics_for_query(results, relevant_set, expected_patterns=None, note_texts=None, k=K):
     ranked = [r[0] for r in results]
     topk = ranked[:k]
@@ -108,6 +126,16 @@ def run_with_kgx(gold):
     total_chars = 0
     latencies = []
     note_texts = load_note_texts(VAULT)
+    missing = unreachable_gold_entries(gold, note_texts)
+    if missing:
+        print("ERROR: gold set contains unreachable entries in this vault:", file=sys.stderr)
+        for entry in missing:
+            print(
+                f"  - {entry['question']} "
+                f"(ids={entry['relevant_note_ids']}, patterns={entry['expected_patterns']})",
+                file=sys.stderr,
+            )
+        raise SystemExit(2)
     for entry in gold:
         q = entry["question"]
         rel = set(entry["relevant_note_ids"])

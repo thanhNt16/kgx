@@ -1,0 +1,14 @@
+---
+description: Run the shared KGX finish gate before declaring work done
+alwaysApply: true
+---
+
+# kgx finish gate
+
+Before telling the user a task is complete, run:
+
+    sh "$(git rev-parse --show-toplevel)/.kgx/hooks/verify-finished.sh" --json
+
+If it fails, inspect `.kgx/hooks/last-finish-check.log`, fix the failure, and
+run the check again before responding. This mirrors the verify-finished Stop
+hook that Claude Code and Codex enforce automatically.

@@ -8,7 +8,7 @@ content with topic rotations so notes have varied text for BM25/SPLADE.
 Usage:
   python3 bench/gen_large_corpus.py --out /tmp/kgx-large --nodes 10000 --edges 15000
 """
-import os, sys, json, random, hashlib, argparse
+import os, sys, json, random, hashlib, argparse, shutil
 from datetime import date, timedelta
 
 SEED = 20260705
@@ -58,6 +58,25 @@ def ulid_for(kind, n):
     h = hashlib.sha256(f"{kind}-{n:06d}".encode()).hexdigest().upper()[:26]
     return "01" + h[2:]
 
+def count_notes(vault):
+    notes = os.path.join(vault, "notes")
+    if not os.path.isdir(notes):
+        return 0
+    total = 0
+    for _, _, files in os.walk(notes):
+        total += sum(1 for f in files if f.endswith(".md"))
+    return total
+
+def copy_base_vault(base_vault, out):
+    copied = 0
+    for sub in ("notes", "raw"):
+        src = os.path.join(base_vault, sub)
+        if os.path.isdir(src):
+            shutil.copytree(src, os.path.join(out, sub), dirs_exist_ok=True)
+            if sub == "notes":
+                copied = count_notes(base_vault)
+    return copied
+
 def make_fact(sprint, idx, start, persons, systems):
     topic = TOPICS[(sprint + idx) % len(TOPICS)]
     verb = VERBS[(sprint + idx) % len(VERBS)]
@@ -100,6 +119,8 @@ def main():
                        help="Target number of edges")
     parser.add_argument("--facts-per-sprint", type=int, default=20,
                        help="Facts generated per sprint")
+    parser.add_argument("--base-vault",
+                       help="Existing KGX vault whose notes/raw files are preserved in the output")
     args = parser.parse_args()
 
     out = args.out
@@ -109,9 +130,11 @@ def main():
         os.makedirs(os.path.join(out, sub), exist_ok=True)
 
     start = date(2025, 10, 6)
+    base_notes = count_notes(args.base_vault) if args.base_vault else 0
 
     # Calculate required sprints
-    target_facts = args.nodes - len(PERSON_NAMES) - len(SYSTEM_NAMES) - 20
+    synthetic_target_nodes = max(0, args.nodes - base_notes)
+    target_facts = synthetic_target_nodes - len(PERSON_NAMES) - len(SYSTEM_NAMES) - 20
     sprints = max(10, target_facts // args.facts_per_sprint + 1)
     f_per_sprint = args.facts_per_sprint
 
@@ -276,8 +299,12 @@ links: [{links_field}]
         with open(os.path.join(out, f"notes/facts/{fname}"), "w") as f:
             f.write(fm)
 
+    copied_base_notes = copy_base_vault(args.base_vault, out) if args.base_vault else 0
+
     manifest = {
-        "nodes": total_notes,
+        "nodes": total_notes + copied_base_notes,
+        "synthetic_nodes": total_notes,
+        "base_nodes": copied_base_notes,
         "edges": edge_count,
         "sprints": sprints,
         "facts_per_sprint": f_per_sprint,
