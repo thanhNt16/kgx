@@ -13,7 +13,7 @@ alwaysApply: false
 | `kgx:ingest` | Capture source + extract atomic facts |
 | `kgx:capture` | Capture a raw source verbatim |
 | `kgx:extract` | Extract facts/entities/decisions from a source |
-| `kgx:index` | Rebuild the brain index with communities |
+| `kgx:index` | Rebuild the brain index |
 | `kgx:search` | Hybrid keyword + semantic search |
 | `kgx:ask` | Answer a question with citations |
 | `kgx:recall` | Retrieve an entity's graph neighborhood |
@@ -51,10 +51,10 @@ kg extract --source <source_note_id> --intensity full
 ```
 
 ### kgx:index
-Build or rebuild the SQLite brain index with vector embeddings and community detection.
+Build or rebuild the SQLite brain index with vector embeddings.
 Semantic search is on by default; set `KGX_EMBED=off` to disable vectors. The first `kg index` may download the embedding model.
 ```
-kg index --full --communities
+kg index --full
 ```
 
 ### kgx:search
@@ -144,7 +144,7 @@ kg sync
 - Ask: `kg ask "<q>" --cite [--scope global]`
 - Consolidate: `kg dream --max-iterations 3`, then `kg review --approve all --ponytail-audit`
 - Refine: `kg refine <query>|--note <id>|--tag <tag>`, then review
-- Rebuild: `kg index --full --communities`
+- Rebuild: `kg index --full`
 - Graph: `kg graph --format cytoscape|graphml`
 - Cron: `kg cron remove <name>`
 

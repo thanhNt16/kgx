@@ -47,10 +47,10 @@ kg extract --source <source_note_id> --intensity full
 ```
 
 ### kgx:index
-Build or rebuild the SQLite brain with embeddings and communities.
+Build or rebuild the SQLite brain with embeddings.
 Semantic search is on by default; set `KGX_EMBED=off` to disable vectors. The first `kg index` may download the embedding model.
 ```
-kg index --full --communities
+kg index --full
 ```
 
 ### kgx:search
@@ -149,7 +149,7 @@ kg sync
 - `kg dream --max-iterations 3`
 - `kg refine <query>|--note <id>|--tag <tag>`
 - `kg review --approve all --ponytail-audit`
-- `kg index --full --communities`
+- `kg index --full`
 - `kg graph --format cytoscape|graphml`
 - `kg cron remove <name>`
 

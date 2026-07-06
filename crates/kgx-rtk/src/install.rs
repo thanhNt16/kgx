@@ -62,7 +62,7 @@ pub fn install_hooks(tool: Tool, root: &Path) -> Result<()> {
         ),
         Tool::Opencode => write(
             ".opencode/rtk.md",
-            "# RTK (Response Token Kiln)\n\nRTK compresses verbose Bash output. Pipe long-running or\noutput-heavy commands through `rtk compress`:\n\n    kg index --full --communities | rtk compress\n\nOpencode has no native output filter hook, but `rtk`\nworks as a standard Unix pipe.\n",
+            "# RTK (Response Token Kiln)\n\nRTK compresses verbose Bash output. Pipe long-running or\noutput-heavy commands through `rtk compress`:\n\n    kg index --full | rtk compress\n\nOpencode has no native output filter hook, but `rtk`\nworks as a standard Unix pipe.\n",
         ),
     }
 }

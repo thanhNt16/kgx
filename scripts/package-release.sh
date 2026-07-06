@@ -71,14 +71,14 @@ fi
 
 if command -v claude >/dev/null 2>&1; then
   claude mcp remove kgx 2>/dev/null || true
-  claude mcp add --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
+  echo "y" | claude mcp add --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
 fi
 if command -v codex >/dev/null 2>&1; then
   codex mcp remove kgx &>/dev/null || true
-  codex mcp add kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
+  echo "y" | codex mcp add kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
 fi
 if command -v opencode >/dev/null 2>&1; then
-  opencode mcp add kgx -- "$INSTALLED_BIN" mcp-server --transport stdio &>/dev/null || true
+  echo "y" | opencode mcp add kgx -- "$INSTALLED_BIN" mcp-server --transport stdio &>/dev/null || true
 fi
 INSTALL
 chmod +x "$PKG_DIR/install.sh"
