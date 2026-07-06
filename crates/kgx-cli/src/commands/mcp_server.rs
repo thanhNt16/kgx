@@ -3,6 +3,6 @@ pub fn run(_json: bool, transport: &str) -> anyhow::Result<()> {
         anyhow::bail!("only --transport stdio supported");
     }
     let rt = tokio::runtime::Runtime::new()?;
-    rt.block_on(kgx_mcp::server::serve_stdio(std::env::current_dir()?))?;
+    rt.block_on(kgx_mcp::server::serve_stdio(crate::vault::vault_root()?))?;
     Ok(())
 }

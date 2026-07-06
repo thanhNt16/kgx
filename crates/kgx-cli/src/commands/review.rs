@@ -98,7 +98,7 @@ pub fn run(
     ponytail_audit: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let staged_path = root.join(".kg/staged_diffs.json");
 
     let (approve, reject) = if interactive {

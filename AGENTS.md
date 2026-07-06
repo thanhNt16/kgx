@@ -127,8 +127,13 @@ kg cron remove <name>
 ### kgx:init
 Scaffold a new KGX vault with templates.
 ```
-kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <path>]
+kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <path>] [--migrate]
 ```
+Knowledge content (`raw/`, `notes/`, `index.md`, `log.md`, `.kg/`, `CLAUDE.md`) is created
+inside a `.brain/` directory; agent/tooling config (`.mcp.json`, `.claude/`, `.codex/`,
+`.cursor/`, `.opencode/`, `.kgx/`, `AGENTS.md`, `config.toml`, `opencode.json`, `.gitignore`)
+stays at the enclosing project root so agents can discover it. Use `--migrate` to relocate
+a legacy root-level vault into `.brain/`.
 
 ### kgx:ship
 Create a portable OKF bundle.
@@ -154,7 +159,7 @@ kg sync
 - `kg cron remove <name>`
 
 ## Rules
-- `raw/` is immutable.
+- `raw/` (under `.brain/`) is immutable.
 - Supersede or archive; never delete notes.
 - Cite note ids.
 

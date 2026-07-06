@@ -4,7 +4,7 @@ use std::time::Instant;
 
 pub fn run(json: bool) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let snap = status::snapshot()?;
     let tokens_by_day = summarize(&root.join(".kg"), 30, GroupBy::Day)?;
     let data = serde_json::json!({

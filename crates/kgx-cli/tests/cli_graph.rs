@@ -20,7 +20,7 @@ fn graph_html_node_count_matches_brain() {
         .assert()
         .success();
     let html = std::fs::read_to_string(&out).unwrap();
-    let conn = rusqlite::Connection::open(d.path().join(".kg/brain.sqlite")).unwrap();
+    let conn = rusqlite::Connection::open(d.path().join(".brain/.kg/brain.sqlite")).unwrap();
     let n: i64 = conn
         .query_row("SELECT count(*) FROM notes", [], |r| r.get(0))
         .unwrap();

@@ -3,7 +3,7 @@ use std::{path::PathBuf, time::Instant};
 
 pub fn run(json: bool, out: PathBuf) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     kgx_okf::bundle::ship(&root, &out)?;
     let data = serde_json::json!({ "out": out.display().to_string() });
     emit("ship", data, json, start, |d| {

@@ -7,7 +7,7 @@ use kgx_core::util;
 
 pub fn run(json: bool, from: &str, kind: &str) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
 
     let content = match from {
         "-" => {

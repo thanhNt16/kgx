@@ -34,6 +34,9 @@ pub enum Commands {
         with_rtk: bool,
         #[arg(long)]
         vault: Option<std::path::PathBuf>,
+        /// Migrate a legacy root-level vault into .brain/
+        #[arg(long)]
+        migrate: bool,
     },
     /// Build/refresh .kg/brain.sqlite
     Index {

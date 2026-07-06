@@ -4,7 +4,7 @@ use std::time::Instant;
 
 pub fn run(json: bool, since: &str, by: &str) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let since_days = parse_since(since)?;
     let group = match by {
         "operation" => GroupBy::Operation,

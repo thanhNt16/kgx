@@ -11,7 +11,7 @@ fn dream_stages_without_touching_files() {
         .current_dir(d.path())
         .assert()
         .success();
-    let path = d.path().join("notes/facts/f-postgres-primary.md");
+    let path = d.path().join(".brain/notes/facts/f-postgres-primary.md");
     let before = std::fs::read_to_string(&path).unwrap();
     let out = Command::cargo_bin("kg")
         .unwrap()
@@ -20,7 +20,7 @@ fn dream_stages_without_touching_files() {
         .current_dir(d.path())
         .assert()
         .success();
-    assert!(d.path().join(".kg/staged_diffs.json").exists());
+    assert!(d.path().join(".brain/.kg/staged_diffs.json").exists());
     assert_eq!(before, std::fs::read_to_string(&path).unwrap());
     let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     assert!(v["data"]["staged"].as_u64().unwrap() >= 1);

@@ -10,7 +10,7 @@ pub fn run(
     filter: Option<String>,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let brain = Brain::open(&root.join(".kg/brain.sqlite"))?;
     let model = from_brain(&brain, filter.as_deref())?;
     let content = match format {

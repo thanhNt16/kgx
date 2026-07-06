@@ -15,7 +15,7 @@ pub struct StatusSnapshot {
 }
 
 pub fn snapshot() -> anyhow::Result<StatusSnapshot> {
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let notes = kgx_vault::scan::scan_vault(&root)?;
     let orphans = kgx_graph::links::orphans(&notes).len();
     let brain = Brain::open(&root.join(".kg/brain.sqlite"))?;

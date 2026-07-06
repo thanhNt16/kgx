@@ -133,8 +133,11 @@ kg cron remove <name>
 ### kgx:init
 Scaffold a new KGX vault with templates and optional OKF conformance.
 ```
-kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <path>]
+kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <path>] [--migrate]
 ```
+Knowledge content (`raw/`, `notes/`, `index.md`, `log.md`, `.kg/`, `CLAUDE.md`) is created
+inside `.brain/`; agent config (`.mcp.json`, `.claude/`, etc.) stays at the project root.
+`--migrate` relocates a legacy root-level vault into `.brain/`.
 
 ### kgx:ship
 Create a portable OKF bundle from the vault.

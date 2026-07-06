@@ -9,7 +9,7 @@ pub fn run(
     _bitemporal: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let report = kgx_okf::check_okf(&root)?;
     let ok = report.ok;
     emit("validate", report, json, start, |r| {

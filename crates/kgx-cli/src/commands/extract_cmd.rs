@@ -13,7 +13,7 @@ pub fn run(
     intensity: &str,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let notes = kgx_vault::scan::scan_vault(&root)?;
     let src = notes
         .iter()

@@ -7,7 +7,7 @@ use kgx_vault::scan::scan_vault;
 
 pub fn run(json: bool, suggest: bool, show_orphans: bool, fix: bool) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let notes = scan_vault(&root)?;
     let bl = backlinks(&notes);
     let orph = orphans(&notes);

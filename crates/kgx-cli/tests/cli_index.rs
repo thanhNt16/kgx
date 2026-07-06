@@ -11,7 +11,7 @@ fn index_full_builds_brain() {
         .current_dir(d.path())
         .assert()
         .success();
-    assert!(d.path().join(".kg/brain.sqlite").exists());
+    assert!(d.path().join(".brain/.kg/brain.sqlite").exists());
     let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     assert_eq!(v["command"], "index");
     assert!(
@@ -19,5 +19,5 @@ fn index_full_builds_brain() {
         "expected >= 15 nodes, got {}",
         v["data"]["nodes"]
     );
-    assert!(d.path().join(".kg/metrics.log").exists());
+    assert!(d.path().join(".brain/.kg/metrics.log").exists());
 }

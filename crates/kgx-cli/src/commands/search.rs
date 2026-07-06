@@ -15,7 +15,7 @@ pub fn run(
     rerank_llm: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let brain = Brain::open(&root.join(".kg/brain.sqlite"))?;
     let embedder = kgx_llm::select::embedder_from_env();
     let m = match mode {

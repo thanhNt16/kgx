@@ -23,7 +23,7 @@ fn copy_fixture() -> tempfile::TempDir {
 }
 
 fn brain_path(dir: &Path) -> PathBuf {
-    dir.join(".kg/brain.sqlite")
+    dir.join(".brain/.kg/brain.sqlite")
 }
 
 /// Canonical content hash of the brain's derived tables.
@@ -92,7 +92,7 @@ fn t10_rebuild_is_deterministic() {
         .success();
 
     // Rebuild 1 from the now-stable on-disk state.
-    std::fs::remove_dir_all(d.path().join(".kg")).unwrap();
+    std::fs::remove_dir_all(d.path().join(".brain/.kg")).unwrap();
     Command::cargo_bin("kg")
         .unwrap()
         .env("KGX_LLM", "mock")
@@ -103,7 +103,7 @@ fn t10_rebuild_is_deterministic() {
     let fp1 = brain_fingerprint(&brain_path(d.path()));
 
     // Rebuild 2: same on-disk state. Must produce an identical brain.
-    std::fs::remove_dir_all(d.path().join(".kg")).unwrap();
+    std::fs::remove_dir_all(d.path().join(".brain/.kg")).unwrap();
     Command::cargo_bin("kg")
         .unwrap()
         .env("KGX_LLM", "mock")
@@ -117,7 +117,7 @@ fn t10_rebuild_is_deterministic() {
 
     // Rebuild 3: belt-and-suspenders — Leiden uses seed=42 and PageRank is
     // order-stable, so a third rebuild from the same state must also match.
-    std::fs::remove_dir_all(d.path().join(".kg")).unwrap();
+    std::fs::remove_dir_all(d.path().join(".brain/.kg")).unwrap();
     Command::cargo_bin("kg")
         .unwrap()
         .env("KGX_LLM", "mock")

@@ -22,7 +22,7 @@ fn copy_fixture() -> tempfile::TempDir {
 #[test]
 fn t02_extract_produces_provenance_facts() {
     let d = copy_fixture();
-    let facts_dir = d.path().join("notes/facts");
+    let facts_dir = d.path().join(".brain/notes/facts");
     let before = std::fs::read_dir(&facts_dir).unwrap().count();
 
     Command::cargo_bin("kg")

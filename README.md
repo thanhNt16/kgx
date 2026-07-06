@@ -45,18 +45,19 @@
 
 ```
 Markdown Vault (git)
-  raw/         ← immutable sources (never edited after capture)
-  notes/
-    facts/     ← atomic claims extracted by AI
-    entities/  ← people, systems, concepts
-    decisions/ ← ADRs
-    experiences/
-    moc/       ← maps of content
-    questions/ ← open gaps, auto-closed when answered
-  .kg/         ← derived, git-ignored
-    brain.sqlite
-    meta.json
-    metrics.log
+  .brain/                  ← knowledge vault (created by `kg init`)
+    raw/         ← immutable sources (never edited after capture)
+    notes/
+      facts/     ← atomic claims extracted by AI
+      entities/  ← people, systems, concepts
+      decisions/ ← ADRs
+      experiences/
+      moc/       ← maps of content
+      questions/ ← open gaps, auto-closed when answered
+    .kg/         ← derived, git-ignored
+      brain.sqlite
+      meta.json
+      metrics.log
 
 Brain Layers
   ┌──────────────────────────────────────────────────┐
@@ -202,27 +203,34 @@ kg init --template team --okf
 kg init --with-skills
 ```
 
-This scaffolds:
+This scaffolds a `.brain/` directory (knowledge content) plus agent/tooling config at the
+enclosing project root:
 
 ```
-brain/
-├── CLAUDE.md          ← schema + prompt ladders (loaded by all AI tools)
-├── index.md           ← OKF root index
-├── log.md             ← append-only operation log
-├── raw/               ← place sources here (immutable after capture)
+.brain/                  ← knowledge vault (run kg commands from the project root)
+├── CLAUDE.md            ← schema + prompt ladders (loaded by all AI tools)
+├── index.md             ← OKF root index
+├── log.md               ← append-only operation log
+├── raw/                 ← place sources here (immutable after capture)
 └── notes/
     ├── facts/
     ├── entities/
     ├── decisions/
     ├── moc/
     └── questions/
+
+.mcp.json, .claude/, .codex/, .cursor/, .opencode/, .kgx/  ← agent config (project root)
 ```
+
+> **Migrating a legacy vault?** If you have an older root-level vault (`raw/`, `notes/`,
+> `.kg/` directly at the project root), run `kg init --migrate` to relocate it into
+> `.brain/`. After migration, `kg` looks only in `.brain/`.
 
 ---
 
 ## MCP Server Setup
 
-The MCP server exposes 9 tools over JSON-RPC 2.0 via stdio. **Run from inside your vault directory** — it uses the current working directory as the vault root.
+The MCP server exposes 9 tools over JSON-RPC 2.0 via stdio. **Run from inside your project directory** — it resolves the knowledge vault from `<cwd>/.brain`.
 
 | Tool | What it does |
 |---|---|
@@ -353,7 +361,7 @@ Commands:
 - `kg cron remove <name>`
 
 Rules:
-- raw/ is immutable.
+- raw/ (under `.brain/`) is immutable.
 - Supersede or archive; never delete notes.
 - Cite note IDs.
 ```
@@ -577,11 +585,11 @@ kg validate --okf --json
 
 | Command | Purpose | Key Flags |
 |---|---|---|
-| `kg init` | Scaffold OKF vault | `--template research\|code\|pkm\|team`, `--okf`, `--with-skills` |
-| `kg capture` | Ingest raw → `raw/` + source note | `--from file\|-`, `--type doc\|transcript\|web\|code` |
+| `kg init` | Scaffold OKF vault into `.brain/` | `--template research\|code\|pkm\|team`, `--okf`, `--with-skills`, `--migrate` |
+| `kg capture` | Ingest raw → `.brain/raw/` + source note | `--from file\|-`, `--type doc\|transcript\|web\|code` |
 | `kg extract` | LLM: raw → atomic facts/entities/decisions | `--source <NOTE_ID>`, `--batch`, `--dry-run`, `--intensity lite\|full\|ultra` |
 | `kg link` | Compute wikilinks/backlinks, orphans | `--suggest`, `--orphans`, `--fix` |
-| `kg index` | Build/refresh `.kg/brain.sqlite` | `--full`, `--incremental`, `--communities`, `--pagerank` |
+| `kg index` | Build/refresh `.brain/.kg/brain.sqlite` | `--full`, `--incremental`, `--communities`, `--pagerank` |
 | `kg ask` | Hybrid Q&A over graph | `--scope local\|global`, `--write`, `--cite`, `--mode keyword\|semantic\|hybrid` |
 | `kg recall` | Entity-centric neighborhood fetch | `--entity "Name"` |
 | `kg search` | Raw hybrid search (no synthesis) | `--type fact,entity`, `--mode`, `--limit` |
@@ -847,7 +855,8 @@ Use with `jq`: `kg ask "..." --json | jq .data.answer`
 ## Vault Layout Reference
 
 ```
-vault/
+vault/                    ← run kg commands here (project root)
+.brain/                    ← knowledge vault (resolved by every kg command)
 ├── CLAUDE.md              ← agent behavior contract
 ├── index.md               ← OKF root map-of-maps
 ├── log.md                 ← OKF append-only operation log

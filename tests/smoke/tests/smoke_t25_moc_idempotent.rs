@@ -54,7 +54,7 @@ fn run_index(d: &tempfile::TempDir) {
 #[test]
 fn t25_communities_moc_idempotent() {
     let d = copy_fixture();
-    let brain = d.path().join(".kg/brain.sqlite");
+    let brain = d.path().join(".brain/.kg/brain.sqlite");
 
     // Run 1: fresh vault. Community MOCs are written to disk AFTER the
     // brain build, so the run-1 brain does NOT yet contain them — only
@@ -65,7 +65,7 @@ fn t25_communities_moc_idempotent() {
     // Run 2: rebuild from the same on-disk vault (which now contains the
     // community MOC files run 1 wrote). The brain now sees them. This is
     // the "steady state" baseline.
-    std::fs::remove_dir_all(d.path().join(".kg")).unwrap();
+    std::fs::remove_dir_all(d.path().join(".brain/.kg")).unwrap();
     run_index(&d);
     let n2 = moc_count(&brain);
     let nodes2 = total_nodes(&brain);

@@ -30,7 +30,7 @@ fn t17_rtk_wrapper_uses_rtk_or_raw_fallback() {
 #[test]
 fn t18_ponytail_audit_reports_over_broad_review_flags() {
     let d = common::copy_fixture();
-    std::fs::create_dir_all(d.path().join(".kg")).unwrap();
+    std::fs::create_dir_all(d.path().join(".brain/.kg")).unwrap();
     let files: Vec<serde_json::Value> = (0..4)
         .map(|i| {
             serde_json::json!({
@@ -41,7 +41,7 @@ fn t18_ponytail_audit_reports_over_broad_review_flags() {
         })
         .collect();
     std::fs::write(
-        d.path().join(".kg/staged_diffs.json"),
+        d.path().join(".brain/.kg/staged_diffs.json"),
         serde_json::to_string_pretty(&serde_json::json!([{
             "id": "audit-diff",
             "pass": "dedup",

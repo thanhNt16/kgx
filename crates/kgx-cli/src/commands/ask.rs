@@ -16,7 +16,7 @@ pub fn run(
     _write: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let brain_path = root.join(".kg/brain.sqlite");
     if !brain_path.exists() {
         anyhow::bail!("brain not built — run `kg index --full` first");

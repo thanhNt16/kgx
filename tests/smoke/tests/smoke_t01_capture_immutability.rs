@@ -22,7 +22,7 @@ fn copy_fixture() -> tempfile::TempDir {
 #[test]
 fn t01_raw_hash_unchanged_after_extract() {
     let d = copy_fixture();
-    let raw = d.path().join("raw/2026-01-15-arch-review.md");
+    let raw = d.path().join(".brain/raw/2026-01-15-arch-review.md");
     let before = std::fs::read(&raw).unwrap();
     Command::cargo_bin("kg")
         .unwrap()

@@ -11,7 +11,7 @@ fn capture_from_stdin_creates_immutable_raw() {
         .current_dir(d.path())
         .assert()
         .success();
-    let raw_dir = d.path().join("raw");
+    let raw_dir = d.path().join(".brain/raw");
     let created: Vec<_> = std::fs::read_dir(&raw_dir)
         .unwrap()
         .filter_map(|e| e.ok())

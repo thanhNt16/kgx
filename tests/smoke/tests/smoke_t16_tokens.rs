@@ -31,7 +31,7 @@ fn t16_index_writes_token_record() {
         .assert()
         .success();
 
-    let log = std::fs::read_to_string(d.path().join(".kg/metrics.log")).unwrap();
+    let log = std::fs::read_to_string(d.path().join(".brain/.kg/metrics.log")).unwrap();
     assert!(
         log.lines().any(|l| {
             l.contains("\"operation\":\"embed\"") && l.contains("\"command\":\"index\"")

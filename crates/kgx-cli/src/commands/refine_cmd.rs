@@ -18,7 +18,7 @@ pub fn run(
     dry_run: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
 
     let notes = kgx_vault::scan::scan_vault(&root)?;
     let brain = Brain::open(&root.join(".kg/brain.sqlite"))?;

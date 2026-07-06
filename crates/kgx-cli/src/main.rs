@@ -1,6 +1,7 @@
 mod cli;
 mod git;
 mod output;
+mod vault;
 mod commands {
     pub mod ask;
     pub mod capture;
@@ -47,7 +48,16 @@ fn main() -> anyhow::Result<()> {
             with_skills,
             with_rtk,
             vault,
-        } => commands::init::run(cli.json, &template, okf, with_skills, with_rtk, vault),
+            migrate,
+        } => commands::init::run(
+            cli.json,
+            &template,
+            okf,
+            with_skills,
+            with_rtk,
+            vault,
+            migrate,
+        ),
         Commands::Index {
             full,
             incremental,

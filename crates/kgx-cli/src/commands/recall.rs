@@ -13,7 +13,7 @@ fn wikilink_inner(s: &str) -> &str {
 
 pub fn run(json: bool, entity: &str) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
 
     let brain_path = root.join(".kg/brain.sqlite");
     if !brain_path.exists() {

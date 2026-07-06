@@ -14,7 +14,7 @@ pub fn run(
     communities: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    let root = std::env::current_dir()?;
+    let root = crate::vault::vault_root()?;
     let kg_dir = root.join(".kg");
     let notes = kgx_vault::scan::scan_vault(&root)?;
     let mut brain = Brain::open(&kg_dir.join("brain.sqlite"))?;

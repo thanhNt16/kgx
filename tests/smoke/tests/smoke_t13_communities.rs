@@ -16,7 +16,7 @@ fn t13_every_community_has_summary_and_moc() {
         .assert()
         .success();
 
-    let conn = rusqlite::Connection::open(d.path().join(".kg/brain.sqlite")).unwrap();
+    let conn = rusqlite::Connection::open(d.path().join(".brain/.kg/brain.sqlite")).unwrap();
     let mut stmt = conn
         .prepare("SELECT DISTINCT community_id FROM communities ORDER BY community_id")
         .unwrap();
@@ -38,7 +38,7 @@ fn t13_every_community_has_summary_and_moc() {
     for cid in &communities {
         assert!(
             d.path()
-                .join(format!("notes/moc/community-{cid}.md"))
+                .join(format!(".brain/notes/moc/community-{cid}.md"))
                 .exists(),
             "missing MOC for community {cid}"
         );

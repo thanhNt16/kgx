@@ -22,7 +22,7 @@ fn copy_fixture() -> tempfile::TempDir {
 }
 
 fn brain_path(dir: &Path) -> PathBuf {
-    dir.join(".kg/brain.sqlite")
+    dir.join(".brain/.kg/brain.sqlite")
 }
 
 /// Embedding-write count proxy: the `embed` token record's input_tokens
@@ -30,7 +30,7 @@ fn brain_path(dir: &Path) -> PathBuf {
 /// incremental record's input_tokens must be much smaller than the full
 /// index record's.
 fn embed_input_tokens(dir: &Path) -> u64 {
-    let metrics = std::fs::read_to_string(dir.join(".kg/metrics.log")).unwrap_or_default();
+    let metrics = std::fs::read_to_string(dir.join(".brain/.kg/metrics.log")).unwrap_or_default();
     let mut last_embed = 0u64;
     for line in metrics.lines() {
         if let Ok(v) = serde_json::from_str::<serde_json::Value>(line) {
@@ -58,7 +58,7 @@ fn t19_incremental_only_touches_changed_notes() {
     assert!(full_tokens > 0, "full index must record embed tokens");
 
     // Clear metrics log so the next reading isolates the incremental run
-    std::fs::write(d.path().join(".kg/metrics.log"), "").unwrap();
+    std::fs::write(d.path().join(".brain/.kg/metrics.log"), "").unwrap();
 
     // Touch NOTHING. Re-index incremental. Should embed ~0 notes.
     Command::cargo_bin("kg")
@@ -89,12 +89,12 @@ fn t19_incremental_picks_up_edited_note() {
         .success();
 
     // Edit exactly one note's body
-    let note_path = d.path().join("notes/facts/f-postgres-primary.md");
+    let note_path = d.path().join(".brain/notes/facts/f-postgres-primary.md");
     let original = std::fs::read_to_string(&note_path).unwrap();
     let edited = original.replace("primary datastore", "primary datastore (updated)");
     std::fs::write(&note_path, edited).unwrap();
 
-    std::fs::write(d.path().join(".kg/metrics.log"), "").unwrap();
+    std::fs::write(d.path().join(".brain/.kg/metrics.log"), "").unwrap();
 
     Command::cargo_bin("kg")
         .unwrap()

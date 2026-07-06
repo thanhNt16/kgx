@@ -8,7 +8,7 @@ fn t05_t07_t08_t15_dream_stages_then_review_applies_soft_and_blocks_hard() {
     let d = common::copy_fixture();
     common::run_index(d.path());
 
-    let pg_path = d.path().join("notes/facts/f-postgres-primary.md");
+    let pg_path = d.path().join(".brain/notes/facts/f-postgres-primary.md");
     let pg_before = std::fs::read_to_string(&pg_path).unwrap();
     let dream = Command::cargo_bin("kg")
         .unwrap()
@@ -19,7 +19,7 @@ fn t05_t07_t08_t15_dream_stages_then_review_applies_soft_and_blocks_hard() {
         .success();
     let dream_json: serde_json::Value = serde_json::from_slice(&dream.get_output().stdout).unwrap();
 
-    assert!(d.path().join(".kg/staged_diffs.json").exists());
+    assert!(d.path().join(".brain/.kg/staged_diffs.json").exists());
     assert_eq!(pg_before, std::fs::read_to_string(&pg_path).unwrap());
     assert!(dream_json["data"]["iterations"].as_u64().unwrap() <= 3);
     assert!(dream_json["data"]["hard_blocks"].as_u64().unwrap() >= 1);
@@ -43,9 +43,9 @@ fn t05_t07_t08_t15_dream_stages_then_review_applies_soft_and_blocks_hard() {
 #[test]
 fn t06_dedup_merge_archives_duplicate_and_keeps_files() {
     let d = common::copy_fixture();
-    let dup_path = d.path().join("notes/facts/f-postgres-primary-copy.md");
+    let dup_path = d.path().join(".brain/notes/facts/f-postgres-primary-copy.md");
     std::fs::copy(
-        d.path().join("notes/facts/f-postgres-primary.md"),
+        d.path().join(".brain/notes/facts/f-postgres-primary.md"),
         &dup_path,
     )
     .unwrap();
@@ -72,7 +72,7 @@ fn t06_dedup_merge_archives_duplicate_and_keeps_files() {
         .assert()
         .success();
 
-    assert!(d.path().join("notes/facts/f-postgres-primary.md").exists());
+    assert!(d.path().join(".brain/notes/facts/f-postgres-primary.md").exists());
     assert!(dup_path.exists());
     assert!(std::fs::read_to_string(dup_path)
         .unwrap()
@@ -82,7 +82,7 @@ fn t06_dedup_merge_archives_duplicate_and_keeps_files() {
 #[test]
 fn t14_stale_archival_retains_note_file() {
     let d = common::copy_fixture();
-    let stale_path = d.path().join("notes/facts/f-stale.md");
+    let stale_path = d.path().join(".brain/notes/facts/f-stale.md");
     std::fs::write(
         &stale_path,
         "---\ntype: fact\nid: 01FACT99STALE0000000000\ntitle: Stale fact\nstatus: active\nvalid_from: 2020-01-01\nsource: \"[[raw/missing-source]]\"\ncreated_by: agent\ncreated_via: cli\n---\n\nThis fact has a missing old source.\n",

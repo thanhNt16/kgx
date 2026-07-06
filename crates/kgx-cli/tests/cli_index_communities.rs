@@ -11,12 +11,12 @@ fn index_communities_writes_summaries_and_moc() {
         .current_dir(d.path())
         .assert()
         .success();
-    let conn = rusqlite::Connection::open(d.path().join(".kg/brain.sqlite")).unwrap();
+    let conn = rusqlite::Connection::open(d.path().join(".brain/.kg/brain.sqlite")).unwrap();
     let n: i64 = conn
         .query_row("SELECT count(*) FROM community_summaries", [], |r| r.get(0))
         .unwrap();
     assert!(n >= 1);
-    let moc = std::fs::read_dir(d.path().join("notes/moc"))
+    let moc = std::fs::read_dir(d.path().join(".brain/notes/moc"))
         .unwrap()
         .filter_map(|e| e.ok())
         .any(|e| e.file_name().to_string_lossy().starts_with("community-"));

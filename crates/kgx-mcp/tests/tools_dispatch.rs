@@ -35,14 +35,14 @@ async fn dream_step_returns_diffs_without_staging_or_applying() {
     unsafe {
         std::env::set_var("KGX_LLM", "mock");
     }
-    let notes = kgx_vault::scan::scan_vault(d.path()).unwrap();
-    let mut brain = Brain::open(&d.path().join(".kg/brain.sqlite")).unwrap();
+    let notes = kgx_vault::scan::scan_vault(&d.path().join(".brain")).unwrap();
+    let mut brain = Brain::open(&d.path().join(".brain/.kg/brain.sqlite")).unwrap();
     build_full(&mut brain, &notes, &MockEmbedder::new()).unwrap();
 
-    let note_path = d.path().join("notes/facts/f-orphan.md");
+    let note_path = d.path().join(".brain/notes/facts/f-orphan.md");
     let before = std::fs::read_to_string(&note_path).unwrap();
     let res = dispatch(
-        d.path(),
+        &d.path().join(".brain"),
         "dream_step",
         &json!({"only": "orphan_repair", "max_iterations": 1}),
     )
@@ -51,6 +51,6 @@ async fn dream_step_returns_diffs_without_staging_or_applying() {
 
     assert!(res["iterations"].as_u64().unwrap() <= 1);
     assert!(!res["diffs"].as_array().unwrap().is_empty());
-    assert!(!d.path().join(".kg/staged_diffs.json").exists());
+    assert!(!d.path().join(".brain/.kg/staged_diffs.json").exists());
     assert_eq!(before, std::fs::read_to_string(note_path).unwrap());
 }
