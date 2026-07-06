@@ -4,6 +4,10 @@
     "kgx": {
       "type": "local",
       "command": ["kg", "mcp-server", "--transport", "stdio"]
+    },
+    "codebase-memory-mcp": {
+      "type": "local",
+      "command": ["codebase-memory-mcp"]
     }
   }
 }
