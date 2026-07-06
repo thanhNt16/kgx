@@ -202,11 +202,12 @@ pub fn build_full(
             .trim_matches('"')
             .to_string();
         tx.execute(
-            "INSERT INTO notes (id,path,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding,entity_type)\
-             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)",
+            "INSERT INTO notes (id,path,title,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding,entity_type)\
+             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12)",
             params![
                 n.fm.id,
                 n.rel_path.display().to_string(),
+                n.fm.title,
                 typ,
                 st,
                 n.fm.valid_from,
@@ -295,12 +296,13 @@ pub fn build_incremental(
             .trim_matches('"')
             .to_string();
         tx.execute(
-            "INSERT INTO notes (id,path,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding,entity_type)\
-             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)\
-             ON CONFLICT(id) DO UPDATE SET path=?2,type=?3,status=?4,valid_from=?5,valid_to=?6,recorded_at=?7,tags=?8,raw_text=?9,embedding=?10,entity_type=?11",
+            "INSERT INTO notes (id,path,title,type,status,valid_from,valid_to,recorded_at,tags,raw_text,embedding,entity_type)\
+             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12)\
+             ON CONFLICT(id) DO UPDATE SET path=?2,title=?3,type=?4,status=?5,valid_from=?6,valid_to=?7,recorded_at=?8,tags=?9,raw_text=?10,embedding=?11,entity_type=?12",
             params![
                 n.fm.id,
                 n.rel_path.display().to_string(),
+                n.fm.title,
                 typ,
                 st,
                 n.fm.valid_from,

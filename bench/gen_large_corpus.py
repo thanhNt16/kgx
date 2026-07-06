@@ -77,15 +77,19 @@ def copy_base_vault(base_vault, out):
                 copied = count_notes(base_vault)
     return copied
 
-def make_fact(sprint, idx, start, persons, systems):
+def fact_seq(sprint, idx, facts_per_sprint):
+    return (sprint - 1) * facts_per_sprint + idx + 1
+
+def make_fact(sprint, idx, start, persons, systems, facts_per_sprint):
     topic = TOPICS[(sprint + idx) % len(TOPICS)]
     verb = VERBS[(sprint + idx) % len(VERBS)]
     noun = NOUNS[(sprint + idx) % len(NOUNS)]
     person = persons[(sprint + idx) % len(persons)]
     sys1 = systems[(sprint + idx) % len(systems)]
     sys2 = systems[(sprint + idx + 3) % len(systems)]
-    tid = 10000 + sprint * 100 + idx
-    fid = ulid_for("fact", sprint * 100 + idx)
+    seq = fact_seq(sprint, idx, facts_per_sprint)
+    tid = 10000 + seq
+    fid = ulid_for("fact", seq)
     title = f"{verb} {topic} {noun}"
     body = (f"During sprint {sprint}, the team {verb} the {topic} system for the "
             f"{noun}. The {sys1} and {sys2} clusters were involved. "
@@ -186,7 +190,7 @@ Infrastructure component. Owner: {owner.replace('-', ' ').title()}.
     # Facts
     for sprint in range(1, sprints + 1):
         for idx in range(f_per_sprint):
-            fm, fid, links = make_fact(sprint, idx, start, PERSON_NAMES, SYSTEM_NAMES)
+            fm, fid, links = make_fact(sprint, idx, start, PERSON_NAMES, SYSTEM_NAMES, f_per_sprint)
             fname = f"dl-{sprint:04d}-{idx:02d}.md"
             with open(os.path.join(out, f"notes/facts/{fname}"), "w") as f:
                 f.write(fm)
@@ -269,15 +273,15 @@ Sprint planning session.
         early_sprint = max(1, (i * 20 + 5) % sprints + 1)
         later_idx = i % f_per_sprint
         early_idx = i % f_per_sprint
-        later_fid = ulid_for("fact", later_sprint * 100 + later_idx)
-        early_fid = ulid_for("fact", early_sprint * 100 + early_idx)
+        later_fid = ulid_for("fact", fact_seq(later_sprint, later_idx, f_per_sprint))
+        early_fid = ulid_for("fact", fact_seq(early_sprint, early_idx, f_per_sprint))
         # Overwrite early fact with superseded status
         topic = TOPICS[(early_sprint + early_idx) % len(TOPICS)]
         verb = VERBS[(early_sprint + early_idx) % len(VERBS)]
         noun = NOUNS[(early_sprint + early_idx) % len(NOUNS)]
         person = PERSON_NAMES[(early_sprint + early_idx) % len(PERSON_NAMES)]
         sys1 = SYSTEM_NAMES[(early_sprint + early_idx) % len(SYSTEM_NAMES)]
-        tid = 10000 + early_sprint * 100 + early_idx
+        tid = 10000 + fact_seq(early_sprint, early_idx, f_per_sprint)
         body = f"Superseded by later finding. Initial {verb} of {topic} for the {noun}."
         links_field = f'"[[{person}]]", "[[{sys1}]]"'
         fm = f"""---

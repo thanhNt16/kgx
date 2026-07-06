@@ -47,6 +47,30 @@ backpressure and exactly-once evidence
             self.assertTrue(copied.exists())
             self.assertIn("backpressure and exactly-once", copied.read_text())
 
+    def test_generated_ids_stay_unique_with_more_than_100_facts_per_sprint(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "large"
+            argv = [
+                "gen_large_corpus.py",
+                "--out",
+                str(out),
+                "--nodes",
+                "180",
+                "--facts-per-sprint",
+                "120",
+            ]
+            with mock.patch.object(sys, "argv", argv):
+                gen_large_corpus.main()
+
+            ids = []
+            for path in out.glob("notes/**/*.md"):
+                for line in path.read_text().splitlines():
+                    if line.startswith("id:"):
+                        ids.append(line.split(":", 1)[1].strip())
+                        break
+
+            self.assertEqual(len(ids), len(set(ids)))
+
 
 class BenchHarnessTests(unittest.TestCase):
     def test_unreachable_gold_entries_are_reported_before_scoring(self):

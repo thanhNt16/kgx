@@ -25,6 +25,15 @@ fn build_full_populates_nodes_and_edges_deterministically() {
         .query_row("SELECT count(*) FROM notes_fts", [], |r| r.get(0))
         .unwrap();
     assert_eq!(cnt as usize, notes.len());
+    let titled: i64 = b1
+        .conn()
+        .query_row(
+            "SELECT count(*) FROM notes WHERE title IS NOT NULL",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(titled as usize, notes.len());
 }
 
 #[test]

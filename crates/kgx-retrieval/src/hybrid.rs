@@ -258,6 +258,8 @@ pub fn search(
         }
     }
 
+    let fused = dedup_by_title(brain, fused, opts.limit)?;
+
     Ok(fused
         .into_iter()
         .take(opts.limit)
@@ -266,6 +268,99 @@ pub fn search(
             SearchHit { id, score, signals }
         })
         .collect())
+}
+
+fn dedup_by_title(
+    brain: &Brain,
+    ranked: Vec<(String, f32)>,
+    min_unique: usize,
+) -> Result<Vec<(String, f32)>> {
+    let mut seen = std::collections::HashSet::new();
+    let mut out = Vec::with_capacity(min_unique.min(ranked.len()));
+
+    let chunk_size = (min_unique.max(1) * 4).max(16);
+    let mut pos = 0;
+    while pos < ranked.len() && out.len() < min_unique {
+        let end = (pos + chunk_size).min(ranked.len());
+        let ids: Vec<&str> = ranked[pos..end].iter().map(|(id, _)| id.as_str()).collect();
+        let titles = load_dedup_titles(brain, &ids)?;
+
+        for (id, score) in &ranked[pos..end] {
+            let key = titles.get(id.as_str()).cloned().unwrap_or_default();
+            if key.is_empty() || seen.insert(key) {
+                out.push((id.clone(), *score));
+                if out.len() >= min_unique {
+                    break;
+                }
+            }
+        }
+        pos = end;
+    }
+
+    Ok(out)
+}
+
+fn load_dedup_titles(
+    brain: &Brain,
+    ids: &[&str],
+) -> Result<std::collections::HashMap<String, String>> {
+    if ids.is_empty() {
+        return Ok(std::collections::HashMap::new());
+    }
+
+    let placeholders = std::iter::repeat_n("?", ids.len())
+        .collect::<Vec<_>>()
+        .join(",");
+    let sql = format!("SELECT id, COALESCE(title, '') FROM notes WHERE id IN ({placeholders})");
+    let mut stmt = brain
+        .conn()
+        .prepare(&sql)
+        .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
+    let rows = stmt
+        .query_map(rusqlite::params_from_iter(ids.iter().copied()), |r| {
+            Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?))
+        })
+        .map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
+
+    let mut titles = std::collections::HashMap::with_capacity(ids.len());
+    for row in rows {
+        let (id, title) = row.map_err(|e| kgx_core::KgError::Brain(e.to_string()))?;
+        let key = normalize_title_for_dedup(&title);
+        titles.insert(id, key);
+    }
+    Ok(titles)
+}
+
+fn normalize_title_for_dedup(title: &str) -> String {
+    let title = strip_generated_title_prefix(
+        title
+            .trim()
+            .trim_matches('"')
+            .trim_start_matches("(superseded)"),
+    );
+    title
+        .trim()
+        .replace(['`', '"'], "")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_lowercase()
+}
+
+fn strip_generated_title_prefix(title: &str) -> &str {
+    if title.starts_with("DL-") {
+        if let Some((_, rest)) = title.split_once("):") {
+            return rest.trim();
+        }
+    }
+    for prefix in ["ADR (Sprint ", "Lesson (Sprint "] {
+        if title.starts_with(prefix) {
+            if let Some((_, rest)) = title.split_once("):") {
+                return rest.trim();
+            }
+        }
+    }
+    title
 }
 
 /// Two-stage retrieve → graph rerank pipeline for keyword mode.

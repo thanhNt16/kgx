@@ -1,8 +1,8 @@
-pub const SCHEMA_VERSION: i32 = 3;
+pub const SCHEMA_VERSION: i32 = 4;
 
 pub const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS notes (
-  id TEXT PRIMARY KEY, path TEXT NOT NULL, type TEXT NOT NULL, status TEXT NOT NULL,
+  id TEXT PRIMARY KEY, path TEXT NOT NULL, title TEXT, type TEXT NOT NULL, status TEXT NOT NULL,
   valid_from TEXT, valid_to TEXT, recorded_at TEXT, tags TEXT, raw_text TEXT, embedding BLOB,
   entity_type TEXT);
 CREATE TABLE IF NOT EXISTS edges (

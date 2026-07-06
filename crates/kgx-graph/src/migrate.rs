@@ -51,6 +51,15 @@ pub fn ensure_schema(conn: &Connection) -> Result<i32> {
         .map_err(|e| KgError::Brain(e.to_string()))?;
     }
 
+    if current < 4 {
+        let _ = conn.execute("ALTER TABLE notes ADD COLUMN title TEXT", []);
+        conn.execute(
+            "INSERT OR IGNORE INTO schema_version (version, applied_at) VALUES (?1, ?2)",
+            rusqlite::params![4, kgx_core::util::now_iso()],
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    }
+
     if current < SCHEMA_VERSION {
         conn.execute_batch(crate::schema::SCHEMA)
             .map_err(|e| KgError::Brain(e.to_string()))?;
