@@ -39,13 +39,61 @@ SHARE_DIR="${KGX_SHARE_DIR:-$HOME/.kgx}"
 
 mkdir -p "$BIN_DIR" "$SHARE_DIR"
 
+# install_bin <src> <dst>
+# Install a freshly-downloaded binary so it actually launches.
+#
+# macOS Gatekeeper can cache a blocking assessment for an unnotarized,
+# adhoc-signed binary on a *per-inode* basis: the same bytes that run fine
+# elsewhere hang forever in dyld (_dyld_start) at a path that was previously
+# assessed. The fix is (1) remove any stale target so the copy lands on a fresh
+# inode, (2) clear quarantine/provenance xattrs, and (3) verify the binary
+# responds to --version within a few seconds so we never silently install a
+# binary that will hang the user's shell.
+run_with_timeout() {
+  # Run a command, killing it if it runs longer than N seconds. Falls back to a
+  # plain run if no timeout(1)/gtimeout(1) is available.
+  local secs="$1"; shift
+  if command -v timeout >/dev/null 2>&1; then
+    timeout "$secs" "$@"
+  elif command -v gtimeout >/dev/null 2>&1; then
+    gtimeout "$secs" "$@"
+  else
+    "$@"
+  fi
+}
+
+install_bin() {
+  local src="$1" dst="$2"
+  rm -f "$dst"
+  cp "$src" "$dst"
+  chmod +x "$dst" 2>/dev/null || true
+  if [ "$(uname -s)" = "Darwin" ]; then
+    xattr -c "$dst" 2>/dev/null || true
+  fi
+  # Sanity check: the binary must start up. Use a hard timeout so a hang fails
+  # the install loudly instead of leaving a broken binary on PATH.
+  if ! run_with_timeout 10 "$dst" --version >/dev/null 2>&1; then
+    echo "ERROR: installed binary at $dst did not respond to --version within 10s." >&2
+    echo "       This is usually a macOS Gatekeeper stall on an unnotarized binary." >&2
+    echo "       Try: xattr -c \"$dst\" && \"$dst\" --version" >&2
+    # Fall back: a forced fresh inode + xattr clear sometimes clears a cached
+    # rejection. If that also fails, surface the error.
+    rm -f "$dst"
+    cp "$src" "$dst"
+    chmod +x "$dst" 2>/dev/null || true
+    [ "$(uname -s)" = "Darwin" ] && xattr -c "$dst" 2>/dev/null || true
+    if ! run_with_timeout 10 "$dst" --version >/dev/null 2>&1; then
+      echo "ERROR: binary at $dst still unresponsive after re-install." >&2
+      exit 1
+    fi
+  fi
+}
+
 if [[ -f "$PKG_DIR/bin/kg.exe" ]]; then
-  cp "$PKG_DIR/bin/kg.exe" "$BIN_DIR/kg.exe"
-  chmod +x "$BIN_DIR/kg.exe" 2>/dev/null || true
+  install_bin "$PKG_DIR/bin/kg.exe" "$BIN_DIR/kg.exe"
   INSTALLED_BIN="$BIN_DIR/kg.exe"
 else
-  cp "$PKG_DIR/bin/kg" "$BIN_DIR/kg"
-  chmod +x "$BIN_DIR/kg"
+  install_bin "$PKG_DIR/bin/kg" "$BIN_DIR/kg"
   INSTALLED_BIN="$BIN_DIR/kg"
 fi
 

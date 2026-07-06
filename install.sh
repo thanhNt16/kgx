@@ -59,6 +59,31 @@ PY
 fi
 "$TMP_DIR/kgx-${VERSION}-${TARGET}/install.sh"
 
+# Verify the freshly installed binary actually launches. A downloaded,
+# adhoc-signed binary can stall forever in dyld on macOS due to a cached
+# Gatekeeper assessment (the inner installer clears this, but verify anyway so
+# we never tell the user "installed" while the binary hangs).
+BIN_DIR="${KGX_BIN_DIR:-$HOME/.local/bin}"
+INSTALLED_BIN="$BIN_DIR/kg"
+[ -f "$BIN_DIR/kg.exe" ] && INSTALLED_BIN="$BIN_DIR/kg.exe"
+
+run_with_timeout() {
+  local secs="$1"; shift
+  if command -v timeout >/dev/null 2>&1; then timeout "$secs" "$@"
+  elif command -v gtimeout >/dev/null 2>&1; then gtimeout "$secs" "$@"
+  else "$@"; fi
+}
+
+if [ -x "$INSTALLED_BIN" ]; then
+  if run_with_timeout 10 "$INSTALLED_BIN" --version >/dev/null 2>&1; then
+    echo "Verified: $INSTALLED_BIN --version responds."
+  else
+    echo "WARNING: $INSTALLED_BIN did not respond to --version within 10s." >&2
+    echo "         On macOS this is usually a Gatekeeper stall on an unnotarized binary." >&2
+    echo "         Fix: xattr -c \"$INSTALLED_BIN\" && \"$INSTALLED_BIN\" --version" >&2
+  fi
+fi
+
 for arg in "$@"; do
   case "$arg" in
     --with-rtk) echo "RTK setup: run kg init --with-rtk inside a vault." ;;
