@@ -32,7 +32,7 @@ pub fn from_brain(brain: &Brain, filter: Option<&str>) -> Result<GraphModel> {
             "SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type, COALESCE(c.community_id, -1) \
              FROM notes n \
              LEFT JOIN pagerank p ON p.id=n.id \
-             LEFT JOIN communities c ON c.id=n.id \
+             LEFT JOIN (SELECT id, MIN(community_id) AS community_id FROM communities GROUP BY id) c ON c.id=n.id \
              WHERE n.type=?1 ORDER BY n.id",
             true,
         ),
@@ -40,7 +40,7 @@ pub fn from_brain(brain: &Brain, filter: Option<&str>) -> Result<GraphModel> {
             "SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type, COALESCE(c.community_id, -1) \
              FROM notes n \
              LEFT JOIN pagerank p ON p.id=n.id \
-             LEFT JOIN communities c ON c.id=n.id \
+             LEFT JOIN (SELECT id, MIN(community_id) AS community_id FROM communities GROUP BY id) c ON c.id=n.id \
              ORDER BY n.id",
             false,
         ),
