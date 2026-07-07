@@ -1,4 +1,8 @@
-// ingest_conversation — incremental conversation capture + finalize compilation
+// ingest_conversation — incremental conversation capture (verbatim, no LLM).
+//
+// Appends turns to a raw transcript note. There is no LLM finalize step here:
+// fact/decision extraction from the transcript is the agent harness's job —
+// drive it through the kgx:ingest / kgx:extract methodology and `upsert_note`.
 use kgx_core::{KgError, Result};
 use serde_json::{json, Value};
 use std::path::Path;
@@ -24,17 +28,19 @@ pub async fn run(root: &Path, args: &Value) -> Result<Value> {
         ));
     }
 
-    let provider = kgx_llm::select::provider_from_env()?;
-
-    let report =
-        kgx_extract::conversation::ingest_conversation(root, provider.as_ref(), &turns, action)
-            .await?;
+    // Verbatim capture only — no LLM. Both "incremental" and "finalize" append
+    // turns to the same raw transcript; "finalize" additionally signals that
+    // the transcript is ready for the harness to extract from.
+    let report = kgx_extract::conversation::ingest_conversation_verbatim(root, &turns, action)?;
 
     Ok(json!({
         "status": "ok",
         "action": action,
-        "notes_created": report.notes_created,
-        "notes_updated": report.notes_updated,
-        "decisions": report.decisions,
+        "transcript": report.notes_updated,
+        "note": if action == "finalize" {
+            "transcript finalized — extract facts/decisions via the kgx:ingest methodology (upsert_note per atomic fact)"
+        } else {
+            "turns appended to transcript"
+        }
     }))
 }

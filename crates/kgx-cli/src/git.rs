@@ -2,6 +2,7 @@ use std::path::Path;
 
 /// Ensure the named git branch exists and is checked out.
 /// Best-effort: if not in a git repo, returns Ok(()) silently.
+#[allow(dead_code)]
 pub fn ensure_branch(root: &Path, name: &str) -> anyhow::Result<()> {
     // Check if we're in a git repo at all
     let is_git = std::process::Command::new("git")

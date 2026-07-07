@@ -2,7 +2,7 @@ use kgx_graph::{build::build_full, community::detect, embed::MockEmbedder, Brain
 use kgx_vault::scan::scan_vault;
 
 fn fixture() -> std::path::PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min")
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min/.brain")
 }
 
 #[test]

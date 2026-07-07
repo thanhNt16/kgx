@@ -27,6 +27,7 @@ fn review_approve_all_applies_soft_but_blocks_hard() {
     let v: serde_json::Value = serde_json::from_slice(&out.get_output().stdout).unwrap();
     assert!(v["data"]["applied"].as_u64().unwrap() >= 1);
     assert!(v["data"]["blocked_hard"].as_u64().unwrap() >= 1);
-    let pg = std::fs::read_to_string(d.path().join("notes/facts/f-postgres-primary.md")).unwrap();
+    let pg =
+        std::fs::read_to_string(d.path().join(".brain/notes/facts/f-postgres-primary.md")).unwrap();
     assert!(pg.contains("status: superseded"));
 }

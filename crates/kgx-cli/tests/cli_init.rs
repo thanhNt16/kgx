@@ -28,7 +28,10 @@ fn init_creates_valid_okf_vault() {
         assert!(target.join(".brain").join(p).exists(), "missing .brain/{p}");
     }
     // The .gitignore lives at the project root and ignores derived brain state.
-    assert!(target.join(".gitignore").exists(), "missing .gitignore at root");
+    assert!(
+        target.join(".gitignore").exists(),
+        "missing .gitignore at root"
+    );
     let ignore = std::fs::read_to_string(target.join(".gitignore")).unwrap();
     assert!(
         ignore.contains(".brain/.kg/"),

@@ -11,7 +11,6 @@ pub fn run(
     incremental: bool,
     rebuild_vectors: bool,
     do_pagerank: bool,
-    communities: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = crate::vault::vault_root()?;
@@ -53,44 +52,6 @@ pub fn run(
 
     if do_pagerank {
         pagerank::compute(&mut brain, 0.85, 30)?;
-    }
-    if communities {
-        kgx_graph::leiden::detect(&mut brain, 42)?;
-        let provider = kgx_llm::select::provider_from_env()?;
-        let rt = tokio::runtime::Runtime::new()?;
-        let summaries = rt.block_on(kgx_retrieval::community_summary::summarize_all(
-            &brain,
-            provider.as_ref(),
-            &notes,
-        ))?;
-        let moc_dir = root.join("notes/moc");
-        std::fs::create_dir_all(&moc_dir)?;
-        for summary in summaries {
-            let body = format!("{}\n\nMembers: {}", summary.summary, summary.member_count);
-            let path = moc_dir.join(format!("community-{}.md", summary.community_id));
-            // Deterministic id keyed on community_id: 26 chars ('01MOC' +
-            // 21-char zero-padded community_id), matching ULID length. The
-            // same community always produces the same id, so re-running
-            // --communities overwrites the same MOC file/row instead of
-            // minting fresh ones. (MOC notes are also excluded from Leiden
-            // input — see leiden.rs — so they cannot create feedback.)
-            let moc_id = format!("01MOC{:021}", summary.community_id);
-            debug_assert_eq!(
-                moc_id.len(),
-                26,
-                "MOC id must be 26 chars, got {}: {moc_id}",
-                moc_id.len()
-            );
-            std::fs::write(
-                path,
-                format!(
-                    "---\ntype: moc\nid: {}\ntitle: \"{}\"\ntags: [entrypoint, community]\ncreated_by: agent\ncreated_via: cli\n---\n{}\n",
-                    moc_id,
-                    summary.title.replace('"', "\\\""),
-                    body
-                ),
-            )?;
-        }
     }
     let approx_in: u32 = notes
         .iter()

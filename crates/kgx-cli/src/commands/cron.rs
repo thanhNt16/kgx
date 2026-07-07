@@ -14,7 +14,7 @@ pub fn run(
         "add" => {
             let job = Job {
                 name: name.ok_or_else(|| anyhow::anyhow!("cron add requires a name"))?,
-                command: command.unwrap_or_else(|| "kg dream".into()),
+                command: command.unwrap_or_else(|| "kg index --incremental".into()),
                 calendar: calendar.unwrap_or_else(|| "*-*-* 03:00:00".into()),
             };
             let files = manage::add(&job)?;

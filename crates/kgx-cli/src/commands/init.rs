@@ -94,7 +94,10 @@ fn scaffold(brain: &Path, template: &str) -> anyhow::Result<()> {
     )?;
     std::fs::write(
         brain.join("log.md"),
-        format!("# Log\n\n## [{}] init | template={}\n", date_prefix, template),
+        format!(
+            "# Log\n\n## [{}] init | template={}\n",
+            date_prefix, template
+        ),
     )?;
     std::fs::write(brain.join("CLAUDE.md"), claude_md(template))?;
     Ok(())
@@ -121,9 +124,7 @@ fn run_migrate(
 ) -> anyhow::Result<()> {
     let brain = root.join(BRAIN_DIR);
     let brain_exists = brain.is_dir();
-    let has_legacy = LEGACY_VAULT_MEMBERS
-        .iter()
-        .any(|m| root.join(m).exists());
+    let has_legacy = LEGACY_VAULT_MEMBERS.iter().any(|m| root.join(m).exists());
 
     if brain_exists && !has_legacy {
         anyhow::bail!(

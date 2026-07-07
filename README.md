@@ -31,9 +31,9 @@
 
 | Problem (without KGX) | Solution (with KGX) |
 |---|---|
-| Raw notes pile up, never get structured | `kg capture` + `kg extract` turns any file into atomic, linked facts automatically |
+| Raw notes pile up, never get structured | `kg capture` (file/folder/URL) + the `kgx:ingest` skill turn any source into atomic, linked facts — extraction is driven by your agent harness |
 | Classic RAG re-derives answers from scratch every time | Persistent hybrid brain: vector + BM25 + tag expansion + entity graph + PageRank |
-| Wikis rot because humans don't maintain them | `kg dream` runs consolidation unattended (dedup, contradiction, archival, link repair) |
+| Wikis rot because humans don't maintain them | The `kgx:dream` skill runs consolidation (dedup, contradiction, archival, link repair), staged and applied via `kg review` |
 | Agent sessions burn tokens on large contexts | Hybrid retrieval sends only relevant context (verified: 371 tokens vs ~3,400 full-vault on 17-note fixture) |
 | No standard format for sharing knowledge bundles | OKF-compatible: `kg ship` + `kg pull` for lossless round-trip bundles |
 | Multi-hop questions fail basic RAG | HippoRAG-style Personalized PageRank over the graph |
@@ -72,7 +72,7 @@ Brain Layers
           ↓ Reciprocal Rank Fusion (multi-k)
       Hybrid ranked results
           ↓
-      kg ask / kg recall / kg search
+      kgx:ask (harness) / kg recall / kg search
           ↓
       MCP tools → Claude Code / Codex / Cursor
 ```
@@ -350,15 +350,14 @@ Claude Code:
 Use the `kg` CLI and the `kgx` MCP server when working in a KGX vault.
 
 Commands:
-- `kg capture --from - --type doc`
-- `kg extract --source <id> --intensity full`
-- `kg ask "<q>" --cite [--scope global]`
-- `kg dream --max-iterations 3`
-- `kg refine <query>|--note <id>|--tag <tag>`
+- `kg capture --from <file|folder|-> [--ext md,txt] --type doc`
 - `kg review --approve all --ponytail-audit`
-- `kg index --full --communities`
+- `kg index --full`
 - `kg graph --format cytoscape|graphml`
 - `kg cron remove <name>`
+- Extraction, Q&A, and consolidation are **agent-harness driven** via the
+  `kgx:ingest` / `kgx:extract` / `kgx:ask` / `kgx:dream` skills (no external
+  LLM provider needed in-session).
 
 Rules:
 - raw/ (under `.brain/`) is immutable.
@@ -382,6 +381,9 @@ Cursor uses `.cursor/mcp.json` for the MCP connection. The MCP connection gives 
 # From a file
 kg capture --from meeting-notes-2026-06-27.md --type transcript
 
+# From a folder (every text file captured as its own source)
+kg capture --from docs/ --ext md,txt
+
 # From stdin (pipe from clipboard, curl, etc.)
 pbpaste | kg capture --from - --type doc
 ```
@@ -391,24 +393,21 @@ Actual output:
 {"ok":true,"command":"capture","data":{"kind":"doc","raw":"raw/2026-06-27-meeting-notes.md","source_note":"notes/sources/meeting-notes.md"},"elapsed_ms":0}
 ```
 
-### 2. Extract atomic notes
+### 2. Extract atomic notes (agent-harness driven)
 
-```bash
-# Full extraction (pass a note ID, not a file path)
-kg extract --source 01RAW01ARCHREVIEW00000000 --intensity full
+Extraction is done by your agent (Claude Code / Codex / OpenCode), not an
+external LLM provider — drive it via the `kgx:ingest` or `kgx:extract` skill:
 
-# Batch over all unprocessed raw sources
-kg extract --batch --intensity lite
-```
+1. `get_note` the captured source by its id.
+2. The agent reads the body and derives atomic facts (one claim per note,
+   confidence levels, named entities → `links`).
+3. For each fact, `upsert_note({type:"fact", title, body, source:"[[raw/<stem>]]",
+   confidence, links})`. Use `type:"decision"` for choices, `type:"entity"`
+   for new named entities.
+4. `kg index --full` so the new notes are searchable.
 
-Actual output:
-```json
-{"ok":true,"command":"extract","data":{"created":2},"elapsed_ms":1}
-```
-
-Creates `notes/facts/`, `notes/entities/`, `notes/decisions/` files — each with `source:` provenance and `recorded_at:` timestamp.
-
-When a real LLM provider is configured, extraction classifies entities as `person`, `object`, `location`, or `event` (POLE) and emits typed relations. `KGX_LLM=mock` remains deterministic for tests and yields untyped output.
+This creates `notes/facts/`, `notes/entities/`, `notes/decisions/` files — each
+with `source:` provenance and `recorded_at:` timestamp.
 
 ### 3. Build the brain
 
@@ -441,15 +440,6 @@ kg search "postgres" --json
 ```
 
 ```bash
-# Hybrid Q&A with citations
-kg ask "What is the primary datastore?" --json
-```
-
-```json
-{"ok":true,"command":"ask","data":{"answer":"Based on the notes, Postgres is the primary datastore.","citations":["01FACT01POSTGRESPRIMARY00"]},"elapsed_ms":1}
-```
-
-```bash
 # Entity-centric neighborhood fetch — 12 neighbors, 0ms
 kg recall --entity "Postgres" --json
 ```
@@ -458,36 +448,21 @@ kg recall --entity "Postgres" --json
 {"ok":true,"command":"recall","data":{"entity":"Postgres","neighbors":["ADR-001: Postgres as primary datastore","ADR-002: Migrate to CockroachDB","CockroachDB","Billing Service","Postgres is the primary datastore","CockroachDB is the primary datastore","Billing Service dependencies","Database backup policy","Datastore MOC","What is the sync strategy during migration?","Architecture Review 2026-01-15","Datastore Migration Note 2026-03-01"]},"elapsed_ms":0}
 ```
 
-### 5. Dream (consolidate)
+For citation-backed Q&A, run the `kgx:ask` skill — the agent retrieves context
+(`nl_query_memory` / `deep_search_memory`) and synthesizes the answer itself.
 
-```bash
-# Dry-run to see what would change
-kg dream --dry-run --json
-```
+### 5. Dream (consolidate) — agent-harness driven
 
-```json
-{"ok":true,"command":"dream","data":{"done_signal":true,"dry_run":true,"hard_blocks":6,"iterations":2,"staged":14},"elapsed_ms":2}
-```
+Consolidation is done by your agent via the `kgx:dream` skill:
 
-```bash
-# Run all 7 consolidation passes, max 3 iterations
-kg dream --max-iterations 3
-```
+1. Surface candidates: `dream_step({only:"orphan_repair,staleness,open_questions"})`
+   (LLM-free) plus your own scan with `query_memory` / `deep_search_memory`.
+2. Run the judgment passes (dedup, contradiction, supersession, stale archival)
+   yourself and write proposed diffs to `.brain/.kg/staged_diffs.json` as
+   `ProposedDiff` records (see the skill for the schema).
+3. `kg review --approve all --ponytail-audit` applies the staged diffs.
 
-Changes are staged as `ProposedDiff` records — never applied automatically to `main`.
-
-### 6. Refine a targeted subgraph
-
-```bash
-# Targeted dream: same passes, scoped subgraph, same review gate
-kg refine "postgres migration" --max-iterations 2
-kg refine --note 01FACT01POSTGRESPRIMARY00 --dry-run
-kg refine --tag reliability
-```
-
-`kg refine` stages `ProposedDiff` records into the same review flow as `kg dream`.
-
-### 7. Review and approve
+### 6. Review and approve
 
 ```bash
 # Approve all soft diffs (hard blocks require manual resolution)
@@ -586,20 +561,20 @@ kg validate --okf --json
 | Command | Purpose | Key Flags |
 |---|---|---|
 | `kg init` | Scaffold OKF vault into `.brain/` | `--template research\|code\|pkm\|team`, `--okf`, `--with-skills`, `--migrate` |
-| `kg capture` | Ingest raw → `.brain/raw/` + source note | `--from file\|-`, `--type doc\|transcript\|web\|code` |
-| `kg extract` | LLM: raw → atomic facts/entities/decisions | `--source <NOTE_ID>`, `--batch`, `--dry-run`, `--intensity lite\|full\|ultra` |
+| `kg capture` | Ingest raw → `.brain/raw/` + source note (file/folder/stdin) | `--from file\|folder\|-`, `--type doc\|transcript\|web\|code`, `--ext md,txt` |
 | `kg link` | Compute wikilinks/backlinks, orphans | `--suggest`, `--orphans`, `--fix` |
-| `kg index` | Build/refresh `.brain/.kg/brain.sqlite` | `--full`, `--incremental`, `--communities`, `--pagerank` |
-| `kg ask` | Hybrid Q&A over graph | `--scope local\|global`, `--write`, `--cite`, `--mode keyword\|semantic\|hybrid` |
+| `kg index` | Build/refresh `.brain/.kg/brain.sqlite` | `--full`, `--incremental`, `--rebuild-vectors`, `--pagerank` |
 | `kg recall` | Entity-centric neighborhood fetch | `--entity "Name"` |
-| `kg search` | Raw hybrid search (no synthesis) | `--type fact,entity`, `--mode`, `--limit` |
-| `kg dream` | 7-pass consolidation | `--max-iterations N`, `--only <set>`, `--dry-run`, `--intensity` |
-| `kg refine` | Targeted dream: same passes, scoped subgraph, same review gate | `<query>`, `--note <id>`, `--tag <tag>`, `--max-iterations N`, `--dry-run` |
+| `kg search` | Raw hybrid search (no synthesis) | `--mode keyword\|semantic\|hybrid`, `--limit`, `--rerank-graph` |
 | `kg review` | Show/approve/reject staged diffs | `--approve <ids\|all>`, `--reject`, `--interactive`, `--ponytail-audit` |
 | `kg graph` | Export visualization | `--format html\|cytoscape\|graphml\|mermaid\|dot\|obsidian`, `--out` |
 | `kg validate` | Integrity + OKF checks | `--okf`, `--links`, `--frontmatter` |
 | `kg status` | Vault health snapshot | `--json`, `--verbose` |
 | `kg tokens` | Token usage analytics | `--since 7d\|30d`, `--by operation\|command\|day` |
+
+Removed (LLM work is done by the agent harness via the `kgx:` skills, not an
+external provider): `kg ask`, `kg dream`, `kg refine`, `kg extract`,
+`kg index --communities`, `kg search --rerank-llm`.
 | `kg cron` | Manage systemd/launchd jobs | `add <name>`, `list`, `enable\|disable <name>`, `remove <name>`, `run <name>` |
 | `kg ship` | Export OKF bundle | `--out path.tar.gz` |
 | `kg pull` | Import OKF bundle | `--namespace /subtree` |

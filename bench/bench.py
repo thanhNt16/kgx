@@ -60,12 +60,18 @@ def ndcg_at_k(ranked_note_ids, relevant_set, k):
 
 def load_note_texts(vault):
     texts = {}
-    for path in Path(vault).glob("notes/**/*.md"):
-        text = path.read_text()
-        for line in text.splitlines():
-            if line.startswith("id:"):
-                texts[line.split(":", 1)[1].strip()] = text
-                break
+    # Support both layouts: knowledge content under <vault>/.brain/notes
+    # (current) and <vault>/notes (legacy / pre-.brain).
+    roots = [Path(vault) / "notes", Path(vault) / ".brain" / "notes"]
+    for root in roots:
+        if not root.is_dir():
+            continue
+        for path in root.glob("**/*.md"):
+            text = path.read_text()
+            for line in text.splitlines():
+                if line.startswith("id:"):
+                    texts[line.split(":", 1)[1].strip()] = text
+                    break
     return texts
 
 def matches_expected_patterns(note_id, expected_patterns, note_texts):

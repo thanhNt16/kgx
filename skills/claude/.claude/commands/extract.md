@@ -4,9 +4,10 @@ description: Extract atomic facts, entities, and decisions from a captured sourc
 disable-model-invocation: true
 ---
 
-Extract atomic facts from a source. You (Claude) are the extractor — do not
-shell out to `kg extract`, it calls an external LLM provider and needs its own
-API key. You already have everything required to do this reasoning yourself.
+Extract atomic facts from a source. **You (the agent) are the extractor** — do
+not shell out to `kg extract`; it calls an external LLM provider that is not
+configured in-session. You already have everything required to do this
+reasoning yourself.
 
 1. Ask the user for the source note ID (or find candidates via `query_memory`
    with `note_type: source`, or `deep_search_memory`).
@@ -30,5 +31,9 @@ API key. You already have everything required to do this reasoning yourself.
 5. If a fact describes a choice/tradeoff rather than a claim, use
    `type: "decision"` instead of `"fact"`. If it names a new entity worth
    tracking on its own, also `upsert_note` a `type: "entity"` note for it.
-6. Report what was created: counts by type, titles, and any facts skipped
+6. Rebuild the index so the new notes are searchable: `kg index --full`.
+7. Report what was created: counts by type, titles, and any facts skipped
    (e.g. duplicates, non-atomic statements you split up).
+
+This is the extraction half of `kgx:ingest`. `kgx:ingest` composes capture +
+this extraction flow.

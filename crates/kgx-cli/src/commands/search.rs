@@ -2,7 +2,6 @@
 use std::time::Instant;
 
 use crate::output::emit;
-use kgx_core::llm::LlmProvider;
 use kgx_graph::Brain;
 use kgx_retrieval::{search, Mode, SearchOpts};
 
@@ -12,7 +11,6 @@ pub fn run(
     mode: &str,
     limit: usize,
     rerank_graph: bool,
-    rerank_llm: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = crate::vault::vault_root()?;
@@ -23,15 +21,9 @@ pub fn run(
         "semantic" => Mode::Semantic,
         _ => Mode::Hybrid,
     };
-    let llm: Option<Box<dyn LlmProvider>> = if rerank_llm {
-        Some(kgx_llm::select::provider_from_env()?)
-    } else {
-        None
-    };
     let reranker = kgx_llm::select::reranker_from_env();
     let sparse = kgx_llm::select::sparse_from_env();
     let r = kgx_retrieval::Retrievers::new(embedder.as_ref())
-        .with_llm(llm.as_deref())
         .with_reranker(reranker.as_deref())
         .with_sparse(sparse.as_deref());
     let hits = search(
@@ -44,7 +36,7 @@ pub fn run(
             expand_ppr: true,
             filter_entities: false,
             rerank_graph,
-            rerank_llm,
+            rerank_llm: false,
             rerank_topk: kgx_llm::select::rerank_topk_from_env(),
         },
     )?;

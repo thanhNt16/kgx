@@ -36,9 +36,9 @@ serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+walkdir.workspace = true
 
 [dev-dependencies]
 assert_cmd.workspace = true
 tempfile.workspace = true
-walkdir.workspace = true
 rusqlite = { version = "0.31", features = ["bundled", "blob"] }

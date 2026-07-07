@@ -23,7 +23,12 @@ if [ -f Cargo.toml ]; then
 fi
 if [ -f package.json ]; then
   if command -v npm >/dev/null 2>&1; then
-    checks+=("npm test")
+    # Only run `npm test` when package.json actually defines scripts.test.
+    # `npm pkg get` prints {} when absent and a quoted string when present.
+    test_script="$(npm pkg get scripts.test 2>/dev/null)"
+    if [ -n "$test_script" ] && [ "$test_script" != "{}" ] && [ "$test_script" != "null" ] && [ "$test_script" != '""' ]; then
+      checks+=("npm test")
+    fi
   fi
 fi
 

@@ -6,7 +6,8 @@ use kgx_graph::{
 use kgx_vault::scan::scan_vault;
 
 fn fixture() -> std::path::PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min")
+    // The fixture mirrors the on-disk layout: vault content lives under .brain/.
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min/.brain")
 }
 
 #[test]

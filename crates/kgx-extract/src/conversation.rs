@@ -74,6 +74,27 @@ pub async fn ingest_conversation(
     })
 }
 
+/// Verbatim, LLM-free conversation capture: appends turns to a raw transcript.
+/// Both "incremental" and "finalize" append turns; "finalize" simply marks the
+/// transcript as ready for the agent harness to extract from (the report's
+/// `notes_updated` is the transcript path). No extraction is performed here —
+/// the harness drives that via `upsert_note` per atomic fact/decision.
+pub fn ingest_conversation_verbatim(
+    root: &Path,
+    turns: &[ConversationTurn],
+    _action: &str,
+) -> Result<IngestReport> {
+    let now = util::now_iso();
+    let today = &now[..10];
+    let transcript_path = find_or_create_transcript(root, today)?;
+    append_turns(root, &transcript_path, turns, &now)?;
+    Ok(IngestReport {
+        notes_created: vec![],
+        notes_updated: vec![transcript_path],
+        decisions: vec![],
+    })
+}
+
 fn find_or_create_transcript(root: &Path, today: &str) -> Result<String> {
     let dir = root.join(TRANSCRIPT_DIR);
     std::fs::create_dir_all(&dir).map_err(|e| KgError::Io {

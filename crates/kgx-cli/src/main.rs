@@ -3,14 +3,11 @@ mod git;
 mod output;
 mod vault;
 mod commands {
-    pub mod ask;
     pub mod capture;
     pub mod codebase;
     pub mod cron;
     pub mod dashboard;
     pub mod docs;
-    pub mod dream_cmd;
-    pub mod extract_cmd;
     pub mod graph;
     pub mod index;
     pub mod init;
@@ -19,7 +16,6 @@ mod commands {
     pub mod project;
     pub mod pull;
     pub mod recall;
-    pub mod refine_cmd;
     pub mod review;
     pub mod search;
     pub mod serve;
@@ -63,22 +59,10 @@ fn main() -> anyhow::Result<()> {
             incremental,
             rebuild_vectors,
             pagerank,
-            communities,
-        } => commands::index::run(
-            cli.json,
-            full,
-            incremental,
-            rebuild_vectors,
-            pagerank,
-            communities,
-        ),
-        Commands::Capture { from, kind } => commands::capture::run(cli.json, &from, &kind),
-        Commands::Extract {
-            source,
-            batch,
-            dry_run,
-            intensity,
-        } => commands::extract_cmd::run(cli.json, &source, batch, dry_run, &intensity),
+        } => commands::index::run(cli.json, full, incremental, rebuild_vectors, pagerank),
+        Commands::Capture { from, kind, ext } => {
+            commands::capture::run(cli.json, &from, &kind, ext.as_deref())
+        }
         Commands::Link {
             suggest,
             orphans,
@@ -89,28 +73,8 @@ fn main() -> anyhow::Result<()> {
             mode,
             limit,
             rerank_graph,
-            rerank_llm,
-        } => commands::search::run(cli.json, &query, &mode, limit, rerank_graph, rerank_llm),
+        } => commands::search::run(cli.json, &query, &mode, limit, rerank_graph),
         Commands::Recall { entity } => commands::recall::run(cli.json, &entity),
-        Commands::Ask {
-            question,
-            scope,
-            mode,
-            cite,
-            write,
-        } => commands::ask::run(cli.json, &question, &scope, &mode, cite, write),
-        Commands::Dream {
-            max_iterations,
-            only,
-            dry_run,
-        } => commands::dream_cmd::run(cli.json, max_iterations, only, dry_run),
-        Commands::Refine {
-            query,
-            note,
-            tag,
-            max_iterations,
-            dry_run,
-        } => commands::refine_cmd::run(cli.json, query, note, tag, max_iterations, dry_run),
         Commands::Review {
             approve,
             reject,

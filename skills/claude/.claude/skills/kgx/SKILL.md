@@ -12,16 +12,15 @@ Use `kg` for Markdown vault work. The MCP server exposes the same MCP tools.
 
 | Verb | What it does |
 |------|-------------|
-| `kgx:ingest` | Capture source + extract atomic facts |
+| `kgx:ingest` | Capture source (file/folder/URL/conversation) + extract atomic facts (harness-driven) |
 | `kgx:capture` | Capture a raw source verbatim |
-| `kgx:extract` | Extract facts/entities/decisions from a source |
+| `kgx:extract` | Extract facts/entities/decisions from a source (harness-driven) |
 | `kgx:index` | Rebuild the brain index |
 | `kgx:search` | Hybrid keyword + semantic search |
-| `kgx:ask` | Answer a question with citations |
+| `kgx:ask` | Answer a question with citations (harness-driven synthesis over retrieval) |
 | `kgx:recall` | Retrieve an entity's graph neighborhood |
-| `kgx:dream` | Run consolidation + review approved diffs |
-| `kgx:refine` | Targeted dream: same passes, scoped subgraph, same review gate |
-| `kgx:review` | Review staged dream diffs |
+| `kgx:dream` | Consolidation (dedup/contradiction/supersession/staleness) — harness-driven, applied via `kgx:review` |
+| `kgx:review` | Apply staged consolidation diffs |
 | `kgx:link` | Analyze and repair wikilinks |
 | `kgx:graph` | Export graph as HTML, Cytoscape, GraphML, Mermaid, DOT, or Obsidian Canvas |
 | `kgx:status` | Show vault and brain status |
@@ -33,24 +32,26 @@ Use `kg` for Markdown vault work. The MCP server exposes the same MCP tools.
 | `kgx:codebase-index` | Index repo into codebase-memory-mcp graph |
 
 ### kgx:ingest
-Capture a raw source and extract atomic facts from it.
+Capture a raw source and extract atomic facts from it. **Extraction is
+harness-driven** — see the `kgx:ingest` command skill (capture, then the agent
+writes facts via `upsert_note`; do not shell out to `kg extract`).
 ```
-kg capture --from <file|-> --type <doc|transcript|article|code>
-kg extract --source <source_note_id> --intensity full
+kg capture --from <file|folder|-> [--ext md,txt] --type <doc|transcript|article|code>
+# then agent extracts facts -> upsert_note per atomic fact
+kg index --full
 ```
 
 ### kgx:capture
-Capture raw source material verbatim (immutable).
+Capture raw source material verbatim (immutable). Accepts a file, a folder
+(walked recursively), or `-` for stdin.
 ```
-kg capture --from <file|-> --type <doc|transcript|article|code>
+kg capture --from <file|folder|-> [--ext md,txt,markdown,mdx] --type <doc|transcript|article|code>
 ```
 
 ### kgx:extract
 Extract atomic facts, entities, and decisions from a captured source.
-With a real LLM provider, extraction classifies entities as person/object/location/event and emits typed relations; `KGX_LLM=mock` yields deterministic untyped output.
-```
-kg extract --source <source_note_id> --intensity full
-```
+**Harness-driven**: the agent is the extractor (no external LLM provider
+needed in-session). See the `kgx:extract` command skill for the methodology.
 
 ### kgx:index
 Build or rebuild the SQLite brain index with vector embeddings.
@@ -74,10 +75,9 @@ kg search <query> [--mode keyword|semantic|hybrid] [--limit <n>]
 | `KGX_RERANK_TOPK` | integer | `30` |
 
 ### kgx:ask
-Ask a question using hybrid retrieval with note ID citations.
-```
-kg ask "<question>" --cite [--scope global]
-```
+Ask a question using hybrid retrieval with note ID citations. **Synthesis is
+harness-driven** — retrieve via `nl_query_memory`/`deep_search_memory` and
+answer yourself; `kg ask` was removed. See the `kgx:ask` command skill.
 
 ### kgx:recall
 Retrieve all notes within 1-2 hops of a named entity.
@@ -86,21 +86,15 @@ kg recall --entity "<entity name>"
 ```
 
 ### kgx:dream
-Run full consolidation: dedup, contradiction detection, supersession, stale archival.
-```
-kg dream --max-iterations 3
-kg review --approve all --ponytail-audit
-```
-
-### kgx:refine
-Run targeted dream passes over a query, note, or tag scope; same passes, scoped subgraph, same review gate.
-```
-kg refine <query>|--note <id>|--tag <tag>
-kg review --approve all --ponytail-audit
-```
+Consolidation (dedup, contradiction, supersession, stale archival).
+**Judgment passes are harness-driven** — you compute the diffs and write
+`.brain/.kg/staged_diffs.json`, then `kg review` applies them. `kg dream` was
+removed; see the `kgx:dream` command skill for the staged-diff schema.
+LLM-free candidate surfacing (orphans/stale/open-questions) is available via
+the `dream_step` MCP tool.
 
 ### kgx:review
-Review staged dream diffs without running consolidation.
+Apply staged consolidation diffs from `.brain/.kg/staged_diffs.json`.
 ```
 kg review [--approve all|--reject] [--ponytail-audit]
 ```
@@ -152,11 +146,10 @@ kg sync
 ```
 
 ## Quick Workflows
-- Capture: `kg capture --from <file|-> --type doc`
-- Extract: `kg extract --source <id> --intensity full`
-- Ask: `kg ask "<question>" --cite [--scope global]`
-- Consolidate: `kg dream --max-iterations 3`, then `kg review --approve all --ponytail-audit`
-- Refine: `kg refine <query>|--note <id>|--tag <tag>`, then review
+- Capture: `kg capture --from <file|folder|-> [--ext md,txt] --type doc`
+- Extract: run the `kgx:ingest` / `kgx:extract` skill — the agent writes facts via `upsert_note`
+- Ask: run the `kgx:ask` skill — retrieve (`nl_query_memory`/`deep_search_memory`), then synthesize
+- Consolidate: run the `kgx:dream` skill (write `.brain/.kg/staged_diffs.json`), then `kg review --approve all --ponytail-audit`
 - Rebuild: `kg index --full`
 - Graph: `kg graph --format cytoscape|graphml`
 - Cron: `kg cron remove <name>`

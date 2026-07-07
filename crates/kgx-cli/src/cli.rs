@@ -48,8 +48,6 @@ pub enum Commands {
         rebuild_vectors: bool,
         #[arg(long)]
         pagerank: bool,
-        #[arg(long)]
-        communities: bool,
     },
     /// Capture raw source (immutable)
     Capture {
@@ -57,17 +55,10 @@ pub enum Commands {
         from: String,
         #[arg(long = "type", default_value = "doc")]
         kind: String,
-    },
-    /// Extract atomic facts from a source note
-    Extract {
+        /// Comma-separated extensions to capture when --from is a directory
+        /// (default: md,txt,markdown,mdx)
         #[arg(long)]
-        source: String,
-        #[arg(long)]
-        batch: bool,
-        #[arg(long)]
-        dry_run: bool,
-        #[arg(long, default_value = "full")]
-        intensity: String,
+        ext: Option<String>,
     },
     /// Analyze and repair links
     Link {
@@ -88,48 +79,11 @@ pub enum Commands {
         /// Use two-stage retrieve → graph rerank pipeline instead of fused RRF
         #[arg(long)]
         rerank_graph: bool,
-        /// Rerank fused RRF results by LLM relevance scoring
-        #[arg(long)]
-        rerank_llm: bool,
     },
     /// Recall an entity's neighborhood
     Recall {
         #[arg(long)]
         entity: String,
-    },
-    /// Answer a question using hybrid retrieval
-    Ask {
-        question: String,
-        #[arg(long, default_value = "local")]
-        scope: String,
-        #[arg(long, default_value = "hybrid")]
-        mode: String,
-        #[arg(long)]
-        cite: bool,
-        #[arg(long)]
-        write: bool,
-    },
-    /// Run dream consolidation passes and stage proposed diffs
-    Dream {
-        #[arg(long, default_value = "3")]
-        max_iterations: u32,
-        #[arg(long)]
-        only: Option<String>,
-        #[arg(long)]
-        dry_run: bool,
-    },
-    /// Refine a targeted subgraph: run dream passes scoped to a query/note/tag
-    Refine {
-        /// Retrieval query selecting the notes to refine
-        query: Option<String>,
-        #[arg(long)]
-        note: Option<String>,
-        #[arg(long)]
-        tag: Option<String>,
-        #[arg(long, default_value = "1")]
-        max_iterations: u32,
-        #[arg(long)]
-        dry_run: bool,
     },
     /// Review staged dream diffs
     Review {

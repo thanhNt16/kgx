@@ -3,7 +3,7 @@ use kgx_vault::scan::scan_vault;
 use kgx_viz::{html, mermaid::render as mermaid, model::from_brain};
 
 fn fixture() -> std::path::PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min")
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/vault-min/.brain")
 }
 
 fn model() -> kgx_viz::model::GraphModel {

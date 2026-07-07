@@ -29,8 +29,12 @@ fn copy_fixture() -> tempfile::TempDir {
 #[test]
 fn ship_then_pull_is_lossless_and_valid() {
     let src = copy_fixture();
+    // The fixture mirrors the on-disk layout: vault content lives under
+    // .brain/. ship/pull are vault-root-agnostic library functions, so pass
+    // the .brain/ directory as the vault root.
+    let src_vault = src.path().join(".brain");
     let bundle = src.path().join("out.okf.tar.gz");
-    ship(src.path(), &bundle).unwrap();
+    ship(&src_vault, &bundle).unwrap();
     let dst = tempfile::tempdir().unwrap();
     std::fs::create_dir_all(dst.path().join("notes")).unwrap();
     std::fs::write(dst.path().join("index.md"), "# Index\n").unwrap();
