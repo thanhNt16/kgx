@@ -22,6 +22,8 @@ fn html_renders_with_3d_viewer_and_counts_match() {
     assert!(h.contains("\"nodes\":"));
     assert_eq!(m.nodes.len(), 17);
     assert_eq!(h.matches("\"title\":").count(), m.nodes.len());
+    assert_eq!(h.matches("\"community\":").count(), m.nodes.len(),
+        "every node should include a community field");
 }
 
 #[test]

@@ -108,6 +108,7 @@ mod tests {
                     status: "active".into(),
                     pagerank: 0.5,
                     entity_type: Some("person".into()),
+                    community: 0,
                 },
                 VizNode {
                     id: "F1".into(),
@@ -116,6 +117,7 @@ mod tests {
                     status: "active".into(),
                     pagerank: 0.1,
                     entity_type: None,
+                    community: 0,
                 },
             ],
             edges: vec![VizEdge {

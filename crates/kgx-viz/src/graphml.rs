@@ -57,6 +57,7 @@ mod tests {
                 status: "active".into(),
                 pagerank: 0.5,
                 entity_type: Some("person".into()),
+                community: 0,
             }],
             edges: vec![VizEdge {
                 src: "E1".into(),

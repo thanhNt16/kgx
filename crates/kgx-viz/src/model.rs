@@ -10,6 +10,7 @@ pub struct VizNode {
     pub status: String,
     pub pagerank: f64,
     pub entity_type: Option<String>,
+    pub community: i64,
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -28,13 +29,19 @@ pub struct GraphModel {
 pub fn from_brain(brain: &Brain, filter: Option<&str>) -> Result<GraphModel> {
     let (sql, param) = match filter {
         Some(_) => (
-            "SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type \
-             FROM notes n LEFT JOIN pagerank p ON p.id=n.id WHERE n.type=?1 ORDER BY n.id",
+            "SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type, COALESCE(c.community_id, -1) \
+             FROM notes n \
+             LEFT JOIN pagerank p ON p.id=n.id \
+             LEFT JOIN communities c ON c.id=n.id \
+             WHERE n.type=?1 ORDER BY n.id",
             true,
         ),
         None => (
-            "SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type \
-             FROM notes n LEFT JOIN pagerank p ON p.id=n.id ORDER BY n.id",
+            "SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type, COALESCE(c.community_id, -1) \
+             FROM notes n \
+             LEFT JOIN pagerank p ON p.id=n.id \
+             LEFT JOIN communities c ON c.id=n.id \
+             ORDER BY n.id",
             false,
         ),
     };
@@ -84,5 +91,6 @@ fn node_from_row(r: &rusqlite::Row<'_>) -> rusqlite::Result<VizNode> {
         status: r.get(3)?,
         pagerank: r.get(4)?,
         entity_type: r.get(5)?,
+        community: r.get(6)?,
     })
 }
