@@ -19,3 +19,14 @@ log.md
 .cursor/
 .codebase-memory/
 token.json
+
+# The test fixture lives under .brain/ and reuses the vault content layout
+# (notes/, raw/, log.md, .kg/), so the broad ignore patterns above would
+# exclude it. Keep the fixture tracked — tests on CI depend on these files.
+!tests/fixtures/
+!tests/fixtures/**/.brain/
+!tests/fixtures/**/.brain/notes/
+!tests/fixtures/**/.brain/raw/
+!tests/fixtures/**/.brain/log.md
+!tests/fixtures/**/.brain/.kg/
+
