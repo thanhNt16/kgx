@@ -145,6 +145,13 @@ function shortName(title) {
   const s = title.replace(/^.*[\/\\]/, '').replace(/\.md$/, '');
   return s.length > 30 ? s.slice(0, 27) + '...' : s;
 }
+
+const COMMUNITY_PALETTE = [
+  '#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b',
+  '#e377c2','#7f7f7f','#bcbd22','#17becf','#aec7e8','#ffbb78'
+];
+function communityColor(c) { return c === -1 ? '#6b7280' : COMMUNITY_PALETTE[c % COMMUNITY_PALETTE.length]; }
+
 document.getElementById('counts').textContent = `\u2014 ${N} nodes, ${DATA.edges.length} edges`;
 
 // --- Force-directed 3D layout ---
@@ -222,17 +229,17 @@ renderer.domElement.addEventListener('pointerdown', onInteraction);
 renderer.domElement.addEventListener('pointerwheel', onInteraction);
 btnAutorotate.addEventListener('click', () => { autorotateEnabled = !autorotateEnabled; controls.autoRotate = autorotateEnabled; btnAutorotate.classList.toggle('active'); });
 
-// --- Node meshes (individual, for draggability) ---
+// --- Node meshes ---
 const nodeGroup = new THREE.Group();
 const meshes = [];
-const positions = []; // {x,y,z} mutable for drag
+const positions = [];
 const radii = [];
 const baseColors = [];
 
 for (let i = 0; i < N; i++) {
   const nd = DATA.nodes[i];
   const r = 0.25 + Math.min(0.7, nd.pagerank * 10);
-  const c = new THREE.Color(nodeColor(nd.type));
+  const c = new THREE.Color(communityColor(nd.community));
   const geo = new THREE.SphereGeometry(1, 20, 16);
   const mat = new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
   const mesh = new THREE.Mesh(geo, mat);
@@ -279,7 +286,7 @@ const spriteMats = [];
 for (let i = 0; i < N; i++) {
   const nd = DATA.nodes[i];
   const name = shortName(nd.title);
-  const { texture, w, h } = makeLabelTexture(name, nodeColor(nd.type));
+  const { texture, w, h } = makeLabelTexture(name, communityColor(nd.community));
   const worldH = labelScaleY;
   const worldW = worldH * (w / h);
   const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false, toneMapped: false });
@@ -294,62 +301,141 @@ for (let i = 0; i < N; i++) {
 }
 scene.add(labelGroup);
 
-// --- Edge lines ---
-let edgeLines, edgeGeoRef;
+// --- Edges and invisible hit cylinders ---
+const edgeSrcIdx = new Array(DATA.edges.length).fill(-1);
+const edgeDstIdx = new Array(DATA.edges.length).fill(-1);
+const edgeSegIdx = new Array(DATA.edges.length).fill(-1);
+const nodeEdgeIdxs = Array.from({length:N},()=>[]);
+const edgePositions = [];
+const edgeColorsArr = [];
+let edgeSegCount = 0;
+
+for (let ei = 0; ei < DATA.edges.length; ei++) {
+  const e = DATA.edges[ei];
+  const ai = DATA.nodes.findIndex(n => n.id === e.src);
+  const bi = DATA.nodes.findIndex(n => n.id === e.dst);
+  if (ai < 0 || bi < 0) continue;
+  edgeSrcIdx[ei] = ai;
+  edgeDstIdx[ei] = bi;
+  edgeSegIdx[ei] = edgeSegCount++;
+  nodeEdgeIdxs[ai].push(ei);
+  nodeEdgeIdxs[bi].push(ei);
+  const a = positions[ai], b = positions[bi];
+  edgePositions.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  edgeColorsArr.push(0.12, 0.12, 0.12, 0.12, 0.12, 0.12);
+}
+
+const edgeGeo = new THREE.BufferGeometry();
+edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3));
+edgeGeo.setAttribute('color', new THREE.Float32BufferAttribute(edgeColorsArr, 3));
+const edgeMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 1.0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
+scene.add(edgeLines);
+
+const hitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false, toneMapped: false });
+const edgeHitByIdx = new Array(DATA.edges.length).fill(null);
+const edgeHitMeshes = [];
+const edgeHitGroup = new THREE.Group();
+
+function alignEdgeHit(mesh, a, b) {
+  const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+  const dir = new THREE.Vector3().subVectors(b, a);
+  const len = dir.length();
+  mesh.position.copy(mid);
+  mesh.scale.set(0.18, len, 0.18);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+}
+
+for (let ei = 0; ei < DATA.edges.length; ei++) {
+  const ai = edgeSrcIdx[ei], bi = edgeDstIdx[ei];
+  if (ai < 0) continue;
+  const geo = new THREE.CylinderGeometry(1, 1, 1, 6, 1);
+  const mesh = new THREE.Mesh(geo, hitMat.clone());
+  alignEdgeHit(mesh, positions[ai], positions[bi]);
+  mesh.userData = { edgeIdx: ei };
+  edgeHitByIdx[ei] = mesh;
+  edgeHitMeshes.push(mesh);
+  edgeHitGroup.add(mesh);
+}
+scene.add(edgeHitGroup);
+
 function buildEdgeGeo() {
   const ep = [], ec = [];
-  for (const e of DATA.edges) {
-    const ai = DATA.nodes.findIndex(n => n.id === e.src);
-    const bi = DATA.nodes.findIndex(n => n.id === e.dst);
-    if (ai < 0 || bi < 0) continue;
+  for (let ei = 0; ei < DATA.edges.length; ei++) {
+    const ai = edgeSrcIdx[ei], bi = edgeDstIdx[ei];
+    if (ai < 0) continue;
     const a = positions[ai], b = positions[bi];
     ep.push(a.x, a.y, a.z, b.x, b.y, b.z);
-    const intensity = 0.12;
-    ec.push(intensity, intensity, intensity, intensity, intensity, intensity);
+    ec.push(0.12, 0.12, 0.12, 0.12, 0.12, 0.12);
   }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3));
   geo.setAttribute('color', new THREE.Float32BufferAttribute(ec, 3));
   return geo;
 }
-edgeGeoRef = buildEdgeGeo();
-const edgeMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 1.0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
-edgeLines = new THREE.LineSegments(edgeGeoRef, edgeMat);
-scene.add(edgeLines);
 
 function rebuildEdges() {
   edgeLines.geometry.dispose();
   edgeLines.geometry = buildEdgeGeo();
+  for (let ei = 0; ei < DATA.edges.length; ei++) {
+    const hm = edgeHitByIdx[ei];
+    if (!hm) continue;
+    alignEdgeHit(hm, positions[edgeSrcIdx[ei]], positions[edgeDstIdx[ei]]);
+  }
 }
 
-// --- Hover ---
+// --- Highlight / hover / selection state ---
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-let hoveredIdx = -1;
+let hoveredNodeIdx = -1;
+let hoveredEdgeIdx = -1;
+let selectedId = null;
+let selectedEdgeIdx = -1;
+let activeNodeIds = new Set();
+let activeEdgeIds = new Set();
 
-renderer.domElement.addEventListener('pointermove', (e) => {
-  const rect = renderer.domElement.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(meshes);
-  if (hits.length > 0) {
-    const idx = hits[0].object.userData.idx;
-    if (idx !== hoveredIdx) {
-      hoveredIdx = idx;
-      const nd = DATA.nodes[idx];
-      const c = nodeColor(nd.type);
-      tooltipInner.innerHTML = `<div id="tooltip-name"><span id="tooltip-dot" style="background:${c}"></span>${shortName(nd.title)} <span id="tooltip-label">${nd.type}</span></div><div id="tooltip-path">${nd.id}</div>`;
-      tooltip.style.left = (e.clientX - container.getBoundingClientRect().left + 14) + 'px';
-      tooltip.style.top = (e.clientY - container.getBoundingClientRect().top - 10) + 'px';
-      tooltip.classList.add('visible');
+function recomputeActive() {
+  activeNodeIds.clear();
+  activeEdgeIds.clear();
+  if (hoveredNodeIdx !== -1) {
+    activeNodeIds.add(hoveredNodeIdx);
+    for (const ei of nodeEdgeIdxs[hoveredNodeIdx]) {
+      activeEdgeIds.add(ei);
+      activeNodeIds.add(edgeSrcIdx[ei] === hoveredNodeIdx ? edgeDstIdx[ei] : edgeSrcIdx[ei]);
     }
+  } else if (hoveredEdgeIdx !== -1) {
+    activeNodeIds.add(edgeSrcIdx[hoveredEdgeIdx]);
+    activeNodeIds.add(edgeDstIdx[hoveredEdgeIdx]);
+    activeEdgeIds.add(hoveredEdgeIdx);
+  } else if (selectedId !== null) {
+    activeNodeIds.add(selectedId);
+    for (const ei of nodeEdgeIdxs[selectedId]) {
+      activeEdgeIds.add(ei);
+      activeNodeIds.add(edgeSrcIdx[ei] === selectedId ? edgeDstIdx[ei] : edgeSrcIdx[ei]);
+    }
+  } else if (selectedEdgeIdx !== -1) {
+    activeNodeIds.add(edgeSrcIdx[selectedEdgeIdx]);
+    activeNodeIds.add(edgeDstIdx[selectedEdgeIdx]);
+    activeEdgeIds.add(selectedEdgeIdx);
+  }
+}
+
+function updateTooltip(e, nodeIdx, edgeIdx) {
+  if (nodeIdx !== -1) {
+    const nd = DATA.nodes[nodeIdx];
+    tooltipInner.innerHTML = `<div id="tooltip-name"><span id="tooltip-dot" style="background:${communityColor(nd.community)}"></span>${shortName(nd.title)} <span id="tooltip-label">${nd.type}</span></div><div id="tooltip-path">${nd.id}</div>`;
+    tooltip.classList.add('visible');
+  } else if (edgeIdx !== -1) {
+    const e = DATA.edges[edgeIdx];
+    const src = DATA.nodes[edgeSrcIdx[edgeIdx]], dst = DATA.nodes[edgeDstIdx[edgeIdx]];
+    tooltipInner.innerHTML = `<div id="tooltip-name">${shortName(src.title)} <span id="tooltip-label">→ ${e.rel} →</span> ${shortName(dst.title)}</div>`;
+    tooltip.classList.add('visible');
   } else {
-    hoveredIdx = -1;
     tooltip.classList.remove('visible');
   }
-});
-renderer.domElement.addEventListener('pointerleave', () => { hoveredIdx = -1; tooltip.classList.remove('visible'); });
+  tooltip.style.left = (e.clientX - container.getBoundingClientRect().left + 14) + 'px';
+  tooltip.style.top = (e.clientY - container.getBoundingClientRect().top - 10) + 'px';
+}
 
 // --- Drag ---
 let dragTarget = null;
@@ -358,42 +444,63 @@ const dragPlane = new THREE.Plane();
 const dragOffset = new THREE.Vector3();
 const dragIntersect = new THREE.Vector3();
 let pointerDownTime = 0;
+let clickEdgeIdx = -1;
 
 renderer.domElement.addEventListener('pointerdown', (e) => {
   pointerDownTime = Date.now();
+  clickEdgeIdx = -1;
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(meshes);
-  if (hits.length > 0) {
-    const obj = hits[0].object;
+  const nodeHits = raycaster.intersectObjects(meshes);
+  if (nodeHits.length > 0) {
+    const obj = nodeHits[0].object;
     dragTarget = obj;
     dragIdx = obj.userData.idx;
     const normal = camera.getWorldDirection(new THREE.Vector3()).negate();
     dragPlane.setFromNormalAndCoplanarPoint(normal, obj.position);
-    dragOffset.copy(hits[0].point).sub(obj.position);
+    dragOffset.copy(nodeHits[0].point).sub(obj.position);
     controls.enabled = false;
-  } else {
-    dragTarget = null;
-    dragIdx = -1;
+    return;
+  }
+  const edgeHits = raycaster.intersectObjects(edgeHitMeshes);
+  if (edgeHits.length > 0) {
+    clickEdgeIdx = edgeHits[0].object.userData.edgeIdx;
   }
 });
 
 renderer.domElement.addEventListener('pointermove', (e) => {
-  if (!dragTarget) return;
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
-  raycaster.ray.intersectPlane(dragPlane, dragIntersect);
-  if (!dragIntersect) return;
-  dragTarget.position.copy(dragIntersect.sub(dragOffset));
-  const p = dragTarget.position;
-  positions[dragIdx] = { x: p.x, y: p.y, z: p.z };
-  const r = radii[dragIdx];
-  labelGroup.children[dragIdx].position.set(p.x, p.y + r * 0.7 + labelScaleY/2, p.z);
-  rebuildEdges();
+
+  if (dragTarget) {
+    raycaster.ray.intersectPlane(dragPlane, dragIntersect);
+    if (!dragIntersect) return;
+    dragTarget.position.copy(dragIntersect.sub(dragOffset));
+    const p = dragTarget.position;
+    positions[dragIdx] = { x: p.x, y: p.y, z: p.z };
+    const r = radii[dragIdx];
+    labelGroup.children[dragIdx].position.set(p.x, p.y + r * 0.7 + labelScaleY/2, p.z);
+    rebuildEdges();
+    return;
+  }
+
+  const nodeHits = raycaster.intersectObjects(meshes);
+  const edgeHits = raycaster.intersectObjects(edgeHitMeshes);
+  let newHN = -1, newHE = -1;
+  if (nodeHits.length > 0) newHN = nodeHits[0].object.userData.idx;
+  else if (edgeHits.length > 0) newHE = edgeHits[0].object.userData.edgeIdx;
+  if (newHN !== hoveredNodeIdx || newHE !== hoveredEdgeIdx) {
+    hoveredNodeIdx = newHN;
+    hoveredEdgeIdx = newHE;
+    recomputeActive();
+    updateTooltip(e, newHN, newHE);
+  } else if (newHN !== -1 || newHE !== -1) {
+    updateTooltip(e, newHN, newHE);
+  }
 });
 
 renderer.domElement.addEventListener('pointerup', () => {
@@ -403,17 +510,28 @@ renderer.domElement.addEventListener('pointerup', () => {
     dragTarget = null;
     dragIdx = -1;
     controls.enabled = true;
+  } else if (clickEdgeIdx !== -1 && Date.now() - pointerDownTime < 200) {
+    selectEdge(clickEdgeIdx);
+    clickEdgeIdx = -1;
+  } else if (hoveredNodeIdx === -1 && hoveredEdgeIdx === -1) {
+    selectNode(null);
   }
 });
 
-// --- Selection ---
-let selectedId = null;
-let highlightedIds = null;
-let flyTarget = null;
+renderer.domElement.addEventListener('pointerleave', () => {
+  hoveredNodeIdx = -1;
+  hoveredEdgeIdx = -1;
+  clickEdgeIdx = -1;
+  recomputeActive();
+  tooltip.classList.remove('visible');
+});
 
+// --- Selection ---
 function selectNode(idx) {
   selectedId = idx;
-  highlightedIds = null;
+  selectedEdgeIdx = -1;
+  clickEdgeIdx = -1;
+  recomputeActive();
   if (idx === null) {
     rightPanel.classList.remove('open');
     updateDetail(null);
@@ -426,14 +544,34 @@ function selectNode(idx) {
   detailType.textContent = nd.type;
   updateDetail(nd);
   rightPanel.classList.add('open');
-  const set = new Set(); set.add(idx);
-  for (const e of DATA.edges) {
-    if (e.src === nd.id) set.add(DATA.nodes.findIndex(n => n.id === e.dst));
-    if (e.dst === nd.id) set.add(DATA.nodes.findIndex(n => n.id === e.src));
-  }
-  highlightedIds = set;
-  updateHUD();
   flyTo(idx);
+  updateHUD();
+}
+
+function selectEdge(ei) {
+  selectedEdgeIdx = ei;
+  selectedId = null;
+  clickEdgeIdx = -1;
+  recomputeActive();
+  const e = DATA.edges[ei];
+  const si = edgeSrcIdx[ei], di = edgeDstIdx[ei];
+  const src = DATA.nodes[si], dst = DATA.nodes[di];
+  detailTitle.textContent = shortName(e.rel);
+  detailType.textContent = 'edge';
+  detailBody.innerHTML = buildEdgeDetail(src, dst, e.rel, si, di);
+  rightPanel.classList.add('open');
+  detailBody.querySelectorAll('.detail-conn-item').forEach(el => {
+    el.addEventListener('click', () => selectNode(parseInt(el.dataset.idx)));
+  });
+  updateHUD();
+}
+
+function buildEdgeDetail(src, dst, rel, si, di) {
+  return `<div class="detail-row"><span class="detail-row-label">Relationship</span><span class="detail-row-value">${rel}</span></div>`
+    + `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Source</div>`
+    + `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${communityColor(src.community)}"></span><span class="detail-conn-name">${shortName(src.title)}</span><span class="detail-conn-type">${src.type}</span></div></div></div>`
+    + `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Target</div>`
+    + `<div class="detail-conn-item" data-idx="${di}"><span class="filter-dot" style="background:${communityColor(dst.community)}"></span><span class="detail-conn-name">${shortName(dst.title)}</span><span class="detail-conn-type">${dst.type}</span></div></div></div>`;
 }
 
 function flyTo(idx) {
@@ -460,9 +598,7 @@ function fitView() {
   const endTarget = center;
   const endPos = new THREE.Vector3(center.x, center.y, center.z + dist);
   flyTarget = { startPos, startTarget, endPos, endTarget, progress: 0 };
-  selectedId = null; highlightedIds = null;
-  rightPanel.classList.remove('open');
-  updateDetail(null);
+  selectNode(null);
 }
 btnFit.addEventListener('click', fitView);
 
@@ -485,7 +621,7 @@ function updateDetail(nd) {
       const ti = DATA.nodes.findIndex(n => n.id === e.dst);
       if (ti < 0) continue;
       const tn = DATA.nodes[ti];
-      out += `<div class="detail-conn-item" data-idx="${ti}"><span class="filter-dot" style="background:${nodeColor(tn.type)}"></span><span class="detail-conn-name">${shortName(tn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
+      out += `<div class="detail-conn-item" data-idx="${ti}"><span class="filter-dot" style="background:${communityColor(tn.community)}"></span><span class="detail-conn-name">${shortName(tn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
     }
     if (outbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${outbound.length-25} more</div>`;
     out += `</div></div>`;
@@ -496,7 +632,7 @@ function updateDetail(nd) {
       const si = DATA.nodes.findIndex(n => n.id === e.src);
       if (si < 0) continue;
       const sn = DATA.nodes[si];
-      out += `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${nodeColor(sn.type)}"></span><span class="detail-conn-name">${shortName(sn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
+      out += `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${communityColor(sn.community)}"></span><span class="detail-conn-name">${shortName(sn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
     }
     if (inbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${inbound.length-25} more</div>`;
     out += `</div></div>`;
@@ -507,23 +643,51 @@ function updateDetail(nd) {
   });
 }
 
-// --- Update node appearance per frame (highlight colors) ---
+// --- Update node/edge appearance per frame ---
 function updateNodeAppearance() {
-  const hasHL = highlightedIds && highlightedIds.size > 0;
+  const anyActive = hoveredNodeIdx !== -1 || hoveredEdgeIdx !== -1 || selectedId !== null || selectedEdgeIdx !== -1;
   for (let i = 0; i < N; i++) {
     const m = meshes[i];
     const visible = enabledTypes.has(DATA.nodes[i].type);
     m.visible = visible;
+    labelGroup.children[i].visible = visible && showLabelsCb.checked;
     if (!visible) continue;
-    if (hasHL) {
-      const bright = highlightedIds.has(i) ? 1.0 : 0.12;
-      m.material.color.copy(baseColors[i]).multiplyScalar(bright);
-      m.scale.setScalar(radii[i] * (highlightedIds.has(i) ? 1.0 : 0.35));
-    } else {
-      m.material.color.copy(baseColors[i]);
-      m.scale.setScalar(radii[i]);
-    }
+    const isActive = !anyActive || activeNodeIds.has(i);
+    const isHovered = i === hoveredNodeIdx;
+    const isSelected = i === selectedId;
+    let brightness = isActive ? 1.0 : 0.25;
+    if (isHovered) brightness = 1.25;
+    else if (isSelected) brightness = 1.35;
+    m.material.color.copy(baseColors[i]).multiplyScalar(brightness);
+    const s = radii[i] * (isHovered ? 1.25 : isSelected ? 1.15 : 1.0);
+    m.scale.setScalar(s);
+    spriteMats[i].opacity = isActive ? 1.0 : 0.25;
   }
+}
+
+function updateEdgeAppearance() {
+  const colAttr = edgeLines.geometry.attributes.color;
+  const anyActive = hoveredNodeIdx !== -1 || hoveredEdgeIdx !== -1 || selectedId !== null || selectedEdgeIdx !== -1;
+  for (let ei = 0; ei < DATA.edges.length; ei++) {
+    const si = edgeSrcIdx[ei], di = edgeDstIdx[ei];
+    const seg = edgeSegIdx[ei];
+    const hm = edgeHitByIdx[ei];
+    if (seg < 0) continue;
+    const visible = meshes[si].visible && meshes[di].visible && enabledEdgeRels.has(DATA.edges[ei].rel);
+    if (hm) hm.visible = visible;
+    if (!visible) {
+      colAttr.setXYZ(seg*2, 0, 0, 0);
+      colAttr.setXYZ(seg*2+1, 0, 0, 0);
+      continue;
+    }
+    const isActive = !anyActive || activeEdgeIds.has(ei) || activeNodeIds.has(si) || activeNodeIds.has(di);
+    const isHovered = ei === hoveredEdgeIdx;
+    const isSelected = ei === selectedEdgeIdx;
+    let intensity = isHovered || isSelected ? 0.55 : isActive ? 0.12 : 0.03;
+    colAttr.setXYZ(seg*2, intensity, intensity, intensity);
+    colAttr.setXYZ(seg*2+1, intensity, intensity, intensity);
+  }
+  colAttr.needsUpdate = true;
 }
 
 // --- Filters ---
@@ -579,7 +743,8 @@ function updateHUD() {
   const visibleEdges = DATA.edges.filter(e => visibleIds.has(e.src) && visibleIds.has(e.dst) && enabledEdgeRels.has(e.rel)).length;
   let h = `<strong>${visibleNodes}</strong> nodes, <strong>${visibleEdges}</strong> edges`;
   if (visibleNodes < N) h += `<br><span class="warn">${visibleNodes} of ${N} nodes shown</span>`;
-  if (selectedId !== null) h += `<br>1 selected`;
+  if (selectedId !== null) h += `<br>1 node selected`;
+  else if (selectedEdgeIdx !== -1) h += `<br>1 edge selected`;
   hud.innerHTML = h;
 }
 
@@ -611,6 +776,7 @@ function resize() {
 window.addEventListener('resize', resize);
 
 // --- Animate ---
+let flyTarget = null;
 function animate() {
   requestAnimationFrame(animate);
   if (!autorotateEnabled && !controls.autoRotate && Date.now() - lastInteraction > IDLE_MS) {
@@ -625,6 +791,7 @@ function animate() {
   }
   controls.update();
   updateNodeAppearance();
+  updateEdgeAppearance();
   composer.render();
 }
 animate();
