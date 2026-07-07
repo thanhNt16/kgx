@@ -117,6 +117,27 @@ if [ -d "$PKG_DIR/skills/claude" ]; then
   printf 'Installed KGX skills+commands to ~/.claude/\n'
 fi
 
+# Install OpenCode global skills + commands
+if [ -d "$PKG_DIR/skills/opencode" ]; then
+  OPENCODE_DIR="$HOME/.config/opencode"
+  mkdir -p "$OPENCODE_DIR/skills/kgx" "$OPENCODE_DIR/command"
+  cp "$PKG_DIR/skills/opencode/.opencode/skills/kgx/SKILL.md" "$OPENCODE_DIR/skills/kgx/SKILL.md"
+  if [ -d "$PKG_DIR/skills/opencode/.opencode/skills/kgx-codebase" ]; then
+    mkdir -p "$OPENCODE_DIR/skills/kgx-codebase"
+    cp "$PKG_DIR/skills/opencode/.opencode/skills/kgx-codebase/SKILL.md" "$OPENCODE_DIR/skills/kgx-codebase/SKILL.md"
+  fi
+  if [ -d "$PKG_DIR/skills/opencode/.opencode/skills/kgx-codebase-index" ]; then
+    mkdir -p "$OPENCODE_DIR/skills/kgx-codebase-index"
+    cp "$PKG_DIR/skills/opencode/.opencode/skills/kgx-codebase-index/SKILL.md" "$OPENCODE_DIR/skills/kgx-codebase-index/SKILL.md"
+  fi
+  if [ -d "$PKG_DIR/skills/opencode/.opencode/command" ]; then
+    for tmpl in "$PKG_DIR/skills/opencode/.opencode/command/"*.md; do
+      cp "$tmpl" "$OPENCODE_DIR/command/$(basename "$tmpl")"
+    done
+  fi
+  printf 'Installed KGX skills+commands to ~/.config/opencode/\n'
+fi
+
 if command -v claude >/dev/null 2>&1; then
   # Reinstall must be authoritative. A stale kgx entry in any scope conflicts
   # with the new one — Claude Code refuses to connect when an MCP server is

@@ -154,6 +154,12 @@ OPENCODE_EOF
        "$VAULT_DIR/.opencode/plugins/kgx-verify-finished.js"
     ok "installed plugin -> $VAULT_DIR/.opencode/plugins/kgx-verify-finished.js"
 
+    if [ -d "$REPO_DIR/skills/opencode/.opencode/command" ]; then
+      mkdir -p "$VAULT_DIR/.opencode/command"
+      cp "$REPO_DIR/skills/opencode/.opencode/command/"*.md "$VAULT_DIR/.opencode/command/"
+      ok "installed commands -> $VAULT_DIR/.opencode/command/"
+    fi
+
     cp "$REPO_DIR/skills/opencode/.opencode/skills/kgx-codebase/SKILL.md" \
        "$SKILLBASE/kgx-codebase/SKILL.md"
     ok "installed skill -> $SKILLBASE/kgx-codebase/SKILL.md"

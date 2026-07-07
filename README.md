@@ -120,7 +120,7 @@ Install a specific release:
 curl -fsSL https://raw.githubusercontent.com/thanhNt16/kgx/main/install.sh | KGX_VERSION=v0.0.1 bash
 ```
 
-The installer downloads the matching `kgx-<version>-<platform>.zip` from GitHub Releases, installs the `kg` CLI to `~/.local/bin`, and copies the bundled skill templates to `~/.kgx/skills`.
+The installer downloads the matching `kgx-<version>-<platform>.zip` from GitHub Releases, installs the `kg` CLI to `~/.local/bin`, copies the bundled skill templates to `~/.kgx/skills`, and installs global skills/commands for Claude Code (`~/.claude/`) and OpenCode (`~/.config/opencode/`).
 
 After installing:
 
@@ -137,6 +137,7 @@ This gives you the full toolset:
 | --- | --- |
 | CLI | `kg` is installed to `~/.local/bin` |
 | MCP server | Run with `kg mcp-server --transport stdio` from inside a vault |
+| Global skills/commands | Claude Code (`~/.claude/skills/`, `~/.claude/commands/`) and OpenCode (`~/.config/opencode/skills/`, `~/.config/opencode/command/`) |
 | Skills and hooks | `kg init --with-skills --with-rtk` writes Claude Code, Codex, Cursor, OpenCode, ZCode, and shared hook files into the vault |
 
 ### Build from Source
@@ -177,7 +178,7 @@ Per-agent, it installs:
 | Agent | MCP Config | Skill / Rules | Config Files |
 |-------|-----------|---------------|--------------|
 | claude | `claude mcp add` (auto) | `~/.claude/skills/kgx/SKILL.md` | — |
-| opencode | `opencode.json` | `.opencode/skills/kgx/SKILL.md` | `.opencode/plugins/kgx-verify-finished.js` |
+| opencode | `opencode.json` | `.opencode/skills/kgx/SKILL.md` | `.opencode/command/kgx:*.md`, `.opencode/plugins/kgx-verify-finished.js` |
 | codex | `config.toml` | `AGENTS.md` | `hooks.json` |
 | cursor | `.cursor/mcp.json` (merged) | `.cursor/rules/kgx.mdc` | — |
 | zcode | `.mcp.json` (stdio) | `~/.zcode/skills/` | installed via `./dev-install.sh --agent zcode` |
