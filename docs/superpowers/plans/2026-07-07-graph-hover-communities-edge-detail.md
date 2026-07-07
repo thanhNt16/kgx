@@ -1,0 +1,984 @@
+# Graph Viewer Improvements Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Add community-based node coloring, hover highlighting for nodes and edges, and click-to-detail for edges in the Three.js 3D graph viewer produced by `kgx:graph --format html`.
+
+**Architecture:** A small Rust data-model change exposes the existing `communities` table to the viewer template. The template then colors nodes by community, dims non-neighborhood elements on hover, and opens a right-side detail panel for both node and edge clicks. No new CLI flags or Cargo dependencies are introduced.
+
+**Tech Stack:** Rust, Three.js 0.170 (ESM via esm.sh), Tera templates.
+
+## Global Constraints
+
+- The feature is accessed through the existing composite verb `kgx:graph --format html` (CLI: `kg graph --format html`).
+- No new Cargo dependencies.
+- No new CLI flags.
+- No changes to the force-directed layout algorithm.
+- No persistence of selection/hover/camera state.
+
+---
+
+### Task 1: Add failing test and expose community assignments in the graph model
+
+**Files:**
+- Modify: `crates/kgx-viz/src/model.rs`
+- Modify: `crates/kgx-viz/tests/html.rs`
+
+**Interfaces:**
+- Consumes: existing `Brain` schema (`notes`, `pagerank`, `communities` tables).
+- Produces: `VizNode` with new `community: i64` field; `from_brain` SQL now joins `communities`; test asserts the field is embedded in the HTML.
+
+- [ ] **Step 1: Add the failing test assertion**
+
+Update `html_renders_with_3d_viewer_and_counts_match` in `crates/kgx-viz/tests/html.rs`:
+
+```rust
+#[test]
+fn html_renders_with_3d_viewer_and_counts_match() {
+    let m = model();
+    let h = html::render(&m);
+    assert!(h.contains("<html") && h.contains("</html>"));
+    assert!(h.contains("esm.sh/three"), "expected Three.js CDN import");
+    assert!(h.contains("\"nodes\":"));
+    assert_eq!(m.nodes.len(), 17);
+    assert_eq!(h.matches("\"title\":").count(), m.nodes.len());
+    assert_eq!(h.matches("\"community\":").count(), m.nodes.len(),
+        "every node should include a community field");
+}
+```
+
+- [ ] **Step 2: Run the test and confirm it fails**
+
+Run:
+
+```bash
+cd /Users/harry/Desktop/kgx && cargo test -p kgx-viz html_renders_with_3d_viewer_and_counts_match -- --nocapture 2>&1
+```
+
+Expected: FAIL with an assertion message about `community` not being present (because `VizNode` does not yet serialize it).
+
+- [ ] **Step 3: Add the `community` field and update the SQL join**
+
+In `crates/kgx-viz/src/model.rs`, update `VizNode`:
+
+```rust
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct VizNode {
+    pub id: String,
+    pub title: String,
+    pub r#type: String,
+    pub status: String,
+    pub pagerank: f64,
+    pub entity_type: Option<String>,
+    pub community: i64,
+}
+```
+
+Update both SQL strings in `from_brain` to:
+
+```rust
+"SELECT n.id, n.path, n.type, n.status, COALESCE(p.score,0.0), n.entity_type, COALESCE(c.community_id, -1) \
+ FROM notes n \
+ LEFT JOIN pagerank p ON p.id=n.id \
+ LEFT JOIN (SELECT id, MIN(community_id) AS community_id FROM communities GROUP BY id) c ON c.id=n.id \
+ ORDER BY n.id"
+```
+
+The grouped `LEFT JOIN` guarantees one row per note and never duplicates nodes; notes with no community row fall back to `-1`.
+
+Update `node_from_row` to read the seventh column:
+
+```rust
+fn node_from_row(r: &rusqlite::Row<'_>) -> rusqlite::Result<VizNode> {
+    Ok(VizNode {
+        id: r.get(0)?,
+        title: r.get(1)?,
+        r#type: r.get(2)?,
+        status: r.get(3)?,
+        pagerank: r.get(4)?,
+        entity_type: r.get(5)?,
+        community: r.get(6)?,
+    })
+}
+```
+
+- [ ] **Step 4: Run the test and confirm it passes**
+
+Run:
+
+```bash
+cd /Users/harry/Desktop/kgx && cargo test -p kgx-viz html_renders_with_3d_viewer_and_counts_match -- --nocapture 2>&1
+```
+
+Expected: PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+cd /Users/harry/Desktop/kgx
+git add crates/kgx-viz/src/model.rs crates/kgx-viz/tests/html.rs
+git commit -m "feat: expose community_id in VizNode and assert it in graph HTML test"
+```
+
+---
+
+### Task 2: Update the HTML template with community colors, hover highlights, and edge details
+
+**Files:**
+- Modify: `crates/kgx-viz/templates/graph.html.tera`
+
+**Interfaces:**
+- Consumes: `{{ graph_data | safe }}` JSON, which now includes `community` for each node.
+- Produces: self-contained HTML page with community-colored nodes, hover highlighting, and edge detail panel.
+
+- [ ] **Step 1: Replace the entire template with the updated version**
+
+Replace the contents of `crates/kgx-viz/templates/graph.html.tera` with:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KGX Graph</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three@0.170",
+    "three/addons/": "https://esm.sh/three@0.170/examples/jsm/"
+  }
+}
+</script>
+<style>
+* { box-sizing: border-box; }
+:root { --bg: #06090f; --surface: #0e2028; --surface2: #0f1e24; --border: #1a3a4030; --text: #e0eded; --muted: #6a9e9e; --accent: #1DA27E; --danger: #e05252; --panel-w: 240px; --detail-w: 280px; }
+body { margin: 0; font-family: system-ui, sans-serif; color: var(--text); background: var(--bg); overflow: hidden; }
+header { padding: 8px 16px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 10px; height: 40px; flex-shrink: 0; }
+header strong { font-size: 13px; color: var(--accent); letter-spacing: -0.3px; }
+#counts { color: var(--muted); font-size: 11px; }
+main { display: flex; height: calc(100vh - 40px); }
+#left-panel { width: var(--panel-w); min-width: 160px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.panel-header { padding: 10px 12px 6px; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-section { padding: 4px 8px; }
+.filter-label { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; color: var(--text); transition: background 0.1s; }
+.filter-label:hover { background: rgba(255,255,255,0.04); }
+.filter-label input { accent-color: var(--accent); }
+.filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.filter-count { margin-left: auto; color: var(--muted); font-size: 10px; }
+.filter-actions { display: flex; gap: 6px; padding: 6px 10px 8px; }
+.filter-actions button { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 10px; padding: 2px 10px; border-radius: 4px; cursor: pointer; }
+.filter-actions button:hover { color: var(--text); border-color: var(--accent); }
+#canvas-container { flex: 1; position: relative; overflow: hidden; background: var(--bg); }
+#canvas-container canvas { display: block; }
+#hud { position: absolute; top: 10px; left: 12px; pointer-events: none; font-size: 11px; color: var(--muted); line-height: 1.5; }
+#hud strong { color: var(--text); }
+#hud .warn { color: var(--danger); }
+#canvas-actions { position: absolute; top: 10px; right: 12px; display: flex; gap: 4px; }
+#canvas-actions button { background: rgba(14,32,40,0.85); border: 1px solid var(--border); color: var(--muted); font-size: 10px; padding: 4px 10px; border-radius: 4px; cursor: pointer; pointer-events: auto; }
+#canvas-actions button:hover { color: var(--text); border-color: var(--accent); }
+#canvas-actions button.active { color: var(--accent); border-color: var(--accent); }
+#tooltip { position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 10; }
+#tooltip.visible { opacity: 1; }
+#tooltip-inner { background: rgba(10,22,26,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px 10px; font-size: 11px; max-width: 280px; }
+#tooltip-name { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+#tooltip-label { color: rgba(255,255,255,0.3); font-size: 10px; }
+#tooltip-path { color: rgba(255,255,255,0.3); font-family: monospace; font-size: 10px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tooltip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+#right-panel { width: var(--detail-w); min-width: 200px; background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto; display: none; flex-direction: column; }
+#right-panel.open { display: flex; }
+.detail-header { padding: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+.detail-close { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 0 2px; line-height: 1; }
+.detail-close:hover { color: var(--text); }
+.detail-title { font-size: 13px; font-weight: 600; color: var(--text); word-break: break-all; }
+.detail-type { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.detail-body { padding: 10px 12px; font-size: 11px; }
+.detail-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.detail-row:last-child { border-bottom: none; }
+.detail-row-label { color: var(--muted); }
+.detail-row-value { color: var(--text); text-align: right; max-width: 60%; word-break: break-all; }
+.detail-connections { margin-top: 8px; }
+.detail-conn-group { margin-bottom: 8px; }
+.detail-conn-header { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+.detail-conn-item { display: flex; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: background 0.1s; }
+.detail-conn-item:hover { background: rgba(255,255,255,0.04); }
+.detail-conn-name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-conn-type { color: var(--muted); font-size: 10px; margin-left: auto; flex-shrink: 0; }
+.show-labels-row { padding: 6px 10px 8px; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text); border-top: 1px solid var(--border); margin-top: auto; }
+.show-labels-row input { accent-color: var(--accent); }
+.resize-handle { width: 3px; cursor: col-resize; background: transparent; position: relative; flex-shrink: 0; z-index: 5; }
+.resize-handle::after { content: ''; position: absolute; left: 1px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+.resize-handle:hover::after, .resize-handle.active::after { background: var(--accent); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <strong>KGX Graph</strong>
+  <span id="counts"></span>
+</header>
+<main>
+  <aside id="left-panel">
+    <div class="panel-header">Node Types</div>
+    <div id="node-filters" class="filter-section"></div>
+    <div class="panel-header" style="padding-top:12px">Edge Types</div>
+    <div id="edge-filters" class="filter-section"></div>
+    <div class="filter-actions">
+      <button id="filter-all">All</button>
+      <button id="filter-none">None</button>
+    </div>
+    <div class="show-labels-row">
+      <input type="checkbox" id="show-labels" checked>
+      <label for="show-labels">Show labels</label>
+    </div>
+  </aside>
+  <div class="resize-handle" id="left-handle"></div>
+  <div id="canvas-container">
+    <div id="hud"></div>
+    <div id="canvas-actions">
+      <button id="btn-fit" title="Fit graph to view">&#x26F6; Fit</button>
+      <button id="btn-autorotate" title="Toggle auto-rotate">&#x21BB;</button>
+    </div>
+    <div id="tooltip"><div id="tooltip-inner"></div></div>
+  </div>
+  <div class="resize-handle" id="right-handle"></div>
+  <aside id="right-panel">
+    <div class="detail-header">
+      <div><div class="detail-title"></div><div class="detail-type"></div></div>
+      <button class="detail-close" id="detail-close">&times;</button>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </aside>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const DATA = {{ graph_data | safe }};
+const container = document.getElementById('canvas-container');
+const hud = document.getElementById('hud');
+const tooltip = document.getElementById('tooltip');
+const tooltipInner = document.getElementById('tooltip-inner');
+const rightPanel = document.getElementById('right-panel');
+const detailClose = document.getElementById('detail-close');
+const detailTitle = rightPanel.querySelector('.detail-title');
+const detailType = rightPanel.querySelector('.detail-type');
+const detailBody = document.getElementById('detail-body');
+const showLabelsCb = document.getElementById('show-labels');
+const leftHandle = document.getElementById('left-handle');
+const rightHandle = document.getElementById('right-handle');
+const btnFit = document.getElementById('btn-fit');
+const btnAutorotate = document.getElementById('btn-autorotate');
+
+const N = DATA.nodes.length;
+const NODE_TYPE_COLORS = { entity: '#2563eb', decision: '#b45309', fact: '#059669', moc: '#8b5cf6', question: '#f59e0b', source: '#64748b' };
+function nodeColor(type) { return NODE_TYPE_COLORS[type] || '#059669'; }
+function shortName(title) {
+  const s = title.replace(/^.*[\/\\]/, '').replace(/\.md$/, '');
+  return s.length > 30 ? s.slice(0, 27) + '...' : s;
+}
+
+const COMMUNITY_PALETTE = [
+  '#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b',
+  '#e377c2','#7f7f7f','#bcbd22','#17becf','#aec7e8','#ffbb78'
+];
+function communityColor(c) { return c === -1 ? '#6b7280' : COMMUNITY_PALETTE[c % COMMUNITY_PALETTE.length]; }
+
+document.getElementById('counts').textContent = `\u2014 ${N} nodes, ${DATA.edges.length} edges`;
+
+// --- Force-directed 3D layout ---
+const pos = new Float32Array(N * 3);
+const vel = new Float32Array(N * 3);
+for (let i = 0; i < N; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  const r = Math.cbrt(Math.random()) * 8;
+  pos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+  pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+  pos[i*3+2] = r * Math.cos(phi);
+}
+for (let iter = 0; iter < 150; iter++) {
+  const rep = 0.025, attr = 0.006, center = 0.0015, damp = 0.85;
+  for (let i = 0; i < N; i++) {
+    for (let j = i + 1; j < N; j++) {
+      const dx = pos[i*3]-pos[j*3], dy = pos[i*3+1]-pos[j*3+1], dz = pos[i*3+2]-pos[j*3+2];
+      const dist = Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
+      const f = rep/(dist*dist+0.5);
+      vel[i*3]+=dx/dist*f; vel[i*3+1]+=dy/dist*f; vel[i*3+2]+=dz/dist*f;
+      vel[j*3]-=dx/dist*f; vel[j*3+1]-=dy/dist*f; vel[j*3+2]-=dz/dist*f;
+    }
+  }
+  for (const e of DATA.edges) {
+    const ai = DATA.nodes.findIndex(n=>n.id===e.src), bi = DATA.nodes.findIndex(n=>n.id===e.dst);
+    if (ai<0||bi<0) continue;
+    const dx=pos[bi*3]-pos[ai*3], dy=pos[bi*3+1]-pos[ai*3+1], dz=pos[bi*3+2]-pos[ai*3+2];
+    const dist=Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
+    const f=(dist-6.0)*attr;
+    vel[ai*3]+=dx/dist*f; vel[ai*3+1]+=dy/dist*f; vel[ai*3+2]+=dz/dist*f;
+    vel[bi*3]-=dx/dist*f; vel[bi*3+1]-=dy/dist*f; vel[bi*3+2]-=dz/dist*f;
+  }
+  for (let i=0;i<N;i++) { vel[i*3]-=pos[i*3]*center; vel[i*3+1]-=pos[i*3+1]*center; vel[i*3+2]-=pos[i*3+2]*center; }
+  for (let i=0;i<pos.length;i++) { vel[i]*=damp; pos[i]+=vel[i]; }
+}
+
+// --- Scene ---
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x06090f);
+
+const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 100000);
+camera.position.set(0, 0, 35);
+
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: false });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.toneMapping = THREE.NoToneMapping;
+container.prepend(renderer.domElement);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight), 1.0, 0.3, 0.6);
+composer.addPass(bloomPass);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const pl = new THREE.PointLight(0xffffff, 0.6, 2000); pl.position.set(500, 500, 500); scene.add(pl);
+const pl2 = new THREE.PointLight(0x6040ff, 0.4, 2000); pl2.position.set(-300, -200, -300); scene.add(pl2);
+
+// --- OrbitControls ---
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.1;
+controls.rotateSpeed = 0.6;
+controls.zoomSpeed = 1.5;
+controls.minDistance = 3;
+controls.maxDistance = 50000;
+controls.target.set(0, 0, 0);
+
+let autorotateEnabled = false;
+let lastInteraction = Date.now();
+const IDLE_MS = 60000;
+function onInteraction() { lastInteraction = Date.now(); if (!autorotateEnabled) controls.autoRotate = false; }
+renderer.domElement.addEventListener('pointerdown', onInteraction);
+renderer.domElement.addEventListener('pointerwheel', onInteraction);
+btnAutorotate.addEventListener('click', () => { autorotateEnabled = !autorotateEnabled; controls.autoRotate = autorotateEnabled; btnAutorotate.classList.toggle('active'); });
+
+// --- Node meshes ---
+const nodeGroup = new THREE.Group();
+const meshes = [];
+const positions = [];
+const radii = [];
+const baseColors = [];
+
+for (let i = 0; i < N; i++) {
+  const nd = DATA.nodes[i];
+  const r = 0.25 + Math.min(0.7, nd.pagerank * 10);
+  const c = new THREE.Color(communityColor(nd.community));
+  const geo = new THREE.SphereGeometry(1, 20, 16);
+  const mat = new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
+  mesh.scale.set(r, r, r);
+  mesh.userData = { idx: i, baseColor: c.clone() };
+  nodeGroup.add(mesh);
+  meshes.push(mesh);
+  positions.push({ x: pos[i*3], y: pos[i*3+1], z: pos[i*3+2] });
+  radii.push(r);
+  baseColors.push(c.clone());
+}
+scene.add(nodeGroup);
+
+// --- Sprite labels ---
+const labelGroup = new THREE.Group();
+const labelScaleY = 0.3;
+
+function makeLabelTexture(text, color) {
+  const canvas = document.createElement('canvas');
+  const fontSize = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.font = `600 ${fontSize}px system-ui, sans-serif`;
+  let tw = ctx.measureText(text).width;
+  if (tw > 620) { text = text.slice(0, Math.floor(text.length * 620 / tw) - 1) + '...'; tw = ctx.measureText(text).width; }
+  const pad = 16;
+  canvas.width = Math.ceil(tw + pad * 2);
+  canvas.height = Math.ceil(fontSize * 1.35);
+  ctx.font = `600 ${fontSize}px system-ui, sans-serif`;
+  ctx.lineWidth = 7;
+  ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
+  ctx.strokeText(text, pad, canvas.height/2);
+  ctx.fillText(text, pad, canvas.height/2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  return { texture, w: canvas.width, h: canvas.height };
+}
+
+const spriteMats = [];
+for (let i = 0; i < N; i++) {
+  const nd = DATA.nodes[i];
+  const name = shortName(nd.title);
+  const { texture, w, h } = makeLabelTexture(name, communityColor(nd.community));
+  const worldH = labelScaleY;
+  const worldW = worldH * (w / h);
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false, toneMapped: false });
+  const sprite = new THREE.Sprite(mat);
+  const r = radii[i];
+  sprite.position.set(pos[i*3], pos[i*3+1] + r * 0.7 + worldH/2, pos[i*3+2]);
+  sprite.scale.set(worldW, worldH, 1);
+  sprite.renderOrder = 20;
+  sprite.userData = { idx: i };
+  labelGroup.add(sprite);
+  spriteMats.push(mat);
+}
+scene.add(labelGroup);
+
+// --- Edges and invisible hit cylinders ---
+const edgeSrcIdx = new Array(DATA.edges.length).fill(-1);
+const edgeDstIdx = new Array(DATA.edges.length).fill(-1);
+const edgeSegIdx = new Array(DATA.edges.length).fill(-1);
+const nodeEdgeIdxs = Array.from({length:N},()=>[]);
+const edgePositions = [];
+const edgeColorsArr = [];
+let edgeSegCount = 0;
+
+for (let ei = 0; ei < DATA.edges.length; ei++) {
+  const e = DATA.edges[ei];
+  const ai = DATA.nodes.findIndex(n => n.id === e.src);
+  const bi = DATA.nodes.findIndex(n => n.id === e.dst);
+  if (ai < 0 || bi < 0) continue;
+  edgeSrcIdx[ei] = ai;
+  edgeDstIdx[ei] = bi;
+  edgeSegIdx[ei] = edgeSegCount++;
+  nodeEdgeIdxs[ai].push(ei);
+  nodeEdgeIdxs[bi].push(ei);
+  const a = positions[ai], b = positions[bi];
+  edgePositions.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  edgeColorsArr.push(0.12, 0.12, 0.12, 0.12, 0.12, 0.12);
+}
+
+const edgeGeo = new THREE.BufferGeometry();
+edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3));
+edgeGeo.setAttribute('color', new THREE.Float32BufferAttribute(edgeColorsArr, 3));
+const edgeMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 1.0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
+scene.add(edgeLines);
+
+const hitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false, toneMapped: false });
+const edgeHitByIdx = new Array(DATA.edges.length).fill(null);
+const edgeHitMeshes = [];
+const edgeHitGroup = new THREE.Group();
+
+function alignEdgeHit(mesh, a, b) {
+  const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+  const dir = new THREE.Vector3().subVectors(b, a);
+  const len = dir.length();
+  mesh.position.copy(mid);
+  mesh.scale.set(0.18, len, 0.18);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+}
+
+for (let ei = 0; ei < DATA.edges.length; ei++) {
+  const ai = edgeSrcIdx[ei], bi = edgeDstIdx[ei];
+  if (ai < 0) continue;
+  const geo = new THREE.CylinderGeometry(1, 1, 1, 6, 1);
+  const mesh = new THREE.Mesh(geo, hitMat.clone());
+  alignEdgeHit(mesh, positions[ai], positions[bi]);
+  mesh.userData = { edgeIdx: ei };
+  edgeHitByIdx[ei] = mesh;
+  edgeHitMeshes.push(mesh);
+  edgeHitGroup.add(mesh);
+}
+scene.add(edgeHitGroup);
+
+function buildEdgeGeo() {
+  const ep = [], ec = [];
+  for (let ei = 0; ei < DATA.edges.length; ei++) {
+    const ai = edgeSrcIdx[ei], bi = edgeDstIdx[ei];
+    if (ai < 0) continue;
+    const a = positions[ai], b = positions[bi];
+    ep.push(a.x, a.y, a.z, b.x, b.y, b.z);
+    ec.push(0.12, 0.12, 0.12, 0.12, 0.12, 0.12);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(ec, 3));
+  return geo;
+}
+
+function rebuildEdges() {
+  edgeLines.geometry.dispose();
+  edgeLines.geometry = buildEdgeGeo();
+  for (let ei = 0; ei < DATA.edges.length; ei++) {
+    const hm = edgeHitByIdx[ei];
+    if (!hm) continue;
+    alignEdgeHit(hm, positions[edgeSrcIdx[ei]], positions[edgeDstIdx[ei]]);
+  }
+}
+
+// --- Highlight / hover / selection state ---
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let hoveredNodeIdx = -1;
+let hoveredEdgeIdx = -1;
+let selectedId = null;
+let selectedEdgeIdx = -1;
+let activeNodeIds = new Set();
+let activeEdgeIds = new Set();
+
+function recomputeActive() {
+  activeNodeIds.clear();
+  activeEdgeIds.clear();
+  if (hoveredNodeIdx !== -1) {
+    activeNodeIds.add(hoveredNodeIdx);
+    for (const ei of nodeEdgeIdxs[hoveredNodeIdx]) {
+      activeEdgeIds.add(ei);
+      activeNodeIds.add(edgeSrcIdx[ei] === hoveredNodeIdx ? edgeDstIdx[ei] : edgeSrcIdx[ei]);
+    }
+  } else if (hoveredEdgeIdx !== -1) {
+    activeNodeIds.add(edgeSrcIdx[hoveredEdgeIdx]);
+    activeNodeIds.add(edgeDstIdx[hoveredEdgeIdx]);
+    activeEdgeIds.add(hoveredEdgeIdx);
+  } else if (selectedId !== null) {
+    activeNodeIds.add(selectedId);
+    for (const ei of nodeEdgeIdxs[selectedId]) {
+      activeEdgeIds.add(ei);
+      activeNodeIds.add(edgeSrcIdx[ei] === selectedId ? edgeDstIdx[ei] : edgeSrcIdx[ei]);
+    }
+  } else if (selectedEdgeIdx !== -1) {
+    activeNodeIds.add(edgeSrcIdx[selectedEdgeIdx]);
+    activeNodeIds.add(edgeDstIdx[selectedEdgeIdx]);
+    activeEdgeIds.add(selectedEdgeIdx);
+  }
+}
+
+function updateTooltip(e, nodeIdx, edgeIdx) {
+  if (nodeIdx !== -1) {
+    const nd = DATA.nodes[nodeIdx];
+    tooltipInner.innerHTML = `<div id="tooltip-name"><span id="tooltip-dot" style="background:${communityColor(nd.community)}"></span>${shortName(nd.title)} <span id="tooltip-label">${nd.type}</span></div><div id="tooltip-path">${nd.id}</div>`;
+    tooltip.classList.add('visible');
+  } else if (edgeIdx !== -1) {
+    const e = DATA.edges[edgeIdx];
+    const src = DATA.nodes[edgeSrcIdx[edgeIdx]], dst = DATA.nodes[edgeDstIdx[edgeIdx]];
+    tooltipInner.innerHTML = `<div id="tooltip-name">${shortName(src.title)} <span id="tooltip-label">→ ${e.rel} →</span> ${shortName(dst.title)}</div>`;
+    tooltip.classList.add('visible');
+  } else {
+    tooltip.classList.remove('visible');
+  }
+  tooltip.style.left = (e.clientX - container.getBoundingClientRect().left + 14) + 'px';
+  tooltip.style.top = (e.clientY - container.getBoundingClientRect().top - 10) + 'px';
+}
+
+// --- Drag ---
+let dragTarget = null;
+let dragIdx = -1;
+const dragPlane = new THREE.Plane();
+const dragOffset = new THREE.Vector3();
+const dragIntersect = new THREE.Vector3();
+let pointerDownTime = 0;
+let clickEdgeIdx = -1;
+
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  pointerDownTime = Date.now();
+  clickEdgeIdx = -1;
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const nodeHits = raycaster.intersectObjects(meshes);
+  if (nodeHits.length > 0) {
+    const obj = nodeHits[0].object;
+    dragTarget = obj;
+    dragIdx = obj.userData.idx;
+    const normal = camera.getWorldDirection(new THREE.Vector3()).negate();
+    dragPlane.setFromNormalAndCoplanarPoint(normal, obj.position);
+    dragOffset.copy(nodeHits[0].point).sub(obj.position);
+    controls.enabled = false;
+    return;
+  }
+  const edgeHits = raycaster.intersectObjects(edgeHitMeshes);
+  if (edgeHits.length > 0) {
+    clickEdgeIdx = edgeHits[0].object.userData.edgeIdx;
+  }
+});
+
+renderer.domElement.addEventListener('pointermove', (e) => {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+
+  if (dragTarget) {
+    raycaster.ray.intersectPlane(dragPlane, dragIntersect);
+    if (!dragIntersect) return;
+    dragTarget.position.copy(dragIntersect.sub(dragOffset));
+    const p = dragTarget.position;
+    positions[dragIdx] = { x: p.x, y: p.y, z: p.z };
+    const r = radii[dragIdx];
+    labelGroup.children[dragIdx].position.set(p.x, p.y + r * 0.7 + labelScaleY/2, p.z);
+    rebuildEdges();
+    return;
+  }
+
+  const nodeHits = raycaster.intersectObjects(meshes);
+  const edgeHits = raycaster.intersectObjects(edgeHitMeshes);
+  let newHN = -1, newHE = -1;
+  if (nodeHits.length > 0) newHN = nodeHits[0].object.userData.idx;
+  else if (edgeHits.length > 0) newHE = edgeHits[0].object.userData.edgeIdx;
+  if (newHN !== hoveredNodeIdx || newHE !== hoveredEdgeIdx) {
+    hoveredNodeIdx = newHN;
+    hoveredEdgeIdx = newHE;
+    recomputeActive();
+    updateTooltip(e, newHN, newHE);
+  } else if (newHN !== -1 || newHE !== -1) {
+    updateTooltip(e, newHN, newHE);
+  }
+});
+
+renderer.domElement.addEventListener('pointerup', () => {
+  if (dragTarget) {
+    const dt = Date.now() - pointerDownTime;
+    if (dt < 200) selectNode(dragIdx);
+    dragTarget = null;
+    dragIdx = -1;
+    controls.enabled = true;
+  } else if (clickEdgeIdx !== -1 && Date.now() - pointerDownTime < 200) {
+    selectEdge(clickEdgeIdx);
+    clickEdgeIdx = -1;
+  } else if (hoveredNodeIdx === -1 && hoveredEdgeIdx === -1) {
+    selectNode(null);
+  }
+});
+
+renderer.domElement.addEventListener('pointerleave', () => {
+  hoveredNodeIdx = -1;
+  hoveredEdgeIdx = -1;
+  clickEdgeIdx = -1;
+  recomputeActive();
+  tooltip.classList.remove('visible');
+});
+
+// --- Selection ---
+function selectNode(idx) {
+  selectedId = idx;
+  selectedEdgeIdx = -1;
+  clickEdgeIdx = -1;
+  recomputeActive();
+  if (idx === null) {
+    rightPanel.classList.remove('open');
+    updateDetail(null);
+    controls.target.set(0, 0, 0);
+    updateHUD();
+    return;
+  }
+  const nd = DATA.nodes[idx];
+  detailTitle.textContent = shortName(nd.title);
+  detailType.textContent = nd.type;
+  updateDetail(nd);
+  rightPanel.classList.add('open');
+  flyTo(idx);
+  updateHUD();
+}
+
+function selectEdge(ei) {
+  selectedEdgeIdx = ei;
+  selectedId = null;
+  clickEdgeIdx = -1;
+  recomputeActive();
+  const e = DATA.edges[ei];
+  const si = edgeSrcIdx[ei], di = edgeDstIdx[ei];
+  const src = DATA.nodes[si], dst = DATA.nodes[di];
+  detailTitle.textContent = shortName(e.rel);
+  detailType.textContent = 'edge';
+  detailBody.innerHTML = buildEdgeDetail(src, dst, e.rel, si, di);
+  rightPanel.classList.add('open');
+  detailBody.querySelectorAll('.detail-conn-item').forEach(el => {
+    el.addEventListener('click', () => selectNode(parseInt(el.dataset.idx)));
+  });
+  updateHUD();
+}
+
+function buildEdgeDetail(src, dst, rel, si, di) {
+  return `<div class="detail-row"><span class="detail-row-label">Relationship</span><span class="detail-row-value">${rel}</span></div>`
+    + `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Source</div>`
+    + `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${communityColor(src.community)}"></span><span class="detail-conn-name">${shortName(src.title)}</span><span class="detail-conn-type">${src.type}</span></div></div></div>`
+    + `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Target</div>`
+    + `<div class="detail-conn-item" data-idx="${di}"><span class="filter-dot" style="background:${communityColor(dst.community)}"></span><span class="detail-conn-name">${shortName(dst.title)}</span><span class="detail-conn-type">${dst.type}</span></div></div></div>`;
+}
+
+function flyTo(idx) {
+  const p = positions[idx];
+  const r = radii[idx];
+  const dist = Math.max(r * 40, 8);
+  const startPos = camera.position.clone();
+  const startTarget = controls.target.clone();
+  const endTarget = new THREE.Vector3(p.x, p.y, p.z);
+  const endPos = new THREE.Vector3(p.x + dist*0.15, p.y + dist*0.1, p.z + dist);
+  flyTarget = { startPos, startTarget, endPos, endTarget, progress: 0 };
+}
+
+function fitView() {
+  if (meshes.length === 0) return;
+  const box = new THREE.Box3().setFromObject(nodeGroup);
+  if (box.isEmpty()) return;
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const dist = maxDim * 1.8;
+  const startPos = camera.position.clone();
+  const startTarget = controls.target.clone();
+  const endTarget = center;
+  const endPos = new THREE.Vector3(center.x, center.y, center.z + dist);
+  flyTarget = { startPos, startTarget, endPos, endTarget, progress: 0 };
+  selectNode(null);
+}
+btnFit.addEventListener('click', fitView);
+
+detailClose.addEventListener('click', () => selectNode(null));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') selectNode(null); });
+
+function updateDetail(nd) {
+  if (!nd) { detailBody.innerHTML = ''; return; }
+  let out = '';
+  out += `<div class="detail-row"><span class="detail-row-label">ID</span><span class="detail-row-value">${nd.id}</span></div>`;
+  out += `<div class="detail-row"><span class="detail-row-label">Type</span><span class="detail-row-value">${nd.type}</span></div>`;
+  out += `<div class="detail-row"><span class="detail-row-label">Status</span><span class="detail-row-value">${nd.status}</span></div>`;
+  const outbound = DATA.edges.filter(e => e.src === nd.id);
+  const inbound = DATA.edges.filter(e => e.dst === nd.id);
+  out += `<div class="detail-row"><span class="detail-row-label">Outbound</span><span class="detail-row-value">${outbound.length}</span></div>`;
+  out += `<div class="detail-row"><span class="detail-row-label">Inbound</span><span class="detail-row-value">${inbound.length}</span></div>`;
+  if (outbound.length > 0) {
+    out += `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">References</div>`;
+    for (const e of outbound.slice(0, 25)) {
+      const ti = DATA.nodes.findIndex(n => n.id === e.dst);
+      if (ti < 0) continue;
+      const tn = DATA.nodes[ti];
+      out += `<div class="detail-conn-item" data-idx="${ti}"><span class="filter-dot" style="background:${communityColor(tn.community)}"></span><span class="detail-conn-name">${shortName(tn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
+    }
+    if (outbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${outbound.length-25} more</div>`;
+    out += `</div></div>`;
+  }
+  if (inbound.length > 0) {
+    out += `<div class="detail-connections"><div class="detail-conn-group"><div class="detail-conn-header">Referenced by</div>`;
+    for (const e of inbound.slice(0, 25)) {
+      const si = DATA.nodes.findIndex(n => n.id === e.src);
+      if (si < 0) continue;
+      const sn = DATA.nodes[si];
+      out += `<div class="detail-conn-item" data-idx="${si}"><span class="filter-dot" style="background:${communityColor(sn.community)}"></span><span class="detail-conn-name">${shortName(sn.title)}</span><span class="detail-conn-type">${e.rel}</span></div>`;
+    }
+    if (inbound.length > 25) out += `<div style="font-size:10px;color:var(--muted);padding:4px 6px">+${inbound.length-25} more</div>`;
+    out += `</div></div>`;
+  }
+  detailBody.innerHTML = out;
+  detailBody.querySelectorAll('.detail-conn-item').forEach(el => {
+    el.addEventListener('click', () => selectNode(parseInt(el.dataset.idx)));
+  });
+}
+
+// --- Update node/edge appearance per frame ---
+function updateNodeAppearance() {
+  const anyActive = hoveredNodeIdx !== -1 || hoveredEdgeIdx !== -1 || selectedId !== null || selectedEdgeIdx !== -1;
+  for (let i = 0; i < N; i++) {
+    const m = meshes[i];
+    const visible = enabledTypes.has(DATA.nodes[i].type);
+    m.visible = visible;
+    labelGroup.children[i].visible = visible && showLabelsCb.checked;
+    if (!visible) continue;
+    const isActive = !anyActive || activeNodeIds.has(i);
+    const isHovered = i === hoveredNodeIdx;
+    const isSelected = i === selectedId;
+    let brightness = isActive ? 1.0 : 0.25;
+    if (isHovered) brightness = 1.25;
+    else if (isSelected) brightness = 1.35;
+    m.material.color.copy(baseColors[i]).multiplyScalar(brightness);
+    const s = radii[i] * (isHovered ? 1.25 : isSelected ? 1.15 : 1.0);
+    m.scale.setScalar(s);
+    spriteMats[i].opacity = isActive ? 1.0 : 0.25;
+  }
+}
+
+function updateEdgeAppearance() {
+  const colAttr = edgeLines.geometry.attributes.color;
+  const anyActive = hoveredNodeIdx !== -1 || hoveredEdgeIdx !== -1 || selectedId !== null || selectedEdgeIdx !== -1;
+  for (let ei = 0; ei < DATA.edges.length; ei++) {
+    const si = edgeSrcIdx[ei], di = edgeDstIdx[ei];
+    const seg = edgeSegIdx[ei];
+    const hm = edgeHitByIdx[ei];
+    if (seg < 0) continue;
+    const visible = meshes[si].visible && meshes[di].visible && enabledEdgeRels.has(DATA.edges[ei].rel);
+    if (hm) hm.visible = visible;
+    if (!visible) {
+      colAttr.setXYZ(seg*2, 0, 0, 0);
+      colAttr.setXYZ(seg*2+1, 0, 0, 0);
+      continue;
+    }
+    const isActive = !anyActive || activeEdgeIds.has(ei) || activeNodeIds.has(si) || activeNodeIds.has(di);
+    const isHovered = ei === hoveredEdgeIdx;
+    const isSelected = ei === selectedEdgeIdx;
+    let intensity = isHovered || isSelected ? 0.55 : isActive ? 0.12 : 0.03;
+    colAttr.setXYZ(seg*2, intensity, intensity, intensity);
+    colAttr.setXYZ(seg*2+1, intensity, intensity, intensity);
+  }
+  colAttr.needsUpdate = true;
+}
+
+// --- Filters ---
+const enabledTypes = new Set();
+const enabledEdgeRels = new Set();
+let allNodeTypes = [];
+let allEdgeRels = [];
+
+function buildFilters() {
+  const counts = {};
+  for (const nd of DATA.nodes) counts[nd.type] = (counts[nd.type] || 0) + 1;
+  allNodeTypes = Object.keys(counts).sort();
+  for (const t of allNodeTypes) enabledTypes.add(t);
+  const ec = {};
+  for (const e of DATA.edges) ec[e.rel] = (ec[e.rel] || 0) + 1;
+  allEdgeRels = Object.keys(ec).sort();
+  for (const r of allEdgeRels) enabledEdgeRels.add(r);
+  renderFilters();
+  updateHUD();
+}
+
+function renderFilters() {
+  const nf = document.getElementById('node-filters');
+  nf.innerHTML = allNodeTypes.map(t => `<label class="filter-label"><input type="checkbox" checked data-type="${t}"><span class="filter-dot" style="background:${nodeColor(t)}"></span>${t}<span class="filter-count">${DATA.nodes.filter(n=>n.type===t).length}</span></label>`).join('');
+  nf.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
+    if (cb.checked) enabledTypes.add(cb.dataset.type); else enabledTypes.delete(cb.dataset.type);
+    applyFilters();
+  }));
+  const ef = document.getElementById('edge-filters');
+  ef.innerHTML = allEdgeRels.map(r => `<label class="filter-label"><input type="checkbox" checked data-rel="${r}"><span class="filter-dot" style="background:#6a9e9e"></span>${r}<span class="filter-count">${DATA.edges.filter(e=>e.rel===r).length}</span></label>`).join('');
+  ef.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
+    if (cb.checked) enabledEdgeRels.add(cb.dataset.rel); else enabledEdgeRels.delete(cb.dataset.rel);
+    applyFilters();
+  }));
+  document.getElementById('filter-all').addEventListener('click', () => {
+    nf.querySelectorAll('input').forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); });
+    ef.querySelectorAll('input').forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); });
+  });
+  document.getElementById('filter-none').addEventListener('click', () => {
+    nf.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+    ef.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
+  });
+}
+
+function applyFilters() {
+  updateHUD();
+}
+
+function updateHUD() {
+  const visibleNodes = meshes.filter(m => m.visible).length;
+  const visibleIds = new Set();
+  for (let i = 0; i < N; i++) { if (meshes[i].visible) visibleIds.add(DATA.nodes[i].id); }
+  const visibleEdges = DATA.edges.filter(e => visibleIds.has(e.src) && visibleIds.has(e.dst) && enabledEdgeRels.has(e.rel)).length;
+  let h = `<strong>${visibleNodes}</strong> nodes, <strong>${visibleEdges}</strong> edges`;
+  if (visibleNodes < N) h += `<br><span class="warn">${visibleNodes} of ${N} nodes shown</span>`;
+  if (selectedId !== null) h += `<br>1 node selected`;
+  else if (selectedEdgeIdx !== -1) h += `<br>1 edge selected`;
+  hud.innerHTML = h;
+}
+
+buildFilters();
+
+showLabelsCb.addEventListener('change', () => { labelGroup.visible = showLabelsCb.checked; });
+
+// --- Auto-center on load ---
+setTimeout(() => fitView(), 100);
+
+// --- Resize handles ---
+let resizing = null;
+leftHandle.addEventListener('pointerdown', (e) => { e.preventDefault(); resizing = leftHandle; leftHandle.setPointerCapture(e.pointerId); });
+rightHandle.addEventListener('pointerdown', (e) => { e.preventDefault(); resizing = rightHandle; rightHandle.setPointerCapture(e.pointerId); });
+document.addEventListener('pointermove', (e) => {
+  if (!resizing) return;
+  if (resizing === leftHandle) { document.getElementById('left-panel').style.width = Math.max(160, Math.min(500, e.clientX)) + 'px'; }
+  else { document.getElementById('right-panel').style.width = Math.max(200, Math.min(500, container.getBoundingClientRect().right - e.clientX + 1)) + 'px'; }
+});
+document.addEventListener('pointerup', () => { if (resizing) resizing = null; });
+document.addEventListener('pointercancel', () => { if (resizing) resizing = null; });
+
+// --- Resize ---
+function resize() {
+  const w = container.clientWidth, h = container.clientHeight;
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  renderer.setSize(w, h); composer.setSize(w, h);
+}
+window.addEventListener('resize', resize);
+
+// --- Animate ---
+let flyTarget = null;
+function animate() {
+  requestAnimationFrame(animate);
+  if (!autorotateEnabled && !controls.autoRotate && Date.now() - lastInteraction > IDLE_MS) {
+    controls.autoRotate = true; controls.autoRotateSpeed = 0.3;
+  }
+  if (flyTarget && flyTarget.progress < 1) {
+    flyTarget.progress = Math.min(1, flyTarget.progress + 0.025);
+    const t = 1 - Math.pow(1 - flyTarget.progress, 3);
+    camera.position.lerpVectors(flyTarget.startPos, flyTarget.endPos, t);
+    controls.target.lerpVectors(flyTarget.startTarget, flyTarget.endTarget, t);
+    if (flyTarget.progress >= 1) flyTarget = null;
+  }
+  controls.update();
+  updateNodeAppearance();
+  updateEdgeAppearance();
+  composer.render();
+}
+animate();
+</script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: Run the test suite**
+
+Run:
+
+```bash
+cd /Users/harry/Desktop/kgx && cargo test -p kgx-viz -- --nocapture 2>&1
+```
+
+Expected: both `html_renders_with_3d_viewer_and_counts_match` and `mermaid_renders_edges` pass, with `test result: ok`.
+
+- [ ] **Step 3: Manually verify the output**
+
+Generate an HTML graph from the fixture vault:
+
+```bash
+cd /Users/harry/Desktop/kgx/tests/fixtures/vault-min
+# or from the project root with a real vault:
+kg graph --format html
+```
+
+Open the resulting `graph.html` in a browser and verify:
+
+1. Nodes are colored by community (not by type).
+2. Hovering a node brightens the node, its neighbors, and the connecting edges; everything else dims.
+3. Hovering an edge brightens the edge and its two endpoints.
+4. Clicking a node opens the right panel with node details.
+5. Clicking an edge opens the right panel showing the relationship text and clickable source/target nodes.
+6. The command surface remains `kgx:graph --format html` (CLI: `kg graph --format html`).
+
+- [ ] **Step 4: Commit**
+
+```bash
+cd /Users/harry/Desktop/kgx
+git add crates/kgx-viz/templates/graph.html.tera
+git commit -m "feat: community colors, hover highlight, and edge details in 3D graph viewer"
+```
+
+---
+
+## Self-Review
+
+- **Spec coverage:** Community field, community colors, hover highlight, edge click detail, and `kgx:graph` command surface are all mapped to tasks.
+- **Placeholder scan:** No TBD/TODO placeholders; code blocks contain complete file contents.
+- **Type consistency:** `VizNode.community` is `i64`; template reads `nd.community`; SQL reads `COALESCE(c.community_id, -1)`.
