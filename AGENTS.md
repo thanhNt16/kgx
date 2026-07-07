@@ -23,7 +23,7 @@ Use the `kg` CLI and the `kgx` MCP server when working in a KGX vault.
 | `kgx:dream` | Consolidation (dedup/contradiction/supersession/staleness) — harness-driven, staged diffs applied via `kgx:review` |
 | `kgx:review` | Apply staged dream diffs |
 | `kgx:link` | Analyze and repair wikilinks |
-| `kgx:graph` | Export graph as HTML, Cytoscape, GraphML, Mermaid, DOT, or Obsidian Canvas |
+| `kgx:graph` | Export graph as an interactive 3D HTML visualization |
 | `kgx:status` | Show vault and brain status |
 | `kgx:cron` | Manage scheduler jobs, including remove |
 | `kgx:init` | Scaffold a new vault |
@@ -107,9 +107,9 @@ kg link [--fix]
 ```
 
 ### kgx:graph
-Export the vault graph.
+Export the vault graph. The `html` format produces an interactive 3D WebGL visualization.
 ```
-kg graph --format cytoscape|graphml
+kg graph --format html|cytoscape|graphml|mermaid|dot|obsidian
 ```
 
 ### kgx:status

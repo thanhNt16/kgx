@@ -22,7 +22,7 @@ Use `kg` for Markdown vault work. The MCP server exposes the same MCP tools.
 | `kgx:dream` | Consolidation (dedup/contradiction/supersession/staleness) — harness-driven, applied via `kgx:review` |
 | `kgx:review` | Apply staged consolidation diffs |
 | `kgx:link` | Analyze and repair wikilinks |
-| `kgx:graph` | Export graph as HTML, Cytoscape, GraphML, Mermaid, DOT, or Obsidian Canvas |
+| `kgx:graph` | Export graph as an interactive 3D HTML visualization |
 | `kgx:status` | Show vault and brain status |
 | `kgx:cron` | Manage scheduler jobs, including remove |
 | `kgx:init` | Scaffold a new vault |
@@ -106,9 +106,9 @@ kg link [--fix]
 ```
 
 ### kgx:graph
-Export the vault graph.
+Export the vault graph. The `html` format produces an interactive 3D WebGL visualization.
 ```
-kg graph --format cytoscape|graphml
+kg graph --format html|cytoscape|graphml|mermaid|dot|obsidian
 ```
 
 ### kgx:status
@@ -151,7 +151,7 @@ kg sync
 - Ask: run the `kgx:ask` skill — retrieve (`nl_query_memory`/`deep_search_memory`), then synthesize
 - Consolidate: run the `kgx:dream` skill (write `.brain/.kg/staged_diffs.json`), then `kg review --approve all --ponytail-audit`
 - Rebuild: `kg index --full`
-- Graph: `kg graph --format cytoscape|graphml`
+- Graph: `kg graph --format html`
 - Cron: `kg cron remove <name>`
 
 ## Rules

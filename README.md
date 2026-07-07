@@ -178,7 +178,7 @@ Per-agent, it installs:
 | Agent | MCP Config | Skill / Rules | Config Files |
 |-------|-----------|---------------|--------------|
 | claude | `claude mcp add` (auto) | `~/.claude/skills/kgx/SKILL.md` | — |
-| opencode | `opencode.json` | `.opencode/skills/kgx/SKILL.md` | `.opencode/command/kgx:*.md`, `.opencode/plugins/kgx-verify-finished.js` |
+| opencode | `opencode.json` | `.opencode/skills/kgx/SKILL.md` | `.opencode/command/kgx-*.md`, `.opencode/plugins/kgx-verify-finished.js` |
 | codex | `config.toml` | `AGENTS.md` | `hooks.json` |
 | cursor | `.cursor/mcp.json` (merged) | `.cursor/rules/kgx.mdc` | — |
 | zcode | `.mcp.json` (stdio) | `~/.zcode/skills/` | installed via `./dev-install.sh --agent zcode` |
