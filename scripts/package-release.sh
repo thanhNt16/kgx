@@ -118,8 +118,34 @@ if [ -d "$PKG_DIR/skills/claude" ]; then
 fi
 
 if command -v claude >/dev/null 2>&1; then
-  claude mcp remove kgx 2>/dev/null || true
-  echo "y" | claude mcp add --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
+  # Reinstall must be authoritative. A stale kgx entry in any scope conflicts
+  # with the new one — Claude Code refuses to connect when an MCP server is
+  # defined in multiple scopes with different endpoints ("defined in multiple
+  # scopes ... ✘ Failed to connect"). `claude mcp remove` only reaches user
+  # and the current project's local scope, so we ALSO strip kgx from every
+  # project entry in ~/.claude.json directly, then register once in user scope
+  # (the cross-project home for a globally-installed CLI server).
+  for scope in user project; do
+    claude mcp remove kgx -s "$scope" >/dev/null 2>&1 || true
+  done
+  python3 - "$HOME/.claude.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+try:
+    d = json.loads(open(path).read())
+except Exception:
+    sys.exit(0)
+changed = False
+for proj, cfg in (d.get("projects") or {}).items():
+    mcp = cfg.get("mcpServers") or {}
+    if "kgx" in mcp:
+        del mcp["kgx"]
+        cfg["mcpServers"] = mcp
+        changed = True
+if changed:
+    open(path, "w").write(json.dumps(d, indent=2))
+PY
+  echo "y" | claude mcp add -s user --transport stdio kgx -- "$INSTALLED_BIN" mcp-server --transport stdio
 fi
 if command -v codex >/dev/null 2>&1; then
   codex mcp remove kgx &>/dev/null || true

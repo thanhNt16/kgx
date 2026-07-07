@@ -1,8 +1,24 @@
 use kgx_core::{KgError, Result};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 
-pub async fn serve_stdio(root: PathBuf) -> Result<()> {
+/// Resolve the knowledge-vault root for a single message.
+///
+/// `project` is the process cwd (the directory Claude Code launched the
+/// server from). The vault lives at `<project>/.brain` if it exists; otherwise
+/// we fall back to `project` itself so that `initialize` / `tools/list`
+/// succeed from any directory and only vault-needing tool *calls* surface a
+/// helpful per-call error (instead of killing the server at startup).
+fn vault_root_for(project: &Path) -> PathBuf {
+    let brain = project.join(".brain");
+    if brain.is_dir() {
+        brain
+    } else {
+        project.to_path_buf()
+    }
+}
+
+pub async fn serve_stdio(project: PathBuf) -> Result<()> {
     let mut reader = BufReader::new(tokio::io::stdin()).lines();
     let mut stdout = tokio::io::stdout();
     while let Some(line) = reader
@@ -17,6 +33,9 @@ pub async fn serve_stdio(root: PathBuf) -> Result<()> {
             Ok(value) => value,
             Err(_) => continue,
         };
+        // Resolve the vault lazily per message so the server stays up and
+        // answers initialize/tools-list even outside an initialized vault.
+        let root = vault_root_for(&project);
         let resp = match crate::protocol::handle_message(&root, msg).await {
             Ok(r) => r,
             Err(e) => {

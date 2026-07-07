@@ -1,4 +1,7 @@
-/// T01: raw/ files are never mutated after capture.
+/// T01: raw/ files are never mutated after capture/index.
+/// (Extraction is now harness-driven — there's no `kg extract` to test here.
+/// The immutability guarantee is verified against `kg index`, which reads
+/// raw sources but must never mutate them.)
 use assert_cmd::Command;
 use std::path::Path;
 
@@ -20,7 +23,7 @@ fn copy_fixture() -> tempfile::TempDir {
 }
 
 #[test]
-fn t01_raw_hash_unchanged_after_extract() {
+fn t01_raw_hash_unchanged_after_index() {
     let d = copy_fixture();
     let raw = d.path().join(".brain/raw/2026-01-15-arch-review.md");
     let before = std::fs::read(&raw).unwrap();
@@ -28,13 +31,6 @@ fn t01_raw_hash_unchanged_after_extract() {
         .unwrap()
         .env("KGX_LLM", "mock")
         .args(["index", "--full"])
-        .current_dir(d.path())
-        .assert()
-        .success();
-    Command::cargo_bin("kg")
-        .unwrap()
-        .env("KGX_LLM", "mock")
-        .args(["extract", "--source", "01RAW01ARCHREVIEW00000000"])
         .current_dir(d.path())
         .assert()
         .success();
