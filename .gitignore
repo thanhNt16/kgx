@@ -12,6 +12,8 @@ log.md
 /.claude/
 .kgx/
 
+.worktrees/
+
 # Build/experiment artifacts
 .fastembed_cache/
 .cellockai/
