@@ -1,0 +1,15 @@
+[package]
+name = "kgx-convert"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+kgx-core = { path = "../kgx-core" }
+pdf-extract = "0.7"
+calamine = { version = "0.26", features = ["dates"] }
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

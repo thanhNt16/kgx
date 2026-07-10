@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/kgx-core", "crates/kgx-store", "crates/kgx-vault", "crates/kgx-okf", "crates/kgx-cli", "crates/kgx-tokens", "crates/kgx-graph", "crates/kgx-llm", "crates/kgx-extract", "crates/kgx-retrieval", "crates/kgx-dream", "crates/kgx-rtk", "crates/kgx-ponytail", "crates/kgx-cron", "crates/kgx-mcp", "crates/kgx-viz", "crates/kgx-docs", "crates/kgx-bench", "tests/smoke"]
+members = ["crates/kgx-core", "crates/kgx-store", "crates/kgx-vault", "crates/kgx-okf", "crates/kgx-convert", "crates/kgx-cli", "crates/kgx-tokens", "crates/kgx-graph", "crates/kgx-llm", "crates/kgx-extract", "crates/kgx-retrieval", "crates/kgx-dream", "crates/kgx-rtk", "crates/kgx-ponytail", "crates/kgx-cron", "crates/kgx-mcp", "crates/kgx-viz", "crates/kgx-docs", "crates/kgx-bench", "tests/smoke"]
 
 [workspace.package]
 edition = "2021"

@@ -16,6 +16,8 @@ pub enum KgError {
     Validation(String),
     #[error("not found: {0}")]
     NotFound(String),
+    #[error("conversion error: {0}")]
+    Convert(String),
     #[error("{0}")]
     Other(String),
 }
