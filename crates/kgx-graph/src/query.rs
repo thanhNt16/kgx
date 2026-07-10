@@ -295,3 +295,94 @@ pub fn has_edges(brain: &Brain) -> Result<bool> {
         })
         .map_err(|e| KgError::Brain(e.to_string()))
 }
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct TypedEdge {
+    pub dst_id: String,
+    pub rel_type: String,
+}
+
+pub fn neighbors_with_relations(brain: &Brain, id: &str, hops: u32) -> Result<Vec<TypedEdge>> {
+    let mut stmt = brain
+        .conn()
+        .prepare(
+            "SELECT dst_id, rel_type FROM edges WHERE src_id = ?1 \
+             UNION SELECT src_id, rel_type FROM edges WHERE dst_id = ?1",
+        )
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    let rows = stmt
+        .query_map([id], |r| {
+            Ok(TypedEdge {
+                dst_id: r.get(0)?,
+                rel_type: r.get(1)?,
+            })
+        })
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    rows.collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|e| KgError::Brain(e.to_string()))
+}
+
+pub fn notes_by_entity_type(brain: &Brain, entity_type: &str, limit: usize) -> Result<Vec<String>> {
+    let mut stmt = brain
+        .conn()
+        .prepare("SELECT id FROM notes WHERE entity_type = ?1 LIMIT ?2")
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    let rows = stmt
+        .query_map(rusqlite::params![entity_type, limit as i64], |r| r.get::<_, String>(0))
+        .map_err(|e| KgError::Brain(e.to_string()))?;
+    rows.collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|e| KgError::Brain(e.to_string()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Brain;
+
+    fn setup_brain() -> Brain {
+        let brain = Brain::open_in_memory().unwrap();
+        let conn = brain.conn();
+        conn.execute(
+            "INSERT INTO notes (id, path, title, type, status, raw_text, entity_type)
+             VALUES ('a1', 'p/a', 'Alice', 'entity', 'active', 'body', 'person')", [],
+        ).unwrap();
+        conn.execute(
+            "INSERT INTO notes (id, path, title, type, status, raw_text, entity_type)
+             VALUES ('e1', 'p/e', 'Meeting', 'entity', 'active', 'body', 'event')", [],
+        ).unwrap();
+        conn.execute(
+            "INSERT INTO notes (id, path, title, type, status, raw_text, entity_type)
+             VALUES ('l1', 'p/l', 'HQ', 'entity', 'active', 'body', 'location')", [],
+        ).unwrap();
+        conn.execute(
+            "INSERT INTO notes (id, path, title, type, status, raw_text, entity_type)
+             VALUES ('f1', 'p/f', 'Fact1', 'fact', 'active', 'body', NULL)", [],
+        ).unwrap();
+        conn.execute(
+            "INSERT INTO edges (src_id, dst_id, rel_type) VALUES ('a1', 'e1', 'participates_in')", [],
+        ).unwrap();
+        conn.execute(
+            "INSERT INTO edges (src_id, dst_id, rel_type) VALUES ('a1', 'l1', 'located_at')", [],
+        ).unwrap();
+        brain
+    }
+
+    #[test]
+    fn test_neighbors_with_relations() {
+        let brain = setup_brain();
+        let edges = neighbors_with_relations(&brain, "a1", 1).unwrap();
+        assert!(edges.iter().any(|e| e.dst_id == "e1" && e.rel_type == "participates_in"));
+        assert!(edges.iter().any(|e| e.dst_id == "l1" && e.rel_type == "located_at"));
+    }
+
+    #[test]
+    fn test_notes_by_entity_type() {
+        let brain = setup_brain();
+        let persons = notes_by_entity_type(&brain, "person", 10).unwrap();
+        assert_eq!(persons, vec!["a1".to_string()]);
+        let events = notes_by_entity_type(&brain, "event", 10).unwrap();
+        assert_eq!(events, vec!["e1".to_string()]);
+        let locations = notes_by_entity_type(&brain, "location", 10).unwrap();
+        assert_eq!(locations, vec!["l1".to_string()]);
+    }
+}
