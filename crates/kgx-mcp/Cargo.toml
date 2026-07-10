@@ -10,6 +10,7 @@ kgx-vault = { path = "../kgx-vault" }
 kgx-graph = { path = "../kgx-graph" }
 kgx-retrieval = { path = "../kgx-retrieval" }
 kgx-extract = { path = "../kgx-extract" }
+kgx-convert = { path = "../kgx-convert" }
 kgx-dream = { path = "../kgx-dream" }
 kgx-llm = { path = "../kgx-llm" }
 serde.workspace = true

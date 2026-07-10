@@ -10,7 +10,11 @@ use kgx_core::{KgError, Result};
 use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
 
-const DEFAULT_TEXT_EXTS: &[&str] = &["md", "txt", "markdown", "mdx"];
+const DEFAULT_TEXT_EXTS: &[&str] = &[
+    "md", "txt", "markdown", "mdx",
+    "pdf", "docx", "pptx", "odt", "epub", "html", "htm",
+    "xlsx", "xls",
+];
 
 pub fn run(root: &Path, args: &Value) -> Result<Value> {
     // Optional extension filter for directory ingestion.
@@ -37,10 +41,28 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
                 if !p.is_file() || !has_text_ext(p, &exts) {
                     continue;
                 }
-                let content = std::fs::read_to_string(p).map_err(|e| KgError::Io {
-                    path: p.display().to_string(),
-                    source: e,
-                })?;
+                let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
+                let content = if kgx_convert::is_document_ext(ext)
+                    && ext != "md" && ext != "txt" && ext != "markdown" && ext != "mdx"
+                {
+                    match kgx_convert::convert(p) {
+                        Ok(c) => c.markdown,
+                        Err(e) => {
+                            eprintln!("skip {} (convert): {e}", p.display());
+                            skipped += 1;
+                            continue;
+                        }
+                    }
+                } else {
+                    match std::fs::read_to_string(p) {
+                        Ok(c) => c,
+                        Err(e) => {
+                            eprintln!("skip {} (read): {e}", p.display());
+                            skipped += 1;
+                            continue;
+                        }
+                    }
+                };
                 match ingest_content(root, &content)? {
                     Some(out) => ingested.push(out),
                     None => skipped += 1,
@@ -54,10 +76,18 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
             }));
         }
         if path.is_file() {
-            let content = std::fs::read_to_string(path).map_err(|e| KgError::Io {
-                path: path.display().to_string(),
-                source: e,
-            })?;
+            let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+            let content = if kgx_convert::is_document_ext(ext)
+                && ext != "md" && ext != "txt" && ext != "markdown" && ext != "mdx"
+            {
+                let converted = kgx_convert::convert(path)?;
+                converted.markdown
+            } else {
+                std::fs::read_to_string(path).map_err(|e| KgError::Io {
+                    path: path.display().to_string(),
+                    source: e,
+                })?
+            };
             return match ingest_content(root, &content)? {
                 Some(out) => Ok(json!({ "status": "ok", "raw": out.raw, "hash": out.hash })),
                 None => Ok(json!({ "status": "skipped", "reason": "content unchanged" })),
