@@ -99,6 +99,7 @@ Brain Layers
 | `kgx-docs` | Use-case HTML generator (tera templates) |
 | `kgx-bench` | 3-arm corpus/gold/judge benchmark harness |
 | `kgx-cli` | `kg` binary — clap commands, JSON output |
+| `kgx-convert` | Document→markdown conversion (pandoc subprocess, PDF/Excel native Rust) |
 
 ---
 
@@ -394,6 +395,45 @@ Actual output:
 {"ok":true,"command":"capture","data":{"kind":"doc","raw":"raw/2026-06-27-meeting-notes.md","source_note":"notes/sources/meeting-notes.md"},"elapsed_ms":0}
 ```
 
+### 1b. Capture a document (PDF, Excel, Word, PPTX)
+
+```bash
+# PDF → auto-converted to markdown, then captured
+kg capture --from report.pdf
+
+# Excel → each sheet becomes a markdown table
+kg capture --from budget.xlsx
+
+# Word doc → pandoc converts to GitHub-flavored markdown
+kg capture --from proposal.docx
+
+# Directory with mixed formats — all converted automatically
+kg capture --from docs/ --ext md,txt,pdf,docx,xlsx,pptx
+```
+
+Document formats are auto-detected by extension. Pandoc handles .docx, .pptx,
+.odt, .epub, .html. PDF uses native Rust extraction. Excel uses native Rust
+calamine. Install pandoc: `install.sh` bundles it automatically, or set
+`$KGX_PANDOC` to point to a pandoc binary.
+
+### 1c. Crawl a URL with depth
+
+```bash
+# Single page (default)
+kg capture --from https://example.com/article
+
+# Crawl same-domain links (depth 1 = page + direct links)
+kg capture --from https://example.com --depth 1 --max-pages 50
+
+# Deeper crawl
+kg capture --from https://example.com --depth 2 --max-pages 100
+```
+
+URLs are fetched, converted to markdown via pandoc, and captured as individual
+raw source notes. Same-domain filtering prevents crawling unrelated sites.
+`--max-pages` caps the total. 500ms delay between fetches (configurable via
+`KGX_CRAWL_DELAY_MS`).
+
 ### 2. Extract atomic notes (agent-harness driven)
 
 Extraction is done by your agent (Claude Code / Codex / OpenCode), not an
@@ -451,6 +491,31 @@ kg recall --entity "Postgres" --json
 
 For citation-backed Q&A, run the `kgx:ask` skill — the agent retrieves context
 (`nl_query_memory` / `deep_search_memory`) and synthesizes the answer itself.
+
+### 4b. Query by POLE entity type
+
+```bash
+# List all person entities
+kg query --entity-type person
+
+# List events tagged "q3"
+kg query --entity-type event --tag q3
+
+# Entity neighborhood with typed relations
+kg recall --entity "Alice Chen" --relations
+```
+
+### 4c. Extract a POLE graph (kgx:pole skill)
+
+After capturing a document or URL, run the `kgx:pole` skill to extract a
+structured POLE (Person/Object/Location/Event) graph:
+
+1. The agent reads the captured source.
+2. Identifies persons, objects, locations, and events.
+3. Creates entity notes with `entity_type` and typed relationship links.
+4. Runs `kg index --full` to make the POLE graph queryable.
+
+See the `kgx:pole` skill in your agent's skill list.
 
 ### 5. Dream (consolidate) — agent-harness driven
 
@@ -562,7 +627,7 @@ kg validate --okf --json
 | Command | Purpose | Key Flags |
 |---|---|---|
 | `kg init` | Scaffold OKF vault into `.brain/` | `--template research\|code\|pkm\|team`, `--okf`, `--with-skills`, `--migrate` |
-| `kg capture` | Ingest raw → `.brain/raw/` + source note (file/folder/stdin) | `--from file\|folder\|-`, `--type doc\|transcript\|web\|code`, `--ext md,txt` |
+| `kg capture` | Ingest raw → `.brain/raw/` + source note (file/folder/stdin/URL). Auto-detects document formats (PDF/Excel/Word/PPTX via pandoc). | `--from file\|folder\|-|url`, `--type doc\|transcript\|web\|code`, `--ext md,txt,pdf,docx,...`, `--depth N` (URL crawl), `--max-pages N` |
 | `kg link` | Compute wikilinks/backlinks, orphans | `--suggest`, `--orphans`, `--fix` |
 | `kg index` | Build/refresh `.brain/.kg/brain.sqlite` | `--full`, `--incremental`, `--rebuild-vectors`, `--pagerank` |
 | `kg recall` | Entity-centric neighborhood fetch | `--entity "Name"` |

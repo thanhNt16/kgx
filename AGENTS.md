@@ -155,6 +155,7 @@ kg sync
 - `kg index --full`
 - `kg graph --format cytoscape|graphml`
 - `kg cron remove <name>`
+- `kg query --entity-type person`
 
 Removed (LLM work now done by the agent harness, not an external provider):
 `kg ask`, `kg dream`, `kg refine`, `kg extract`, `kg index --communities`,
