@@ -17,6 +17,11 @@ pub fn run(root: &Path, args: &Value) -> Result<Value, kgx_core::KgError> {
                     return false;
                 }
             }
+            if let Some(et) = args["entity_type"].as_str().filter(|s| !s.is_empty()) {
+                if n.fm.entity_type.as_deref() != Some(et) {
+                    return false;
+                }
+            }
             if let Some(status) = args["status"].as_str().filter(|s| !s.is_empty()) {
                 if format!("{:?}", n.fm.status).to_lowercase() != status.to_lowercase() {
                     return false;
@@ -30,6 +35,7 @@ pub fn run(root: &Path, args: &Value) -> Result<Value, kgx_core::KgError> {
                 "id": n.fm.id,
                 "title": n.fm.title,
                 "type": format!("{:?}", n.fm.r#type),
+                "entity_type": n.fm.entity_type,
                 "status": format!("{:?}", n.fm.status),
                 "tags": n.fm.tags,
                 "path": n.rel_path.display().to_string(),
