@@ -17,14 +17,14 @@ pub fn run(
     from: &str,
     kind: &str,
     exts_csv: Option<&str>,
-    _depth: u32,
-    _max_pages: u32,
+    depth: u32,
+    max_pages: u32,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = crate::vault::vault_root()?;
 
     if from.starts_with("http://") || from.starts_with("https://") {
-        anyhow::bail!("URL capture requires kgx-mcp url_crawl module (Task 7). Use ingest_url MCP tool for now.");
+        return run_url_capture(json, from, kind, depth, max_pages, &root, start);
     }
 
     // Directory branch: walk recursively, capture each matching file.
@@ -128,6 +128,46 @@ fn capture_file(root: &Path, path: &Path, kind: &str) -> anyhow::Result<Option<C
     } else {
         let content = std::fs::read_to_string(path)?;
         capture_one_returning(root, &content, kind)
+    }
+}
+
+fn run_url_capture(
+    json: bool,
+    url: &str,
+    kind: &str,
+    depth: u32,
+    max_pages: u32,
+    root: &Path,
+    start: Instant,
+) -> anyhow::Result<()> {
+    let rt = tokio::runtime::Runtime::new()?;
+    let result = rt.block_on(async {
+        kgx_mcp::url_crawl::crawl(url, depth, max_pages, root).await
+    });
+    match result {
+        Ok(crawl_result) => {
+            emit(
+                "capture",
+                serde_json::json!({
+                    "seed_url": url,
+                    "depth": depth,
+                    "pages_captured": crawl_result.pages_captured,
+                    "pages_skipped": crawl_result.pages_skipped,
+                    "raw": crawl_result.raw_paths,
+                    "kind": kind,
+                }),
+                json,
+                start,
+                |_| {
+                    println!(
+                        "captured {} page(s) (skipped {})",
+                        crawl_result.pages_captured, crawl_result.pages_skipped
+                    );
+                },
+            );
+            Ok(())
+        }
+        Err(e) => anyhow::bail!("{e}"),
     }
 }
 
