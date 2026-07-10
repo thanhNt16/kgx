@@ -74,9 +74,10 @@ pub fn run(json: bool, entity: &str, relations: bool) -> anyhow::Result<()> {
             edges
                 .iter()
                 .filter_map(|e| {
-                    notes.iter().find(|n| n.fm.id == e.dst_id).map(|n| {
-                        serde_json::json!({"target": n.fm.title, "rel": e.rel_type})
-                    })
+                    notes
+                        .iter()
+                        .find(|n| n.fm.id == e.dst_id)
+                        .map(|n| serde_json::json!({"target": n.fm.title, "rel": e.rel_type}))
                 })
                 .collect()
         } else {
@@ -87,31 +88,25 @@ pub fn run(json: bool, entity: &str, relations: bool) -> anyhow::Result<()> {
         serde_json::json!({"entity": entity, "neighbors": titles})
     };
 
-    emit(
-        "recall",
-        data,
-        json,
-        start,
-        |d| {
-            println!("Entity: {}", d["entity"]);
-            if let Some(neighbors) = d["neighbors"].as_array() {
-                for t in neighbors {
-                    if let Some(s) = t.as_str() {
-                        println!("  - {s}");
-                    }
+    emit("recall", data, json, start, |d| {
+        println!("Entity: {}", d["entity"]);
+        if let Some(neighbors) = d["neighbors"].as_array() {
+            for t in neighbors {
+                if let Some(s) = t.as_str() {
+                    println!("  - {s}");
                 }
             }
-            if let Some(rels) = d["relations"].as_array() {
-                if !rels.is_empty() {
-                    println!("Relations:");
-                    for r in rels {
-                        let target = r["target"].as_str().unwrap_or("?");
-                        let rel = r["rel"].as_str().unwrap_or("?");
-                        println!("  {rel} -> {target}");
-                    }
+        }
+        if let Some(rels) = d["relations"].as_array() {
+            if !rels.is_empty() {
+                println!("Relations:");
+                for r in rels {
+                    let target = r["target"].as_str().unwrap_or("?");
+                    let rel = r["rel"].as_str().unwrap_or("?");
+                    println!("  {rel} -> {target}");
                 }
             }
-        },
-    );
+        }
+    });
     Ok(())
 }

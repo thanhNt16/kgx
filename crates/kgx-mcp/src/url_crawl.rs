@@ -11,14 +11,16 @@ pub struct CrawlResult {
 }
 
 const MEDIA_EXTS: &[&str] = &[
-    "pdf", "png", "jpg", "jpeg", "gif", "svg", "css", "js", "woff", "woff2",
-    "ico", "mp4", "webm", "zip", "tar", "gz",
+    "pdf", "png", "jpg", "jpeg", "gif", "svg", "css", "js", "woff", "woff2", "ico", "mp4", "webm",
+    "zip", "tar", "gz",
 ];
 
 fn is_media_url(url: &str) -> bool {
     let lower = url.to_ascii_lowercase();
     let path = lower.split('?').next().unwrap_or(&lower);
-    MEDIA_EXTS.iter().any(|ext| path.ends_with(&format!(".{ext}")))
+    MEDIA_EXTS
+        .iter()
+        .any(|ext| path.ends_with(&format!(".{ext}")))
 }
 
 fn same_domain(seed: &url::Url, target: &url::Url) -> bool {
@@ -55,7 +57,11 @@ fn strip_html_tags(html: &str) -> String {
             // Check for <script> or <style> — skip entirely
             let remaining = &lower[i..];
             if remaining.starts_with("<script") || remaining.starts_with("<style") {
-                let close_tag = if remaining.starts_with("<script") { "</script>" } else { "</style>" };
+                let close_tag = if remaining.starts_with("<script") {
+                    "</script>"
+                } else {
+                    "</style>"
+                };
                 if let Some(pos) = lower[i..].find(close_tag) {
                     i += pos + close_tag.len();
                     in_tag = false;
@@ -129,14 +135,9 @@ fn capture_page(root: &Path, url: &str, content: &str) -> Result<String> {
     Ok(rel)
 }
 
-pub async fn crawl(
-    seed_url: &str,
-    depth: u32,
-    max_pages: u32,
-    root: &Path,
-) -> Result<CrawlResult> {
-    let seed = url::Url::parse(seed_url)
-        .map_err(|e| KgError::Other(format!("invalid URL: {e}")))?;
+pub async fn crawl(seed_url: &str, depth: u32, max_pages: u32, root: &Path) -> Result<CrawlResult> {
+    let seed =
+        url::Url::parse(seed_url).map_err(|e| KgError::Other(format!("invalid URL: {e}")))?;
 
     let delay_ms = std::env::var("KGX_CRAWL_DELAY_MS")
         .ok()

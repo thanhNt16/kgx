@@ -15,8 +15,8 @@ mod commands {
     pub mod mcp_server;
     pub mod project;
     pub mod pull;
-    pub mod recall;
     pub mod query;
+    pub mod recall;
     pub mod review;
     pub mod search;
     pub mod serve;
@@ -79,7 +79,9 @@ fn main() -> anyhow::Result<()> {
             limit,
             rerank_graph,
         } => commands::search::run(cli.json, &query, &mode, limit, rerank_graph),
-        Commands::Recall { entity, relations } => commands::recall::run(cli.json, &entity, relations),
+        Commands::Recall { entity, relations } => {
+            commands::recall::run(cli.json, &entity, relations)
+        }
         Commands::Query {
             note_type,
             entity_type,

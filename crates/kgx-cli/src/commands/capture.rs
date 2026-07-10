@@ -141,9 +141,8 @@ fn run_url_capture(
     start: Instant,
 ) -> anyhow::Result<()> {
     let rt = tokio::runtime::Runtime::new()?;
-    let result = rt.block_on(async {
-        kgx_mcp::url_crawl::crawl(url, depth, max_pages, root).await
-    });
+    let result =
+        rt.block_on(async { kgx_mcp::url_crawl::crawl(url, depth, max_pages, root).await });
     match result {
         Ok(crawl_result) => {
             emit(

@@ -11,7 +11,10 @@ pub async fn run(root: &Path, args: &Value) -> Result<Value> {
 
     let depth = args["depth"].as_u64().unwrap_or(0) as u32;
     let max_pages = args["max_pages"].as_u64().unwrap_or(50) as u32;
-    let same_domain = args.get("same_domain").and_then(|v| v.as_bool()).unwrap_or(true);
+    let same_domain = args
+        .get("same_domain")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(true);
 
     let effective_depth = if same_domain { depth } else { 0 };
 

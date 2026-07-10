@@ -1,4 +1,4 @@
-use calamine::{open_workbook, Reader, Xlsx, Xls, Data};
+use calamine::{open_workbook, Data, Reader, Xls, Xlsx};
 use kgx_core::{KgError, Result};
 use std::io::{Read, Seek};
 use std::path::Path;
@@ -6,12 +6,12 @@ use std::path::Path;
 pub fn convert(path: &Path) -> Result<super::ConvertOutput> {
     let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
     let sheets: Vec<(String, Vec<Vec<String>>)> = if ext.eq_ignore_ascii_case("xlsx") {
-        let mut workbook: Xlsx<_> = open_workbook(path)
-            .map_err(|e| KgError::Convert(format!("xlsx open failed: {e}")))?;
+        let mut workbook: Xlsx<_> =
+            open_workbook(path).map_err(|e| KgError::Convert(format!("xlsx open failed: {e}")))?;
         extract_sheets(&mut workbook)
     } else if ext.eq_ignore_ascii_case("xls") {
-        let mut workbook: Xls<_> = open_workbook(path)
-            .map_err(|e| KgError::Convert(format!("xls open failed: {e}")))?;
+        let mut workbook: Xls<_> =
+            open_workbook(path).map_err(|e| KgError::Convert(format!("xls open failed: {e}")))?;
         extract_sheets(&mut workbook)
     } else {
         return Err(KgError::Convert(format!("not an excel file: .{ext}")));

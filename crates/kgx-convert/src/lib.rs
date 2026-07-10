@@ -27,9 +27,8 @@ pub struct ConvertOutput {
 }
 
 pub const SUPPORTED_EXTS: &[&str] = &[
-    "md", "txt", "markdown", "mdx",
-    "pdf", "docx", "pptx", "odt", "epub", "html", "htm",
-    "xlsx", "xls",
+    "md", "txt", "markdown", "mdx", "pdf", "docx", "pptx", "odt", "epub", "html", "htm", "xlsx",
+    "xls",
 ];
 
 pub fn is_document_ext(ext: &str) -> bool {
@@ -74,8 +73,12 @@ pub fn convert(path: &Path) -> Result<ConvertOutput> {
         .and_then(|e| e.to_str())
         .ok_or_else(|| KgError::Convert("file has no extension".into()))?;
 
-    let fmt = classify(ext)
-        .ok_or_else(|| KgError::Convert(format!("unsupported format: .{ext}. Supported: {}", SUPPORTED_EXTS.join(", "))))?;
+    let fmt = classify(ext).ok_or_else(|| {
+        KgError::Convert(format!(
+            "unsupported format: .{ext}. Supported: {}",
+            SUPPORTED_EXTS.join(", ")
+        ))
+    })?;
 
     match fmt {
         SourceFormat::Markdown | SourceFormat::Text => {
@@ -84,14 +87,26 @@ pub fn convert(path: &Path) -> Result<ConvertOutput> {
                 source: e,
             })?;
             let title = title_from_markdown(&content, &title_from_path(path));
-            Ok(ConvertOutput { markdown: content, title, source_format: fmt })
+            Ok(ConvertOutput {
+                markdown: content,
+                title,
+                source_format: fmt,
+            })
         }
         SourceFormat::Pdf => pdf::convert(path),
         SourceFormat::Xlsx => xlsx::convert(path),
-        SourceFormat::Docx | SourceFormat::Pptx | SourceFormat::Odt | SourceFormat::Epub | SourceFormat::Html => {
+        SourceFormat::Docx
+        | SourceFormat::Pptx
+        | SourceFormat::Odt
+        | SourceFormat::Epub
+        | SourceFormat::Html => {
             let md = pandoc::convert(path)?;
             let title = title_from_markdown(&md, &title_from_path(path));
-            Ok(ConvertOutput { markdown: md, title, source_format: fmt })
+            Ok(ConvertOutput {
+                markdown: md,
+                title,
+                source_format: fmt,
+            })
         }
     }
 }

@@ -11,9 +11,8 @@ use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
 
 const DEFAULT_TEXT_EXTS: &[&str] = &[
-    "md", "txt", "markdown", "mdx",
-    "pdf", "docx", "pptx", "odt", "epub", "html", "htm",
-    "xlsx", "xls",
+    "md", "txt", "markdown", "mdx", "pdf", "docx", "pptx", "odt", "epub", "html", "htm", "xlsx",
+    "xls",
 ];
 
 pub fn run(root: &Path, args: &Value) -> Result<Value> {
@@ -43,7 +42,10 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
                 }
                 let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
                 let content = if kgx_convert::is_document_ext(ext)
-                    && ext != "md" && ext != "txt" && ext != "markdown" && ext != "mdx"
+                    && ext != "md"
+                    && ext != "txt"
+                    && ext != "markdown"
+                    && ext != "mdx"
                 {
                     match kgx_convert::convert(p) {
                         Ok(c) => c.markdown,
@@ -78,7 +80,10 @@ pub fn run(root: &Path, args: &Value) -> Result<Value> {
         if path.is_file() {
             let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
             let content = if kgx_convert::is_document_ext(ext)
-                && ext != "md" && ext != "txt" && ext != "markdown" && ext != "mdx"
+                && ext != "md"
+                && ext != "txt"
+                && ext != "markdown"
+                && ext != "mdx"
             {
                 let converted = kgx_convert::convert(path)?;
                 converted.markdown

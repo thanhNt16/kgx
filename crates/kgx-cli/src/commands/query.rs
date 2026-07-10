@@ -19,7 +19,10 @@ pub fn run(
     let mut results: Vec<serde_json::Value> = Vec::new();
     for n in notes.iter() {
         if let Some(ref nt) = note_type {
-            if !format!("{:?}", n.fm.r#type).to_lowercase().contains(&nt.to_lowercase()) {
+            if !format!("{:?}", n.fm.r#type)
+                .to_lowercase()
+                .contains(&nt.to_lowercase())
+            {
                 continue;
             }
         }
@@ -34,7 +37,10 @@ pub fn run(
             }
         }
         if let Some(ref s) = status {
-            if !format!("{:?}", n.fm.status).to_lowercase().contains(&s.to_lowercase()) {
+            if !format!("{:?}", n.fm.status)
+                .to_lowercase()
+                .contains(&s.to_lowercase())
+            {
                 continue;
             }
         }
