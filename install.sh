@@ -84,6 +84,44 @@ if [ -x "$INSTALLED_BIN" ]; then
   fi
 fi
 
+# Install pandoc for document conversion (PDF/Word/PPTX/etc.)
+PANDOC_VERSION="3.1.11"
+PANDOC_BIN="$BIN_DIR/pandoc-kgx"
+if [ ! -x "$PANDOC_BIN" ]; then
+  case "$TARGET" in
+    macos-x86_64)  PANDOC_PLATFORM="x86_64-apple-darwin" ;;
+    macos-aarch64) PANDOC_PLATFORM="aarch64-apple-darwin" ;;
+    linux-x86_64)  PANDOC_PLATFORM="x86_64-linux-gnu" ;;
+    linux-aarch64) PANDOC_PLATFORM="aarch64-linux-gnu" ;;
+    windows-x86_64) PANDOC_PLATFORM="x86_64-windows" ;;
+    *) echo "No pandoc bundle for $TARGET — install pandoc manually if you need document conversion." >&2 ;;
+  esac
+  if [ -n "$PANDOC_PLATFORM" ]; then
+    PANDOC_URL="https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-${PANDOC_PLATFORM}.zip"
+    echo "Downloading pandoc ${PANDOC_VERSION}..."
+    if curl -fsSL "$PANDOC_URL" -o "$TMP_DIR/pandoc.zip" 2>/dev/null; then
+      if command -v unzip >/dev/null 2>&1; then
+        unzip -q -o "$TMP_DIR/pandoc.zip" -d "$TMP_DIR/pandoc-extract"
+      else
+        python3 - "$TMP_DIR/pandoc.zip" "$TMP_DIR/pandoc-extract" <<'PY'
+import sys, zipfile, os
+os.makedirs(sys.argv[2], exist_ok=True)
+with zipfile.ZipFile(sys.argv[1]) as zf:
+    zf.extractall(sys.argv[2])
+PY
+      fi
+      PANDOC_SRC=$(find "$TMP_DIR/pandoc-extract" -name "pandoc" -o -name "pandoc.exe" | head -1)
+      if [ -n "$PANDOC_SRC" ]; then
+        cp "$PANDOC_SRC" "$PANDOC_BIN"
+        chmod +x "$PANDOC_BIN"
+        echo "Installed pandoc to $PANDOC_BIN"
+      fi
+    else
+      echo "Could not download pandoc — install manually if you need document conversion." >&2
+    fi
+  fi
+fi
+
 for arg in "$@"; do
   case "$arg" in
     --with-rtk) echo "RTK setup: run kg init --with-rtk inside a vault." ;;
