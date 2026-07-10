@@ -56,9 +56,15 @@ pub enum Commands {
         #[arg(long = "type", default_value = "doc")]
         kind: String,
         /// Comma-separated extensions to capture when --from is a directory
-        /// (default: md,txt,markdown,mdx)
+        /// (default: md,txt,markdown,mdx,pdf,docx,pptx,odt,epub,html,htm,xlsx,xls)
         #[arg(long)]
         ext: Option<String>,
+        /// URL crawl depth: 0 = single page, 1 = page + direct links, etc.
+        #[arg(long, default_value = "0")]
+        depth: u32,
+        /// Maximum pages to fetch during URL crawl
+        #[arg(long, default_value = "50")]
+        max_pages: u32,
     },
     /// Analyze and repair links
     Link {

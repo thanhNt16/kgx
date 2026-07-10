@@ -15,6 +15,7 @@ candle = ["kgx-llm/candle"]
 
 [dependencies]
 kgx-core = { path = "../kgx-core" }
+kgx-convert = { path = "../kgx-convert" }
 kgx-okf = { path = "../kgx-okf" }
 kgx-vault = { path = "../kgx-vault" }
 kgx-graph = { path = "../kgx-graph" }

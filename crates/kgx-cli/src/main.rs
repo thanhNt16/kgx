@@ -60,9 +60,13 @@ fn main() -> anyhow::Result<()> {
             rebuild_vectors,
             pagerank,
         } => commands::index::run(cli.json, full, incremental, rebuild_vectors, pagerank),
-        Commands::Capture { from, kind, ext } => {
-            commands::capture::run(cli.json, &from, &kind, ext.as_deref())
-        }
+        Commands::Capture {
+            from,
+            kind,
+            ext,
+            depth,
+            max_pages,
+        } => commands::capture::run(cli.json, &from, &kind, ext.as_deref(), depth, max_pages),
         Commands::Link {
             suggest,
             orphans,

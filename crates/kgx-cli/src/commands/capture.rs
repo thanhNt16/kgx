@@ -7,11 +7,25 @@ use crate::output::emit;
 use kgx_core::util;
 
 /// Default extensions captured when ingesting a directory.
-const DEFAULT_TEXT_EXTS: &[&str] = &["md", "txt", "markdown", "mdx"];
+const DEFAULT_TEXT_EXTS: &[&str] = &[
+    "md", "txt", "markdown", "mdx", "pdf", "docx", "pptx", "odt", "epub", "html", "htm", "xlsx",
+    "xls",
+];
 
-pub fn run(json: bool, from: &str, kind: &str, exts_csv: Option<&str>) -> anyhow::Result<()> {
+pub fn run(
+    json: bool,
+    from: &str,
+    kind: &str,
+    exts_csv: Option<&str>,
+    _depth: u32,
+    _max_pages: u32,
+) -> anyhow::Result<()> {
     let start = Instant::now();
     let root = crate::vault::vault_root()?;
+
+    if from.starts_with("http://") || from.starts_with("https://") {
+        anyhow::bail!("URL capture requires kgx-mcp url_crawl module (Task 7). Use ingest_url MCP tool for now.");
+    }
 
     // Directory branch: walk recursively, capture each matching file.
     if Path::new(from).is_dir() {
@@ -26,16 +40,14 @@ pub fn run(json: bool, from: &str, kind: &str, exts_csv: Option<&str>) -> anyhow
             if !path.is_file() {
                 continue;
             }
-            if !has_text_ext(path, &exts) {
+            let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+            if !has_text_ext(path, &exts) && !kgx_convert::is_document_ext(ext) {
                 continue;
             }
-            match std::fs::read_to_string(path) {
-                Ok(content) => match capture_one_returning(&root, &content, kind)? {
-                    Some(c) => captured.push(c.raw_rel),
-                    None => skipped += 1,
-                },
+            match capture_file(&root, path, kind) {
+                Ok(Some(c)) => captured.push(c.raw_rel),
+                Ok(None) => skipped += 1,
                 Err(e) => {
-                    // Skip unreadable/binary files but keep going.
                     eprintln!("skip {}: {e}", path.display());
                     skipped += 1;
                 }
@@ -60,22 +72,39 @@ pub fn run(json: bool, from: &str, kind: &str, exts_csv: Option<&str>) -> anyhow
     }
 
     // Single-source branch (file path or "-" stdin).
-    let content = match from {
-        "-" => {
-            let mut s = String::new();
-            std::io::stdin().read_to_string(&mut s)?;
-            s
+    let (raw_rel, src_rel, status) = if from == "-" {
+        let mut content = String::new();
+        std::io::stdin().read_to_string(&mut content)?;
+        match capture_one_returning(&root, &content, kind)? {
+            Some(c) => (c.raw_rel, c.src_rel, "ok"),
+            None => ("(skipped)".to_string(), "(skipped)".to_string(), "skipped"),
         }
-        path if Path::new(path).exists() => std::fs::read_to_string(path)?,
-        url if url.starts_with("http") => {
-            anyhow::bail!("url capture requires --features net (Phase 6)")
+    } else if Path::new(from).exists() {
+        let path = Path::new(from);
+        let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+        if kgx_convert::is_document_ext(ext)
+            && ext != "md"
+            && ext != "txt"
+            && ext != "markdown"
+            && ext != "mdx"
+        {
+            // Document format — convert first
+            let converted = kgx_convert::convert(path).map_err(|e| anyhow::anyhow!("{e}"))?;
+            match capture_one_returning(&root, &converted.markdown, kind)? {
+                Some(c) => (c.raw_rel, c.src_rel, "ok"),
+                None => ("(skipped)".to_string(), "(skipped)".to_string(), "skipped"),
+            }
+        } else {
+            let content = std::fs::read_to_string(path)?;
+            match capture_one_returning(&root, &content, kind)? {
+                Some(c) => (c.raw_rel, c.src_rel, "ok"),
+                None => ("(skipped)".to_string(), "(skipped)".to_string(), "skipped"),
+            }
         }
-        other => anyhow::bail!("cannot read source: {other}"),
+    } else {
+        anyhow::bail!("cannot read source: {from}");
     };
-    let (raw_rel, src_rel, status) = match capture_one_returning(&root, &content, kind)? {
-        Some(c) => (c.raw_rel, c.src_rel, "ok"),
-        None => ("(skipped)".to_string(), "(skipped)".to_string(), "skipped"),
-    };
+
     emit(
         "capture",
         serde_json::json!({"raw": raw_rel, "source_note": src_rel, "kind": kind, "status": status}),
@@ -84,6 +113,22 @@ pub fn run(json: bool, from: &str, kind: &str, exts_csv: Option<&str>) -> anyhow
         |_| println!("captured -> {raw_rel}"),
     );
     Ok(())
+}
+
+fn capture_file(root: &Path, path: &Path, kind: &str) -> anyhow::Result<Option<Captured>> {
+    let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+    if kgx_convert::is_document_ext(ext)
+        && ext != "md"
+        && ext != "txt"
+        && ext != "markdown"
+        && ext != "mdx"
+    {
+        let converted = kgx_convert::convert(path).map_err(|e| anyhow::anyhow!("{e}"))?;
+        capture_one_returning(root, &converted.markdown, kind)
+    } else {
+        let content = std::fs::read_to_string(path)?;
+        capture_one_returning(root, &content, kind)
+    }
 }
 
 struct Captured {
