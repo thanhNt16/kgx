@@ -16,6 +16,7 @@ Use the `kg` CLI and the `kgx` MCP server when working in a KGX vault.
 | `kgx:ingest` | Capture source (file/folder/URL/conversation) + extract atomic facts (harness-driven) |
 | `kgx:capture` | Capture a raw source verbatim (file/folder/URL/conversation) |
 | `kgx:extract` | Extract facts/entities/decisions from a captured source (harness-driven) |
+| `kgx:pole` | Extract POLE (Person/Object/Location/Event) graph from a captured source — harness-driven, reusable post-ingest step |
 | `kgx:index` | Rebuild the brain index |
 | `kgx:search` | Hybrid keyword + semantic search |
 | `kgx:ask` | Answer a question with citations (harness-driven synthesis over retrieval) |

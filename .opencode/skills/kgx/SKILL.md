@@ -14,6 +14,7 @@ Use `kg` for Markdown vault work. The MCP server exposes the same MCP tools.
 | `kgx-ingest` | Capture source + extract atomic facts |
 | `kgx-capture` | Capture a raw source verbatim |
 | `kgx-extract` | Extract facts/entities/decisions from a source |
+| `kgx-pole` | Extract POLE (Person/Object/Location/Event) graph from a source |
 | `kgx-index` | Rebuild the brain index |
 | `kgx-search` | Hybrid keyword + semantic search |
 | `kgx-ask` | Answer a question with citations |
