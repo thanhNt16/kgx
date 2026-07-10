@@ -90,6 +90,22 @@ pub enum Commands {
     Recall {
         #[arg(long)]
         entity: String,
+        /// Include typed relationship edges in the output
+        #[arg(long)]
+        relations: bool,
+    },
+    /// Query notes with filters
+    Query {
+        #[arg(long)]
+        note_type: Option<String>,
+        #[arg(long)]
+        entity_type: Option<String>,
+        #[arg(long)]
+        tag: Option<String>,
+        #[arg(long)]
+        status: Option<String>,
+        #[arg(long, default_value = "20")]
+        limit: usize,
     },
     /// Review staged dream diffs
     Review {
