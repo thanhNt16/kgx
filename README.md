@@ -5,6 +5,8 @@
 
 **KGX** turns a plain Markdown + `[[wikilinks]]` vault into a living, queryable knowledge graph. The vault is your canonical, git-versioned source of truth. A disposable SQLite "brain" provides hybrid vector + graph + keyword retrieval, PageRank, and community summaries. AI agents ingest, extract, link, answer, and consolidate. You review via git diffs and Obsidian's native graph view.
 
+> **[User Manual](MANUAL.md)** — install, configure, and use KGX day-to-day: vault setup, daily workflows, CLI reference, env vars, and troubleshooting.
+>
 > **[Full Report (HTML)](docs/kgx-final-report.html)** — consolidated benchmarks, test results, architecture, sprint simulation, and all documentation in one page.
 >
 > **[Battle Test Report (HTML)](docs/kgx-battletest-report.html)** — 36-sprint / 18-month engineering-team simulation, WITH-vs-WITHOUT-KGX benchmark (recall +239%, MRR +4926%, 25× less context), 4-harness compatibility audit, and every bug found & fixed during battle testing. Reproducible via `bench/gen_corpus.py` + `bench/bench.py`.
@@ -13,6 +15,7 @@
 
 ## Table of Contents
 
+0. [User Manual](MANUAL.md) — install, configure, daily use
 1. [Why KGX?](#why-kgx)
 2. [Architecture at a Glance](#architecture-at-a-glance)
 3. [Installation](#installation)
@@ -24,6 +27,7 @@
 9. [KGX vs Without KGX](#kgx-vs-without-kgx)
 10. [Sprint Simulation (2-week DataLake sprint)](#sprint-simulation)
 11. [Configuration Reference](#configuration-reference)
+12. [Benchmark Results](#benchmark-results)
 
 ---
 
@@ -917,6 +921,49 @@ vault/                    ← run kg commands here (project root)
     ├── meta.json           ← last-run timestamps
     └── metrics.log         ← per-command token JSONL
 ```
+
+---
+
+## Benchmark Results
+
+Measured on Apple Silicon (M-series) with `KGX_LLM=mock KGX_EMBED=mock kg index --full`.
+
+### Index performance (GraphBuffer bulk-write path)
+
+| Notes | Edges | Total (warm) | ms/note |
+|-------|-------|-------------|---------|
+| 10,000 | 0 | 91.8s* | 9 |
+| **10,000** | **29,881** | **6.2s** | **0.62** |
+
+\* First-run includes ~32s startup overhead. Warm runs are 10-100x faster.
+
+**Step breakdown (10k notes + 30k edges, warm):**
+
+| Step | Time |
+|------|------|
+| Bulk INSERT 10k notes | 12ms |
+| Bulk INSERT 30k edges | 13ms |
+| vec0 inserts (10k individual) | **5.6s** ← 90% |
+| FTS repopulation | 0.5s |
+| **Total** | **6.2s** |
+
+### Query latency (10k nodes, 30k edges)
+
+| Operation | Avg |
+|-----------|-----|
+| `kg query --entity-type person` | 189ms |
+| `kg recall --entity "Person 5000"` | 169ms |
+| `kg status` | 198ms |
+
+### 1k-node baseline
+
+| Operation | Avg |
+|-----------|-----|
+| `kg query --entity-type person` | 34ms |
+| `kg recall --entity "Person 500"` | 27ms |
+| `kg status` | 26ms |
+
+Full details in the [E2E Test Report](e2e-test-report.html#6-benchmark-results).
 
 ---
 
