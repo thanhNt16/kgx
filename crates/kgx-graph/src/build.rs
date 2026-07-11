@@ -166,6 +166,22 @@ fn write_meta(brain: &mut Brain, mode: &str, node_count: usize, edge_count: usiz
     Ok(())
 }
 
+/// Full re-index using the in-memory GraphBuffer + bulk-write pipeline.
+/// Mirrors the codebase-memory-mcp graph_buffer + dump architecture.
+///  - Derives edges in memory (no DB round-trips)
+///  - Drops indexes + synchronous=OFF + 64 MB cache for maximal INSERT speed
+///  - Single transaction
+///  - Recreates indexes after commit
+pub fn build_full_bulk(
+    brain_path: &std::path::Path,
+    notes: &[Note],
+    embedder: &dyn Embedder,
+) -> Result<BuildStats> {
+    let buf = crate::graph_buffer::GraphBuffer::new(notes.to_vec());
+    let stats = buf.write_to_sqlite(brain_path, embedder)?;
+    Ok(stats)
+}
+
 pub fn build_full(
     brain: &mut Brain,
     notes: &[Note],

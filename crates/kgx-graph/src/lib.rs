@@ -2,6 +2,7 @@ pub mod brain;
 pub mod build;
 pub mod community;
 pub mod embed;
+pub mod graph_buffer;
 pub mod knn;
 pub mod leiden;
 pub mod links;

@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use crate::output::emit;
 use kgx_core::Note;
-use kgx_graph::{build::build_full, build::build_incremental, pagerank, Brain};
+use kgx_graph::{build::build_full_bulk, build::build_incremental, pagerank, Brain};
 use kgx_tokens::record::{append, TokenRecord};
 
 pub fn run(
@@ -15,34 +15,36 @@ pub fn run(
     let start = Instant::now();
     let root = crate::vault::vault_root()?;
     let kg_dir = root.join(".kg");
+    let brain_path = kg_dir.join("brain.sqlite");
     let notes = kgx_vault::scan::scan_vault(&root)?;
-    let mut brain = Brain::open(&kg_dir.join("brain.sqlite"))?;
     let embedder = kgx_llm::select::embedder_from_env();
 
     let (stats, embedded_ids): (_, std::collections::BTreeSet<String>) =
         if rebuild_vectors || (incremental && !full) {
+            let mut brain = Brain::open(&brain_path)?;
             let changed_ids = find_changed_ids(&brain, &notes)?;
             let embedded_ids: std::collections::BTreeSet<String> =
                 changed_ids.iter().cloned().collect();
             let s = build_incremental(&mut brain, &notes, &changed_ids, embedder.as_ref())?;
             (s, embedded_ids)
         } else {
+            // Full rebuild using in-memory GraphBuffer + bulk write
+            // (mirrors codebase-memory-mcp graph_buffer + dump architecture)
             let all: std::collections::BTreeSet<String> =
                 notes.iter().map(|n| n.fm.id.clone()).collect();
-            let s = build_full(&mut brain, &notes, embedder.as_ref())?;
+            let s = build_full_bulk(&brain_path, &notes, embedder.as_ref())?;
             (s, all)
         };
 
+    // Re-open brain for post-processing (build_full_bulk creates its own connection)
+    let mut brain = Brain::open(&brain_path)?;
+
     // Sparse (SPLADE) postings: post-build step.
     if let Some(sparse) = kgx_llm::select::sparse_from_env() {
-        let target: Vec<&Note> = if rebuild_vectors || (incremental && !full) {
-            notes
-                .iter()
-                .filter(|n| embedded_ids.contains(&n.fm.id))
-                .collect()
-        } else {
-            notes.iter().collect()
-        };
+        let target: Vec<&Note> = notes
+            .iter()
+            .filter(|n| embedded_ids.contains(&n.fm.id))
+            .collect();
         kgx_graph::sparse::index_sparse(&brain, &target, sparse.as_ref())?;
     }
     // Warm the reranker cache at index time.
