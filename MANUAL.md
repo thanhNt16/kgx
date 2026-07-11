@@ -416,7 +416,155 @@ KGX ships with skill files and MCP configs for Claude, OpenCode, Codex, Cursor, 
 
 ---
 
-## 8. Performance
+## 8. Agent Skills (kgx: verbs)
+
+When working in a KGX vault from an AI agent (OpenCode, Claude Code, Codex, Cursor), use these composite verbs. **LLM work is delegated to the agent harness** — extraction, Q&A synthesis, and dream consolidation run in-session; retrieval, indexing, and graph math run locally via `kg`/MCP.
+
+| Verb | What it does |
+|------|-------------|
+| `kgx:ingest` | Capture source + extract atomic facts (harness-driven) |
+| `kgx:capture` | Capture a raw source verbatim |
+| `kgx:extract` | Extract facts/entities/decisions from a captured source |
+| `kgx:pole` | Extract POLE (Person/Object/Location/Event) graph |
+| `kgx:index` | Rebuild the brain index |
+| `kgx:search` | Hybrid keyword + semantic search |
+| `kgx:ask` | Answer a question with citations (harness-driven synthesis) |
+| `kgx:recall` | Retrieve an entity's graph neighborhood |
+| `kgx:dream` | Consolidation (dedup/contradiction/supersession) — staged diffs |
+| `kgx:review` | Apply staged dream diffs |
+| `kgx:link` | Analyze and repair wikilinks |
+| `kgx:graph` | Export graph as interactive 3D HTML |
+| `kgx:status` | Show vault and brain status |
+| `kgx:cron` | Manage scheduler jobs |
+| `kgx:init` | Scaffold a new vault |
+| `kgx:ship` | Create an OKF bundle |
+| `kgx:sync` | Pull and merge remote changes |
+
+### kgx:ingest
+
+Capture a raw source and extract atomic facts. The agent reads the captured source and writes facts via `upsert_note` — do not shell out to `kg extract`.
+
+```
+kg capture --from <file|folder|-> [--ext md,txt] --type doc
+# agent: read source → upsert_note per atomic fact
+kg index --full
+```
+
+### kgx:capture
+
+Capture raw source material verbatim (immutable). Supports file, folder, stdin.
+
+```
+kg capture --from <file|folder|-> [--ext md,txt,markdown,mdx] [--type doc]
+```
+
+### kgx:extract
+
+Extract atomic facts, entities, and decisions from a captured source. **Harness-driven**: the agent is the extractor. Read the source note, derive atomic facts (one claim per note with confidence and links), write each via `upsert_note`.
+
+### kgx:pole
+
+Extract a structured POLE (Person/Object/Location/Event) graph from a captured source:
+1. Agent reads the captured source
+2. Identifies persons, objects, locations, events
+3. Creates entity notes with `entity_type` and typed relationship links
+4. Runs `kg index --full`
+
+### kgx:index
+
+Build or rebuild the SQLite brain.
+
+```
+kg index --full
+```
+
+Semantic search is on by default. Set `KGX_EMBED=off` to disable vectors.
+
+### kgx:search
+
+```
+kg search <query> [--mode keyword|semantic|hybrid] [--limit <n>] [--rerank-graph]
+```
+
+### kgx:ask
+
+Answer a question using hybrid retrieval with citations. **Synthesis is harness-driven** — the agent retrieves context via `nl_query_memory` / `deep_search_memory`, then synthesizes the answer itself. `kg ask` was removed.
+
+### kgx:recall
+
+```
+kg recall --entity "<entity name>"
+```
+
+Retrieves notes within 1-2 hops of a named entity.
+
+### kgx:dream
+
+Consolidation (dedup, contradiction, supersession, stale archival). **Judgment passes are harness-driven** — the agent computes diffs and writes `.brain/.kg/staged_diffs.json`, then `kg review` applies them. `kg dream` was removed. Use `dream_step` MCP tool for pure-heuristic candidate surfacing (orphans, stale, open questions).
+
+### kgx:review
+
+Apply staged dream diffs.
+
+```
+kg review [--approve all|--reject] [--ponytail-audit]
+```
+
+### kgx:link
+
+```
+kg link [--fix]
+```
+
+### kgx:graph
+
+```
+kg graph --format html|cytoscape|graphml|mermaid|dot|obsidian
+```
+
+### kgx:status
+
+```
+kg status [--json]
+```
+
+### kgx:cron
+
+```
+kg cron list
+kg cron remove <name>
+```
+
+### kgx:init
+
+```
+kg init [--template research|code|pkm|team] [--with-skills] [--okf] [--vault <path>] [--migrate]
+```
+
+Knowledge content (`raw/`, `notes/`, `index.md`, `log.md`, `.kg/`, `CLAUDE.md`) is created inside `.brain/`. Agent/tooling config (`.mcp.json`, `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.kgx/`, `AGENTS.md`, `config.toml`, `opencode.json`, `.gitignore`) stays at the project root.
+
+### kgx:ship
+
+```
+kg ship --out <bundle.okf.tar.gz>
+```
+
+### kgx:sync
+
+```
+kg sync
+```
+
+### Rules
+
+- `raw/` (under `.brain/`) is immutable.
+- Supersede or archive; never delete notes.
+- Cite note IDs in answers.
+- Extraction, Q&A, and consolidation use these verbs — never shell out to `kg ask`, `kg dream`, `kg refine`, `kg extract`, `kg index --communities`, or `kg search --rerank-llm`.
+
+---
+
+## 9. Performance
 
 Benchmark results (10,000 nodes + 30,000 edges, MacBook Apple Silicon):
 
@@ -434,7 +582,7 @@ The indexer is I/O bound on vec0 vector inserts (~90% of time). Bulk notes+edges
 
 ---
 
-## 9. Architecture
+## 10. Architecture
 
 ```
 ┌──────────────┐    ┌──────────────┐    ┌─────────────────┐
@@ -485,7 +633,7 @@ The indexer is I/O bound on vec0 vector inserts (~90% of time). Bulk notes+edges
 
 ---
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
