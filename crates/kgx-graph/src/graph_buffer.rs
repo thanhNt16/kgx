@@ -1,10 +1,9 @@
-use std::collections::HashMap;
 use std::path::Path;
 
 use kgx_core::{Edge, KgError, Note, Result};
 
-use crate::embed::f32_to_blob;
 use crate::build::BuildStats;
+use crate::embed::f32_to_blob;
 
 pub struct GraphBuffer {
     pub notes: Vec<Note>,
@@ -25,7 +24,11 @@ impl GraphBuffer {
     ///   4. Bulk INSERT notes + edges
     ///   5. Commit, recreate indexes, restore synchronous
     ///   6. vec0 inserts (must be after commit)
-    pub fn write_to_sqlite(self, db_path: &Path, embedder: &dyn kgx_core::llm::Embedder) -> Result<BuildStats> {
+    pub fn write_to_sqlite(
+        self,
+        db_path: &Path,
+        embedder: &dyn kgx_core::llm::Embedder,
+    ) -> Result<BuildStats> {
         let node_count = self.notes.len();
         let edge_count = self.edges.len();
         let t0 = std::time::Instant::now();
@@ -129,8 +132,14 @@ impl GraphBuffer {
                     .unwrap()
                     .trim_matches('"')
                     .to_string();
-                stmt.execute(rusqlite::params![e.src_id, e.dst_id, rt, e.valid_from, e.valid_to])
-                    .map_err(|e| KgError::Brain(e.to_string()))?;
+                stmt.execute(rusqlite::params![
+                    e.src_id,
+                    e.dst_id,
+                    rt,
+                    e.valid_from,
+                    e.valid_to
+                ])
+                .map_err(|e| KgError::Brain(e.to_string()))?;
             }
         }
         eprintln!("  TIMING step6 insert edges: {:?}", t5.elapsed());

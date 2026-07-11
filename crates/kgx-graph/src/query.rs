@@ -302,7 +302,7 @@ pub struct TypedEdge {
     pub rel_type: String,
 }
 
-pub fn neighbors_with_relations(brain: &Brain, id: &str, hops: u32) -> Result<Vec<TypedEdge>> {
+pub fn neighbors_with_relations(brain: &Brain, id: &str, _hops: u32) -> Result<Vec<TypedEdge>> {
     let mut stmt = brain
         .conn()
         .prepare(

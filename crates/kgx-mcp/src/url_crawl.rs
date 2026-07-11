@@ -29,7 +29,7 @@ fn same_domain(seed: &url::Url, target: &url::Url) -> bool {
 
 fn convert_html_to_markdown(html: &str) -> String {
     // Try pandoc first
-    if let Ok(pandoc_path) = kgx_convert::pandoc::resolve_pandoc() {
+    if kgx_convert::pandoc::resolve_pandoc().is_ok() {
         let dir = tempfile::tempdir().ok();
         if let Some(dir) = dir {
             let html_path = dir.path().join("input.html");
